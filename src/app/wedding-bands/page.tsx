@@ -17,7 +17,7 @@ function WeddingBandsContent() {
   }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (
@@ -25,7 +25,7 @@ function WeddingBandsContent() {
       initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Wedding Bands"
-      pageSubtitle="Elegant wedding bands for every style — from classic gold to diamond-studded eternity bands."
+      pageSubtitle="Elegant wedding bands for every style — from classic gold to gemstone-studded eternity bands."
     />
   );
 }

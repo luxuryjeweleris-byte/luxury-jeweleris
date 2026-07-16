@@ -9,9 +9,9 @@ import './blog.css';
 const BLOG_POSTS = [
   {
     id: 1,
-    category: 'Diamond Guide',
-    title: 'Lab-Grown vs. Natural Diamonds: The Ultimate Comparison',
-    excerpt: 'Thinking about purchasing a simulated or copy stone, or debating between lab-grown and natural diamonds? Here is a breakdown of costs, values, and features.',
+    category: 'Gemstone Guide',
+    title: 'Moissanite vs. Precious Gemstones: The Ultimate Comparison',
+    excerpt: 'Thinking about purchasing a custom ring, or debating between moissanite and other precious gemstones? Here is a breakdown of costs, values, and features.',
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
     date: 'July 5, 2026',
     readTime: '6 min read',
@@ -74,7 +74,7 @@ export default function BlogPage() {
   const [emailSubscribed, setEmailSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState('');
 
-  const categories = ['All', 'Diamond Guide', 'Trends', 'Education', 'Metal Guide', 'Buying Guide'];
+  const categories = ['All', 'Gemstone Guide', 'Trends', 'Education', 'Metal Guide', 'Buying Guide'];
 
   const filteredPosts = activeCategory === 'All'
     ? BLOG_POSTS
@@ -95,8 +95,8 @@ export default function BlogPage() {
       {/* Blog Hero Header */}
       <section className="blog-hero">
         <div className="container text-center">
-          <span className="blog-hero-tag">Rare Carat Journal</span>
-          <h1 className="blog-hero-title">Diamonds, Rings & Buying Advice</h1>
+          <span className="blog-hero-tag">Luxury Journal</span>
+          <h1 className="blog-hero-title">Gemstones, Rings & Buying Advice</h1>
           <p className="blog-hero-subtitle">
             Get expert insights, styling ideas, and unbiased guides to selecting fine jewelry.
           </p>
@@ -183,7 +183,7 @@ export default function BlogPage() {
         <div className="container newsletter-box">
           <h3 className="newsletter-title">Subscribe to the Jewelers Journal</h3>
           <p className="newsletter-subtitle">
-            Get the latest jewelry trends, diamond education guides, and exclusive offers straight to your inbox.
+            Get the latest jewelry trends, gemstone education guides, and exclusive offers straight to your inbox.
           </p>
 
           {emailSubscribed ? (

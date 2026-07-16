@@ -96,7 +96,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'd6',
-    name: '1.05 ct Pear Shaped Pavé Diamond Ring',
+    name: '1.05 ct Pear Shaped Pavé Moissanite Ring',
     price: 3950,
     compPrice: 5600,
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
@@ -215,7 +215,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'e1',
-    name: '1.50 ct Round Brilliant Diamond Stud Earrings',
+    name: '1.50 ct Round Brilliant Stud Earrings',
     price: 3200,
     compPrice: 4500,
     image: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=600&auto=format&fit=crop',
@@ -232,7 +232,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'e2',
-    name: 'Diamond Huggie Hoop Earrings 14K Gold',
+    name: 'Huggie Hoop Earrings 14K Gold',
     price: 1250,
     compPrice: 1800,
     image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?q=80&w=600&auto=format&fit=crop',
@@ -249,7 +249,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'n1',
-    name: '1.00 ct Diamond Solitaire Pendant Necklace',
+    name: '1.00 ct Solitaire Pendant Necklace',
     price: 2900,
     compPrice: 4100,
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
@@ -266,7 +266,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'n2',
-    name: '18K Yellow Gold Multi-Diamond Choker',
+    name: '18K Yellow Gold Multi-Stone Choker',
     price: 5400,
     compPrice: 7600,
     image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop',
@@ -283,7 +283,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'b1',
-    name: '4.50 ct Classic Diamond Tennis Bracelet',
+    name: '4.50 ct Classic Tennis Bracelet',
     price: 7800,
     compPrice: 11000,
     image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop',
@@ -317,7 +317,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'w2',
-    name: 'Platinum Diamond Eternity Wedding Band',
+    name: 'Platinum Eternity Wedding Band',
     price: 4600,
     compPrice: 6500,
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
@@ -334,7 +334,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'w3',
-    name: 'Gold Stackable Diamond Eternity Band',
+    name: 'Gold Stackable Eternity Band',
     price: 1100,
     compPrice: 1600,
     image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
@@ -351,7 +351,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'l1',
-    name: '1.01 ct Oval Lab Created Loose Diamond',
+    name: '1.01 ct Oval Lab Created Loose Gemstone',
     price: 1800,
     compPrice: 2600,
     image: 'https://images.unsplash.com/photo-1582298538104-fe2e74c27f59?q=80&w=600&auto=format&fit=crop',
@@ -363,12 +363,12 @@ export const INITIAL_PRODUCTS: Product[] = [
     aiScore: 9.8,
     isVerified: true,
     isNew: true,
-    category: 'Loose Diamond',
+    category: 'Loose Gemstone',
     style: 'Lab'
   },
   {
     id: 'l2',
-    name: '1.50 ct Round Ideal Cut Lab Diamond',
+    name: '1.50 ct Round Ideal Cut Lab Gemstone',
     price: 3100,
     compPrice: 4400,
     image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=600&auto=format&fit=crop',
@@ -380,7 +380,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     aiScore: 9.7,
     isVerified: true,
     isNew: false,
-    category: 'Loose Diamond',
+    category: 'Loose Gemstone',
     style: 'Lab'
   }
 ];
@@ -402,6 +402,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   const [dbLoading, setDbLoading] = useState(true);
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [sortOption, setSortOption] = useState('score-desc');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   // Filter States
   const [selectedShape, setSelectedShape] = useState<string | null>(initialFilters?.shape || null);
@@ -504,8 +505,8 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
         result = result.filter(p => p.category?.toLowerCase() === 'ring');
       } else if (catLower === 'wedding') {
         result = result.filter(p => p.category?.toLowerCase() === 'wedding band');
-      } else if (catLower === 'diamonds') {
-        result = result.filter(p => ['ring', 'wedding band'].includes(p.category?.toLowerCase() || ''));
+      } else if (catLower === 'loose gemstone') {
+        result = result.filter(p => p.category?.toLowerCase() === 'loose gemstone');
       } else if (catLower === 'earrings') {
         result = result.filter(p => p.category?.toLowerCase() === 'earrings');
       } else if (catLower === 'necklaces') {
@@ -718,8 +719,8 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
 
       <div className="container">
         <div className="listing-layout">
-          {/* Desktop Filter Sidebar */}
-          <aside className="filter-sidebar">
+          {/* Desktop Filter Sidebar / Mobile Collapsible Sidebar */}
+          <aside className={`filter-sidebar ${showMobileFilters ? 'mobile-visible' : ''}`}>
             <h3 className="sidebar-title">
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <SlidersHorizontal size={16} /> Filters
@@ -826,10 +827,17 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
           <main className="results-content">
             <div className="results-header">
               <div className="results-count">
-                {loading ? 'Searching...' : `${filteredProducts.length} diamonds found`}
+                {loading ? 'Searching...' : `${filteredProducts.length} items found`}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="caption-text" style={{ fontWeight: '500' }}>Sort by:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button 
+                  className="mobile-filter-toggle-btn"
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                >
+                  <SlidersHorizontal size={14} />
+                  {showMobileFilters ? 'Hide Filters' : 'Filters'}
+                </button>
+                <span className="caption-text font-medium-mobile" style={{ fontWeight: '500' }}>Sort by:</span>
                 <select 
                   className="sort-select"
                   value={sortOption}

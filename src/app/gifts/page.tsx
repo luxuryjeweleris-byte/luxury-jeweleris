@@ -17,7 +17,7 @@ function GiftsContent() {
   }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (

@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               <Logo theme="dark" height={44} />
             </Link>
             <p className="body-sm-text" style={{ color: 'var(--color-slate-muted)', marginTop: '4px', lineHeight: '1.6' }}>
-              Trust-first, AI-driven diamond search. We aggregate millions of certified diamonds from vetted sellers to bring you the best value.
+              Luxury Jeweleris crafts timeless jewelry with exceptional artistry. From engagement rings to everyday elegance, each piece is designed to celebrate life&apos;s most precious moments.
             </p>
             <div style={{ display: 'flex', gap: '16px', marginTop: '16px', alignItems: 'center' }}>
               <a 
@@ -48,36 +48,39 @@ export const Footer: React.FC = () => {
             </div>
           </div>
           <div className="footer-col">
-            <h4>Shop Diamonds</h4>
+            <h4>Shop</h4>
             <ul>
-              <li><Link href="/diamonds">Loose Diamonds</Link></li>
-              <li><Link href="/diamonds?shape=Round">Round Diamonds</Link></li>
-              <li><Link href="/diamonds?shape=Oval">Oval Diamonds</Link></li>
-              <li><Link href="/diamonds">Engagement Ring Settings</Link></li>
+              <li><Link href="/engagement-rings">Engagement Rings</Link></li>
+              <li><Link href="/wedding-bands">Wedding Bands</Link></li>
+              <li><Link href="/earrings">Earrings</Link></li>
+              <li><Link href="/necklaces">Necklaces</Link></li>
+              <li><Link href="/bracelets">Bracelets</Link></li>
+              <li><Link href="/gifts">Gifts</Link></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Education & Tools</h4>
+            <h4>Company</h4>
             <ul>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>The Diamond 4Cs Guide</a></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>AI Value Estimator</a></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>Interactive Carat weight visualizer</a></li>
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/contact">Contact Us</Link></li>
+              <li><a href="#" onClick={(e) => e.preventDefault()}>Careers</a></li>
+              <li><a href="#" onClick={(e) => e.preventDefault()}>Press</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Vetted Trust Policies</h4>
+            <h4>Customer Care</h4>
             <ul>
               <li><a href="#" onClick={(e) => e.preventDefault()}>100% Free Insured Shipping</a></li>
               <li><a href="#" onClick={(e) => e.preventDefault()}>30-Day Money-Back Returns</a></li>
               <li><a href="#" onClick={(e) => e.preventDefault()}>Price Match Guarantee</a></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>Conflict-Free Diamond Sourcing</a></li>
+              <li><a href="#" onClick={(e) => e.preventDefault()}>Lifetime Warranty</a></li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
           <div>
-            &copy; {new Date().getFullYear()} Luxury Jeweleris Inc. All rights reserved. Vetted partners, certified quality stones.
+            &copy; {new Date().getFullYear()} Luxury Jeweleris Inc. All rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '20px' }}>
             <a href="#" onClick={(e) => e.preventDefault()}>Privacy Policy</a>

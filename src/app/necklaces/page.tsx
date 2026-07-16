@@ -17,7 +17,7 @@ function NecklacesContent() {
   }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (
@@ -25,7 +25,7 @@ function NecklacesContent() {
       initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Necklaces"
-      pageSubtitle="Exquisite diamond necklaces and pendants — the perfect statement piece for any occasion."
+      pageSubtitle="Exquisite fine necklaces and pendants — the perfect statement piece for any occasion."
     />
   );
 }
