@@ -8,7 +8,7 @@ function BraceletsContent() {
   const router = useRouter();
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (
@@ -16,7 +16,7 @@ function BraceletsContent() {
       initialFilters={{ category: 'bracelets' }}
       onProductSelect={handleProductSelect}
       pageTitle="Bracelets"
-      pageSubtitle="Luxurious diamond bracelets — from classic tennis bracelets to bold modern bangles."
+      pageSubtitle="Luxurious gemstone bracelets — from classic tennis bracelets to bold modern bangles."
     />
   );
 }

@@ -151,10 +151,10 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
             <Shield size={48} style={{ color: 'var(--color-slate-muted)' }} />
             <h2 className="h2-text">Your cart is empty</h2>
             <p className="body-text" style={{ maxWidth: '340px' }}>
-              Browse our certified diamonds lists and click "Add to Cart" to start customizing your ring.
+              Browse our collections and click "Add to Cart" to find your perfect piece.
             </p>
             <Button variant="primary" onClick={() => onNavigate('listing')}>
-              Shop Diamonds
+              Shop Jewelry
             </Button>
           </div>
         ) : (

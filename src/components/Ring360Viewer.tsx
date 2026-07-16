@@ -59,8 +59,6 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
     const dpr = window.devicePixelRatio || 1;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
     ctx.scale(dpr, dpr);
 
     const cx = width / 2;
@@ -281,14 +279,16 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleMouseUpOrLeave}
       style={{
-        width: `${width}px`,
-        height: `${height}px`,
+        width: '100%',
+        maxWidth: `${width}px`,
+        height: 'auto',
+        aspectRatio: '1 / 1',
         position: 'relative',
         cursor: interactive ? (isDragging.current ? 'grabbing' : 'grab') : 'default',
         userSelect: 'none',
       }}
     >
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
       {interactive && (
         <div className="ring-360-hint">
           <span>← Drag to Rotate 360° →</span>

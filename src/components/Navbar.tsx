@@ -8,30 +8,11 @@ import { useCart } from '../context/CartContext';
 import Logo from './Logo';
 import './components.css';
 
-// Faceted Diamond Heart SVG Icon for Logo
-const LogoIcon = () => (
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--color-teal)', margin: '0 2px' }}>
-    <path d="M12 5 C10 1 2 1 2 9 C2 16 12 22 12 22 C12 22 22 16 22 9 C22 1 14 1 12 5 Z" fill="none" stroke="currentColor" />
-    <path d="M12 5 L12 22" strokeWidth="0.8" opacity="0.5" />
-    <path d="M2 9 L22 9" strokeWidth="0.8" opacity="0.5" />
-    <path d="M12 5 L5 12 L12 22" strokeWidth="0.8" opacity="0.5" />
-    <path d="M12 5 L19 12 L12 22" strokeWidth="0.8" opacity="0.5" />
-  </svg>
-);
-
 // Custom Ring SVG Icon for Menu Items
 const RingIcon = () => (
   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="menu-icon" style={{ marginRight: '6px' }}>
     <circle cx="12" cy="14" r="6" />
     <path d="M12 2 L9 5 L12 8 L15 5 Z" />
-  </svg>
-);
-
-// Custom Diamond SVG Icon for Menu Items
-const DiamondIcon = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="menu-icon" style={{ marginRight: '6px' }}>
-    <path d="M6 3h12l4 6-10 12L2 9z" />
-    <path d="M2 9h20" />
   </svg>
 );
 
@@ -43,24 +24,6 @@ const BraceletIcon = () => (
     <circle cx="20" cy="12" r="1" fill="currentColor" />
     <circle cx="12" cy="20" r="1" fill="currentColor" />
     <circle cx="4" cy="12" r="1" fill="currentColor" />
-  </svg>
-);
-
-// Custom Earrings SVG Icon
-const EarringsIcon = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" className="menu-icon" style={{ marginRight: '6px' }}>
-    <circle cx="8" cy="12" r="2.5" />
-    <circle cx="16" cy="12" r="2.5" />
-    <path d="M8 9.5V6M16 9.5V6" />
-  </svg>
-);
-
-// Custom Pendant SVG Icon
-const PendantIcon = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" className="menu-icon" style={{ marginRight: '6px' }}>
-    <path d="M12 2v7" />
-    <circle cx="12" cy="14" r="3.5" />
-    <circle cx="12" cy="14" r="1" fill="currentColor" />
   </svg>
 );
 
@@ -112,7 +75,7 @@ export const Navbar: React.FC = () => {
               {contactOpen && (
                 <div className="contact-top-dropdown animate-fade-in">
                   <h4 className="contact-dropdown-title">Customer Support</h4>
-                  <p className="contact-dropdown-subtitle">Connect with a certified gemologist.</p>
+                  <p className="contact-dropdown-subtitle">Connect with a jewelry consultant.</p>
                   
                   <button 
                     className="contact-dropdown-chat-btn" 
@@ -160,6 +123,13 @@ export const Navbar: React.FC = () => {
         {/* Center: Desktop Navigation Links (with custom rich mega menus) */}
         <div className="desktop-only-links" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           
+          {/* Shop tab */}
+          <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
+            <Link href="/shop" className={`navbar-link-item ${pathname === '/shop' ? 'active' : ''}`}>
+              Shop
+            </Link>
+          </div>
+
           {/* Engagement Rings tab */}
           <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
             <Link href="/engagement-rings" className={`navbar-link-item ${pathname === '/engagement-rings' ? 'active' : ''}`}>
@@ -172,29 +142,27 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Design your engagement ring</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Start with a setting</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><DiamondIcon /> Start with a lab diamond</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><DiamondIcon /> Start with a natural diamond</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Shop ready-to-ship rings</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Start with a setting</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Shop ready-to-ship rings</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all engagement rings &gt;</Link>
+                  <Link href="/engagement-rings" className="menu-action-link">Shop all engagement rings &gt;</Link>
                 </div>
                 
                 <div>
                   <h4 className="menu-column-title">Shop by style</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds?style=Solitaire" className="menu-item-link"><RingIcon /> Solitaire</Link></li>
-                    <li><Link href="/diamonds?style=Halo" className="menu-item-link"><RingIcon /> Halo</Link></li>
-                    <li><Link href="/diamonds?style=Pavé" className="menu-item-link"><RingIcon /> Pavé and Side-Stone</Link></li>
-                    <li><Link href="/diamonds?style=Three-Stone" className="menu-item-link"><RingIcon /> Three Stone</Link></li>
-                    <li><Link href="/diamonds?style=Halo" className="menu-item-link"><RingIcon /> Hidden Halo</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Solitaire</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Halo</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Pavé and Side-Stone</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Three Stone</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Hidden Halo</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all styles &gt;</Link>
+                  <Link href="/engagement-rings" className="menu-action-link">Shop all styles &gt;</Link>
                   
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">New Arrivals</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Shop all new arrivals</Link></li>
+                      <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Shop all new arrivals</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -202,23 +170,23 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Shop by metal</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C0C0C0' }} /> Platinum</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C0C0C0' }} /> Platinum</Link></li>
                   </ul>
                   
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Gemstone Rings</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Moissanite rings</Link></li>
+                      <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Moissanite rings</Link></li>
                     </ul>
                   </div>
                   
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Custom Ring Design</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Custom engagement rings</Link></li>
+                      <li><Link href="/engagement-rings" className="menu-item-link"><RingIcon /> Custom engagement rings</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -226,25 +194,24 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Featured</h4>
                   <ul className="menu-column-list" style={{ gap: '12px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Ready to ship engagement rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Engagement rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Signature collection</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Wedding rings</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Ready to ship engagement rings</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Engagement rings</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Signature collection</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Wedding rings</Link></li>
                   </ul>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Education</h4>
                   <ul className="menu-column-list" style={{ gap: '12px', marginBottom: '16px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Lab grown vs Natural diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Most popular engagement rings</Link></li>
+                    <li><Link href="/engagement-rings" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Most popular engagement rings</Link></li>
                   </ul>
                   
                   {/* Banner */}
-                  <Link href="/diamonds" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=300&auto=format&fit=crop)' }}>
+                  <Link href="/engagement-rings" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=300&auto=format&fit=crop)' }}>
                     <div className="menu-promo-card-overlay"></div>
                     <div className="menu-promo-content">
-                      <div className="menu-promo-title">The Christian Siriano Collection</div>
+                      <div className="menu-promo-title">Signature Collection</div>
                       <span className="menu-promo-action">Shop now</span>
                     </div>
                   </Link>
@@ -265,174 +232,51 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Women</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Classic bands</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Eternity rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Curved rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Anniversary rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Stackable rings</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Classic bands</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Eternity rings</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Curved rings</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Anniversary rings</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Stackable rings</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">All women's wedding bands &gt;</Link>
+                  <Link href="/wedding-bands" className="menu-action-link">All women's wedding bands &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Men</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Classic bands</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Matte bands</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Hammered bands</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Engraved Bands</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Classic bands</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Matte bands</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Hammered bands</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link">Engraved Bands</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">All men's wedding bands &gt;</Link>
+                  <Link href="/wedding-bands" className="menu-action-link">All men's wedding bands &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Women's by metal</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D99F8D' }} /> Rose Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2E7EB' }} /> White Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C8CDD0' }} /> Platinum</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D99F8D' }} /> Rose Gold</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2E7EB' }} /> White Gold</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C8CDD0' }} /> Platinum</Link></li>
                   </ul>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Men's by metal</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C8CDD0' }} /> Platinum</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#8792A0' }} /> Tantalum</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#C8CDD0' }} /> Platinum</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#8792A0' }} /> Tantalum</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all metals &gt;</Link>
+                  <Link href="/wedding-bands" className="menu-action-link">Shop all metals &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Education</h4>
                   <ul className="menu-column-list" style={{ gap: '12px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Lab grown vs Natural diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Most popular engagement rings</Link></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Diamonds tab */}
-          <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
-            <Link href="/diamonds" className={`navbar-link-item ${pathname === '/diamonds' ? 'active' : ''}`}>
-              Diamonds
-            </Link>
-
-            {/* Mega Menu: Diamonds */}
-            <div className="mega-menu slide-down-enter">
-              <div className="mega-menu-content-grid mega-menu-content-grid-4">
-                <div>
-                  <h4 className="menu-column-title">Shop by shape</h4>
-                  <ul className="menu-column-list" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
-                    <li>
-                      <Link href="/diamonds?shape=Round" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/round.webp" alt="Round" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Round
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Oval" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/oval.webp" alt="Oval" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Oval
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Marquise" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/marquise.webp" alt="Marquise" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Marquise
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Emerald" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/emerald.webp" alt="Emerald" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Emerald
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Princess" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/princess.webp" alt="Princess" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Princess
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Cushion" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/cushion.webp" alt="Cushion" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Cushion
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Radiant" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/radiant.webp" alt="Radiant" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Radiant
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Pear" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/pear.webp" alt="Pear" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Pear
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Heart" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/heart.webp" alt="Heart" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Heart
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/diamonds?shape=Asscher" className="menu-item-link">
-                        <img src="https://cldnr.rarecarat.com/rarecarat/image/upload/v1686552091/shapes/asscher.webp" alt="Asscher" width="14" height="14" style={{ marginRight: '6px', objectFit: 'contain' }} />
-                        Asscher
-                      </Link>
-                    </li>
-                  </ul>
-                  <Link href="/diamonds" className="menu-action-link" style={{ marginTop: '16px' }}>Shop all diamonds &gt;</Link>
-                </div>
-
-                <div>
-                  <h4 className="menu-column-title">Create your own</h4>
-                  <ul className="menu-column-list" style={{ marginBottom: '16px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link"><RingIcon /> Diamond engagement ring</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><EarringsIcon /> Diamond earrings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><PendantIcon /> Diamond pendant</Link></li>
-                  </ul>
-
-                  <div className="menu-sub-section">
-                    <h4 className="menu-column-title">Loose Diamonds</h4>
-                    <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link"><DiamondIcon /> Shop natural diamonds</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link"><DiamondIcon /> Shop lab diamonds</Link></li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="menu-column-title">Diamond Jewelry</h4>
-                  <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Diamond earrings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Diamond necklaces</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Tennis bracelets</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Eternity rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Anniversary rings</Link></li>
-                  </ul>
-                  <Link href="/diamonds" className="menu-action-link" style={{ marginTop: '12px' }}>All diamond jewelry &gt;</Link>
-                </div>
-
-                <div>
-                  <h4 className="menu-column-title">Education</h4>
-                  <ul className="menu-column-list" style={{ gap: '10px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond cut guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond color guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond clarity guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond carat guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond 101 guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond trends</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Use our 8-step guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Lab diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamonds</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Wedding band guide</Link></li>
+                    <li><Link href="/wedding-bands" className="menu-item-link" style={{ fontSize: '13px', color: 'var(--color-ink)' }}>Most popular wedding bands</Link></li>
                   </ul>
                 </div>
               </div>
@@ -451,29 +295,29 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Shop by style</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Studs</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Lab diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Hoops</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Plain metal</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link">Studs</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link">Hoops</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link">Drop earrings</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link">Plain metal</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all earrings &gt;</Link>
+                  <Link href="/earrings" className="menu-action-link">Shop all earrings &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Shop by metal</h4>
                   <ul className="menu-column-list" style={{ marginBottom: '16px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
                   </ul>
 
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Featured</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link">Best Sellers</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Luxe collection</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Create your own earrings</Link></li>
+                      <li><Link href="/earrings" className="menu-item-link">Best Sellers</Link></li>
+                      <li><Link href="/earrings" className="menu-item-link">Luxe collection</Link></li>
+                      <li><Link href="/earrings" className="menu-item-link">Create your own earrings</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -481,10 +325,10 @@ export const Navbar: React.FC = () => {
                 {/* Triple Promo Area */}
                 <div className="necklace-promo-area">
                   {/* Left portrait card */}
-                  <Link href="/diamonds" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=400&auto=format&fit=crop)', height: '220px' }}>
+                  <Link href="/earrings" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=400&auto=format&fit=crop)', height: '220px' }}>
                     <div className="menu-promo-card-overlay"></div>
                     <div className="menu-promo-content">
-                      <div className="menu-promo-title">Classic Diamond Studs</div>
+                      <div className="menu-promo-title">Classic Studs</div>
                       <div className="menu-promo-subtitle">(Starting at $199)</div>
                       <span className="menu-promo-action">Shop now</span>
                     </div>
@@ -492,15 +336,15 @@ export const Navbar: React.FC = () => {
 
                   {/* Right landscape cards */}
                   <div className="necklace-promo-right-stack">
-                    <Link href="/diamonds" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=300&auto=format&fit=crop)' }}>
+                    <Link href="/earrings" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=300&auto=format&fit=crop)' }}>
                       <div className="menu-promo-card-overlay"></div>
                       <div className="menu-promo-content">
-                        <div className="menu-promo-title" style={{ fontSize: '14px' }}>The Christiano Siriano Collection</div>
+                        <div className="menu-promo-title" style={{ fontSize: '14px' }}>Signature Collection</div>
                         <span className="menu-promo-action" style={{ fontSize: '11px' }}>Shop now</span>
                       </div>
                     </Link>
 
-                    <Link href="/diamonds" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=300&auto=format&fit=crop)' }}>
+                    <Link href="/earrings" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=300&auto=format&fit=crop)' }}>
                       <div className="menu-promo-card-overlay"></div>
                       <div className="menu-promo-content">
                         <div className="menu-promo-title" style={{ fontSize: '14px' }}>Pearl Collection</div>
@@ -525,29 +369,28 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Shop by style</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Pendants</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Lab diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Tennis</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Pearls</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Chains</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link">Pendants</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link">Tennis</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link">Pearls</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link">Chains</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all necklace styles &gt;</Link>
+                  <Link href="/necklaces" className="menu-action-link">Shop all necklace styles &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Shop by metal color</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
                   </ul>
 
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Featured</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link">Best selling collection</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Create your own pendant</Link></li>
+                      <li><Link href="/necklaces" className="menu-item-link">Best selling collection</Link></li>
+                      <li><Link href="/necklaces" className="menu-item-link">Create your own pendant</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -555,7 +398,7 @@ export const Navbar: React.FC = () => {
                 {/* Triple Promo Area */}
                 <div className="necklace-promo-area">
                   {/* Left portrait card */}
-                  <Link href="/diamonds" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=300&auto=format&fit=crop)', minHeight: '100%' }}>
+                  <Link href="/necklaces" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=300&auto=format&fit=crop)', minHeight: '100%' }}>
                     <div className="menu-promo-card-overlay"></div>
                     <div className="menu-promo-content">
                       <div className="menu-promo-title">Split Bail Necklace</div>
@@ -566,7 +409,7 @@ export const Navbar: React.FC = () => {
 
                   {/* Right landscape cards */}
                   <div className="necklace-promo-right-stack">
-                    <Link href="/diamonds" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=300&auto=format&fit=crop)' }}>
+                    <Link href="/necklaces" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=300&auto=format&fit=crop)' }}>
                       <div className="menu-promo-card-overlay"></div>
                       <div className="menu-promo-content">
                         <div className="menu-promo-title" style={{ fontSize: '15px' }}>Pearl Collection</div>
@@ -574,7 +417,7 @@ export const Navbar: React.FC = () => {
                       </div>
                     </Link>
 
-                    <Link href="/diamonds" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=300&auto=format&fit=crop)' }}>
+                    <Link href="/necklaces" className="menu-promo-card-horizontal" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=300&auto=format&fit=crop)' }}>
                       <div className="menu-promo-card-overlay"></div>
                       <div className="menu-promo-content">
                         <div className="menu-promo-title" style={{ fontSize: '15px' }}>Personalized Collection</div>
@@ -599,34 +442,33 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Shop by style</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Tennis</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Lab diamonds</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Chains</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Pearls</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Bangles</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link">Tennis</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link">Chains</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link">Pearls</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link">Bangles</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all bracelet styles &gt;</Link>
+                  <Link href="/bracelets" className="menu-action-link">Shop all bracelet styles &gt;</Link>
                 </div>
 
                 <div>
                   <h4 className="menu-column-title">Shop by metal color</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/diamonds" className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</li>
+                    <li><Link href="/bracelets" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="menu-column-title">Diamond Essentials</h4>
+                  <h4 className="menu-column-title">Essentials</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link"><BraceletIcon /> Tennis bracelets</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link"><BraceletIcon /> Gemstone bracelets</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link"><BraceletIcon /> Tennis bracelets</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link"><BraceletIcon /> Gemstone bracelets</Link></li>
                   </ul>
                 </div>
 
                 <div>
-                  <Link href="/diamonds" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=300&auto=format&fit=crop)' }}>
+                  <Link href="/bracelets" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=300&auto=format&fit=crop)' }}>
                     <div className="menu-promo-card-overlay"></div>
                     <div className="menu-promo-content">
                       <div className="menu-promo-title">Tennis bracelet</div>
@@ -651,19 +493,19 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Top Gifts</h4>
                   <ul className="menu-column-list" style={{ marginBottom: '16px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link">Diamond studs</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Solitaire necklaces</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Tennis bracelets</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Most loved gifts</Link></li>
+                    <li><Link href="/earrings" className="menu-item-link">Stud earrings</Link></li>
+                    <li><Link href="/necklaces" className="menu-item-link">Solitaire necklaces</Link></li>
+                    <li><Link href="/bracelets" className="menu-item-link">Tennis bracelets</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Most loved gifts</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link">Shop all gifts &gt;</Link>
+                  <Link href="/gifts" className="menu-action-link">Shop all gifts &gt;</Link>
 
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Gifts by budget</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link">Under $250</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Under $500</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Under $1,000</Link></li>
+                      <li><Link href="/gifts" className="menu-item-link">Under $250</Link></li>
+                      <li><Link href="/gifts" className="menu-item-link">Under $500</Link></li>
+                      <li><Link href="/gifts" className="menu-item-link">Under $1,000</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -671,17 +513,17 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Gifts by occasion</h4>
                   <ul className="menu-column-list" style={{ marginBottom: '16px' }}>
-                    <li><Link href="/diamonds" className="menu-item-link">Graduation gifts</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Anniversary gifts</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Birthday gifts</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Push presents</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Graduation gifts</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Anniversary gifts</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Birthday gifts</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Push presents</Link></li>
                   </ul>
 
                   <div className="menu-sub-section">
                     <h4 className="menu-column-title">Gifts by recipient</h4>
                     <ul className="menu-column-list">
-                      <li><Link href="/diamonds" className="menu-item-link">Gifts for him</Link></li>
-                      <li><Link href="/diamonds" className="menu-item-link">Gifts for her</Link></li>
+                      <li><Link href="/gifts" className="menu-item-link">Gifts for him</Link></li>
+                      <li><Link href="/gifts" className="menu-item-link">Gifts for her</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -689,18 +531,17 @@ export const Navbar: React.FC = () => {
                 <div>
                   <h4 className="menu-column-title">Gifts by collection</h4>
                   <ul className="menu-column-list">
-                    <li><Link href="/diamonds" className="menu-item-link">Personalized jewelry</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Pearl jewelry</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Quick ship gifts</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Trending gifts</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Promise rings</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link">Christian Siriano collection</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Personalized jewelry</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Pearl jewelry</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Quick ship gifts</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Trending gifts</Link></li>
+                    <li><Link href="/gifts" className="menu-item-link">Promise rings</Link></li>
                   </ul>
-                  <Link href="/diamonds" className="menu-action-link" style={{ marginTop: '12px' }}>Shop all collections &gt;</Link>
+                  <Link href="/gifts" className="menu-action-link" style={{ marginTop: '12px' }}>Shop all collections &gt;</Link>
                 </div>
 
                 <div>
-                  <Link href="/diamonds" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=300&auto=format&fit=crop)' }}>
+                  <Link href="/gifts" className="menu-promo-card-vertical" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=300&auto=format&fit=crop)' }}>
                     <div className="menu-promo-card-overlay"></div>
                     <div className="menu-promo-content">
                       <div className="menu-promo-title">Shop best sellers</div>
@@ -710,6 +551,20 @@ export const Navbar: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* About tab */}
+          <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
+            <Link href="/about" className={`navbar-link-item ${pathname === '/about' ? 'active' : ''}`}>
+              About
+            </Link>
+          </div>
+
+          {/* Contact tab */}
+          <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
+            <Link href="/contact" className={`navbar-link-item ${pathname === '/contact' ? 'active' : ''}`}>
+              Contact
+            </Link>
           </div>
         </div>
 
@@ -746,14 +601,17 @@ export const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="mobile-menu-panel slide-down-enter">
           <div className="mobile-menu-content">
+            <Link href="/" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+              Home
+            </Link>
+            <Link href="/shop" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+              Shop
+            </Link>
             <Link href="/engagement-rings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
               Engagement Rings
             </Link>
             <Link href="/wedding-bands" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
               Wedding Bands
-            </Link>
-            <Link href="/diamonds" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Diamonds
             </Link>
             <Link href="/earrings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
               Earrings
@@ -766,6 +624,12 @@ export const Navbar: React.FC = () => {
             </Link>
             <Link href="/gifts" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
               Gifts
+            </Link>
+            <Link href="/about" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+              About
+            </Link>
+            <Link href="/contact" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+              Contact
             </Link>
             <Link 
               href="/cart" 

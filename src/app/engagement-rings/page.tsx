@@ -8,7 +8,7 @@ function EngagementRingsContent() {
   const router = useRouter();
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (
@@ -16,7 +16,7 @@ function EngagementRingsContent() {
       initialFilters={{ category: 'engagement' }}
       onProductSelect={handleProductSelect}
       pageTitle="Engagement Rings"
-      pageSubtitle="Find the perfect ring to celebrate your love — crafted with certified diamonds and timeless designs."
+      pageSubtitle="Find the perfect ring to celebrate your love — crafted with certified gemstones and timeless designs."
     />
   );
 }

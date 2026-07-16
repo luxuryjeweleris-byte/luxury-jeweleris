@@ -11,7 +11,7 @@ export default function CartPage() {
 
   const handleNavigate = (view: string) => {
     if (view === 'listing') {
-      router.push('/diamonds');
+      router.push('/shop');
     } else {
       router.push('/');
     }

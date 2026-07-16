@@ -185,7 +185,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
 
             {/* Specs Table */}
             <div className="config-group" style={{ marginTop: '16px' }}>
-              <div className="config-label">Diamond Details & Certifications</div>
+              <div className="config-label">Gemstone Details & Certifications</div>
               <table className="specs-table">
                 <tbody>
                   <tr>

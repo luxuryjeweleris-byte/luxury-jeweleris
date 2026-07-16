@@ -10,7 +10,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function DiamondDetailPage({ params }: PageProps) {
+export default function ProductDetailPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
   const { addToCart } = useCart();
@@ -20,10 +20,10 @@ export default function DiamondDetailPage({ params }: PageProps) {
   if (!product) {
     return (
       <div className="container" style={{ padding: '64px 0', textAlign: 'center' }}>
-        <h2 className="h2-text">Listing Not Found</h2>
-        <p className="body-text" style={{ margin: '16px 0' }}>The requested stone listing could not be found or has been sold.</p>
-        <button className="btn btn-primary" onClick={() => router.push('/diamonds')}>
-          Back to Diamonds Listing
+        <h2 className="h2-text">Product Not Found</h2>
+        <p className="body-text" style={{ margin: '16px 0' }}>The requested product could not be found or is no longer available.</p>
+        <button className="btn btn-primary" onClick={() => router.push('/shop')}>
+          Back to Shop
         </button>
       </div>
     );
@@ -36,7 +36,7 @@ export default function DiamondDetailPage({ params }: PageProps) {
   return (
     <DetailView 
       product={product} 
-      onBack={() => router.push('/diamonds')} 
+      onBack={() => router.push('/shop')} 
       onAddToCart={handleAddToCart} 
     />
   );

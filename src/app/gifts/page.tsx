@@ -8,7 +8,7 @@ function GiftsContent() {
   const router = useRouter();
 
   const handleProductSelect = (product: any) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   return (

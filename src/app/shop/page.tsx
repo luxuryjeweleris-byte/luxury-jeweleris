@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
-function NecklacesContent() {
+function ShopContent() {
   const router = useRouter();
 
   const handleProductSelect = (product: any) => {
@@ -13,22 +13,22 @@ function NecklacesContent() {
 
   return (
     <ListingView
-      initialFilters={{ category: 'necklaces' }}
+      initialFilters={{}}
       onProductSelect={handleProductSelect}
-      pageTitle="Necklaces"
-      pageSubtitle="Exquisite fine necklaces and pendants — the perfect statement piece for any occasion."
+      pageTitle="Shop All Jewelry"
+      pageSubtitle="Explore our complete collection of exquisite jewelry — handcrafted with passion and precision."
     />
   );
 }
 
-export default function NecklacesPage() {
+export default function ShopPage() {
   return (
     <Suspense fallback={
       <div className="container" style={{ padding: '64px 0', textAlign: 'center' }}>
-        <div className="caption-text">Loading necklaces...</div>
+        <div className="caption-text">Loading shop...</div>
       </div>
     }>
-      <NecklacesContent />
+      <ShopContent />
     </Suspense>
   );
 }
