@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MessageSquare, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Mail, Phone, MessageSquare, Eye, EyeOff, CheckCircle, Loader2 } from 'lucide-react';
 import Button from '../../components/Button';
+import { supabase } from '../../lib/supabase';
 import './login.css';
 
 // Custom Google SVG Icon
@@ -16,147 +18,344 @@ const GoogleIcon = () => (
   </svg>
 );
 
-// Custom Facebook SVG Icon
-const FacebookIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style={{ marginRight: '10px' }}>
-    <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.8c4.56-.93 8-4.96 8-9.8z" />
-  </svg>
-);
+type AuthMode = 'signin' | 'signup' | 'forgot';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) router.push('/');
+    });
+  }, [router]);
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
       setError('Please fill in both email and password.');
       return;
     }
     setError('');
-    setIsSuccess(true);
+    setLoading(true);
+    try {
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      if (authError) {
+        setError(authError.message || 'Sign in failed. Please try again.');
+      } else {
+        setSuccessMsg('Signed in successfully! Redirecting...');
+        setTimeout(() => router.push('/'), 1200);
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Connection error. Check your internet.');
+    }
+    setLoading(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim() || !fullName.trim()) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } },
+      });
+      if (authError) {
+        setError(authError.message || 'Sign up failed. Please try again.');
+      } else if (data.user && !data.session) {
+        // Email confirmation required
+        setSuccessMsg('Account created! Please check your email to verify, then sign in.');
+      } else {
+        setSuccessMsg('Account created successfully! You are now signed in.');
+        setTimeout(() => router.push('/'), 1500);
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Connection error. Check your internet.');
+    }
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      setError('Please enter your email.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const { error: authError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (authError) {
+        setError(authError.message || 'Failed to send reset email.');
+      } else {
+        setSuccessMsg('Password reset email sent! Check your inbox.');
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Connection error.');
+    }
+    setLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/` },
+    });
+  };
+
+  const resetState = () => {
+    setError('');
+    setSuccessMsg('');
+    setEmail('');
+    setPassword('');
+    setFullName('');
+  };
+
+  const switchMode = (newMode: AuthMode) => {
+    resetState();
+    setMode(newMode);
   };
 
   return (
     <div className="login-page">
       <div className="container login-container-grid">
-        {/* Left/Center Column: Sign In Form */}
+        {/* Left/Center Column: Auth Form */}
         <div className="login-form-card">
           <div className="login-form-header">
-            <h1 className="login-title">Sign in</h1>
-            <span className="create-account-text">
-              or <Link href="#" className="login-blue-link">create an account</Link>
-            </span>
+            <h1 className="login-title">
+              {mode === 'signin' && 'Sign in'}
+              {mode === 'signup' && 'Create account'}
+              {mode === 'forgot' && 'Reset password'}
+            </h1>
+            {mode === 'signin' && (
+              <span className="create-account-text">
+                or{' '}
+                <button type="button" className="login-blue-link" onClick={() => switchMode('signup')}>
+                  create an account
+                </button>
+              </span>
+            )}
+            {mode === 'signup' && (
+              <span className="create-account-text">
+                Already have one?{' '}
+                <button type="button" className="login-blue-link" onClick={() => switchMode('signin')}>
+                  Sign in
+                </button>
+              </span>
+            )}
           </div>
 
-          {isSuccess ? (
+          {/* Success State */}
+          {successMsg ? (
             <div className="login-success-state">
               <CheckCircle size={48} className="success-icon" />
-              <h3>Sign In Successful!</h3>
-              <p>Welcome back to RareCarat. Redirecting to your dashboard...</p>
-              <Button variant="primary" onClick={() => setIsSuccess(false)} style={{ marginTop: '16px' }}>
-                Reset Demo Form
+              <h3>Success!</h3>
+              <p>{successMsg}</p>
+              <Button variant="primary" onClick={() => { setSuccessMsg(''); }} style={{ marginTop: '16px' }}>
+                Continue
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="login-form">
-              {error && <div className="login-error-box">{error}</div>}
+            <>
+              {/* Sign In Form */}
+              {mode === 'signin' && (
+                <form onSubmit={handleSignIn} className="login-form">
+                  {error && <div className="login-error-box">{error}</div>}
 
-              {/* Email Field */}
-              <div className="login-form-group">
-                <input
-                  type="email"
-                  className="login-input-field"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+                  <div className="login-form-group">
+                    <input
+                      id="login-email"
+                      type="email"
+                      className="login-input-field"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                    />
+                  </div>
 
-              {/* Password Field */}
-              <div className="login-form-group password-group">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className="login-input-field"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+                  <div className="login-form-group password-group">
+                    <input
+                      id="login-password"
+                      type={showPassword ? 'text' : 'password'}
+                      className="login-input-field"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label="Toggle password visibility"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
 
-              {/* Forgot Password Link */}
-              <div className="forgot-password-container">
-                <Link href="#" className="login-blue-link forgot-password-link">
-                  Forgot your password?
-                </Link>
-              </div>
+                  <div className="forgot-password-container">
+                    <button type="button" className="login-blue-link forgot-password-link" onClick={() => switchMode('forgot')}>
+                      Forgot your password?
+                    </button>
+                  </div>
 
-              {/* Submit Button */}
-              <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }}>
-                Sign In
-              </Button>
+                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Sign In'}
+                  </Button>
 
-              {/* OR Separator */}
-              <div className="login-separator">
-                <span>or</span>
-              </div>
+                  <div className="login-separator"><span>or</span></div>
 
-              {/* Google OAuth */}
-              <button type="button" className="oauth-btn google-btn">
-                <GoogleIcon />
-                Continue with Google
-              </button>
+                  <button type="button" className="oauth-btn google-btn" onClick={handleGoogleLogin}>
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
 
-              {/* Facebook OAuth */}
-              <button type="button" className="oauth-btn facebook-btn">
-                <FacebookIcon />
-                Continue with Facebook
-              </button>
+                  <p className="login-terms-text">
+                    By signing in you agree to our <Link href="#" className="underline-link">Terms</Link>.
+                  </p>
+                </form>
+              )}
 
-              {/* Terms Footer */}
-              <p className="login-terms-text">
-                By signing up on Luxury Jewelers you agree to our <Link href="#" className="underline-link">Terms</Link>.
-              </p>
-            </form>
+              {/* Sign Up Form */}
+              {mode === 'signup' && (
+                <form onSubmit={handleSignUp} className="login-form">
+                  {error && <div className="login-error-box">{error}</div>}
+
+                  <div className="login-form-group">
+                    <input
+                      id="signup-name"
+                      type="text"
+                      className="login-input-field"
+                      placeholder="Full Name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                      autoComplete="name"
+                    />
+                  </div>
+
+                  <div className="login-form-group">
+                    <input
+                      id="signup-email"
+                      type="email"
+                      className="login-input-field"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      autoComplete="email"
+                    />
+                  </div>
+
+                  <div className="login-form-group password-group">
+                    <input
+                      id="signup-password"
+                      type={showPassword ? 'text' : 'password'}
+                      className="login-input-field"
+                      placeholder="Password (min 6 characters)"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label="Toggle password visibility"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+
+                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Create Account'}
+                  </Button>
+
+                  <div className="login-separator"><span>or</span></div>
+
+                  <button type="button" className="oauth-btn google-btn" onClick={handleGoogleLogin}>
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
+
+                  <p className="login-terms-text">
+                    By creating an account you agree to our <Link href="#" className="underline-link">Terms</Link>.
+                  </p>
+                </form>
+              )}
+
+              {/* Forgot Password Form */}
+              {mode === 'forgot' && (
+                <form onSubmit={handleForgotPassword} className="login-form">
+                  {error && <div className="login-error-box">{error}</div>}
+                  <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
+                    Enter your email address and we'll send you a link to reset your password.
+                  </p>
+
+                  <div className="login-form-group">
+                    <input
+                      id="forgot-email"
+                      type="email"
+                      className="login-input-field"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Send Reset Link'}
+                  </Button>
+
+                  <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                    <button type="button" className="login-blue-link" onClick={() => switchMode('signin')}>
+                      ← Back to Sign In
+                    </button>
+                  </div>
+                </form>
+              )}
+            </>
           )}
         </div>
 
-        {/* Right Column: Customer Support Box (Contact Us) */}
+        {/* Right Column: Customer Support */}
         <div className="support-card">
-          <h2 className="support-title">Luxury Jewelers Customer Support</h2>
-          
-          <p className="support-subtitle">
-            Connect with a certified gemologist.
-          </p>
-          <p className="support-description">
-            Get unbiased advice wherever you buy.
-          </p>
+          <h2 className="support-title">Luxury Jeweleris Customer Support</h2>
+          <p className="support-subtitle">Connect with a certified gemologist.</p>
+          <p className="support-description">Get unbiased advice wherever you buy.</p>
 
-          {/* Chat Button */}
           <Button variant="primary" className="support-chat-btn" onClick={() => alert('Starting customer chat support...')}>
             <MessageSquare size={16} style={{ marginRight: '8px' }} />
             Chat Now
           </Button>
 
-          {/* OR Separator */}
-          <div className="support-separator">
-            <span>or</span>
-          </div>
+          <div className="support-separator"><span>or</span></div>
 
-          {/* Contact Details Grid */}
           <div className="support-details-grid">
             <div className="support-detail-item">
               <Phone size={18} className="support-detail-icon" />
@@ -168,12 +367,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Order Info */}
           <div className="support-order-info">
             <span>Looking for info about your order?</span>
-            <Link href="#" className="login-blue-link" onClick={(e) => { e.preventDefault(); alert('Redirecting to order tracking...'); }}>
-              Track your order
-            </Link>
+            <Link href="#" className="login-blue-link">Track your order</Link>
           </div>
         </div>
       </div>

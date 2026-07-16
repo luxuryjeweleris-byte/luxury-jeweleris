@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import ProductCard, { type Product } from '../components/ProductCard';
 import Button from '../components/Button';
 import { Filter, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { supabase, dbProductToProduct } from '../lib/supabase';
 import './views.css';
 
 // Mock inventory data
@@ -389,6 +390,7 @@ interface ListingViewProps {
     shape?: string;
     style?: string;
     category?: string;
+    search?: string;
   };
   onProductSelect: (product: Product) => void;
   pageTitle?: string;
@@ -397,23 +399,50 @@ interface ListingViewProps {
 
 export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProductSelect, pageTitle, pageSubtitle }) => {
   const [loading, setLoading] = useState(false);
+  const [dbLoading, setDbLoading] = useState(true);
+  const [productsList, setProductsList] = useState<Product[]>([]);
   const [sortOption, setSortOption] = useState('score-desc');
   
   // Filter States
   const [selectedShape, setSelectedShape] = useState<string | null>(initialFilters?.shape || null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(initialFilters?.style || null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialFilters?.category || null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(initialFilters?.search || null);
   const [maxCarat, setMaxCarat] = useState<number>(5.0);
   const [maxPrice, setMaxPrice] = useState<number>(15000);
   const [selectedClarity, setSelectedClarity] = useState<string[]>([]);
   const [selectedCut, setSelectedCut] = useState<string[]>([]);
   const [isVerifiedOnly, setIsVerifiedOnly] = useState<boolean>(false);
 
+  // Fetch products from database
+  useEffect(() => {
+    const fetchDbProducts = async () => {
+      setDbLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (!error && data && data.length > 0) {
+          setProductsList(data.map(dbProductToProduct));
+        } else {
+          setProductsList(INITIAL_PRODUCTS);
+        }
+      } catch {
+        setProductsList(INITIAL_PRODUCTS);
+      }
+      setDbLoading(false);
+    };
+    fetchDbProducts();
+  }, []);
+
   // Sync initial filters when they change
   useEffect(() => {
     setSelectedShape(initialFilters?.shape || null);
     setSelectedStyle(initialFilters?.style || null);
     setSelectedCategory(initialFilters?.category || null);
+    setSearchQuery(initialFilters?.search || null);
   }, [initialFilters]);
 
   // Simulate network loading state when filters change
@@ -428,7 +457,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   // Trigger loading on filter changes
   useEffect(() => {
     triggerLoading();
-  }, [selectedShape, selectedStyle, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption]);
+  }, [selectedShape, selectedStyle, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption, searchQuery]);
 
   const toggleClarity = (clarity: string) => {
     setSelectedClarity(prev => 
@@ -445,6 +474,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   const resetFilters = () => {
     setSelectedShape(null);
     setSelectedStyle(null);
+    setSearchQuery(null);
     setMaxCarat(5.0);
     setMaxPrice(15000);
     setSelectedClarity([]);
@@ -455,7 +485,17 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
-    let result = [...INITIAL_PRODUCTS];
+    let result = [...productsList];
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(p => 
+        p.name.toLowerCase().includes(query) ||
+        p.category?.toLowerCase().includes(query) ||
+        p.style?.toLowerCase().includes(query) ||
+        p.shape?.toLowerCase().includes(query)
+      );
+    }
 
     // Category-level filtering (for dedicated pages)
     if (selectedCategory) {
@@ -481,39 +521,41 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     if (selectedShape) {
       result = result.filter(p => p.shape.toLowerCase() === selectedShape.toLowerCase());
     }
-
     if (selectedStyle) {
       const styleLower = selectedStyle.toLowerCase();
-      
       if (styleLower === 'earrings') {
         result = result.filter(p => p.category?.toLowerCase() === 'earrings');
-      } else if (styleLower === 'necklace') {
+      } else if (styleLower === 'necklace' || styleLower === 'necklaces') {
         result = result.filter(p => p.category?.toLowerCase() === 'necklace');
-      } else if (styleLower === 'bracelet') {
+      } else if (styleLower === 'bracelet' || styleLower === 'bracelets') {
         result = result.filter(p => p.category?.toLowerCase() === 'bracelet');
       } else if (styleLower === 'wedding') {
         result = result.filter(p => p.category?.toLowerCase() === 'wedding band');
       } else if (styleLower === 'mens') {
-        result = result.filter(p => p.style?.toLowerCase() === 'mens' || (p.category?.toLowerCase() === 'wedding band' && p.name.toLowerCase().includes('men')));
+        result = result.filter(p => p.style?.toLowerCase() === 'mens' || p.name.toLowerCase().includes('men') || p.category?.toLowerCase() === 'wedding band');
       } else if (styleLower === 'eternity') {
         result = result.filter(p => p.style?.toLowerCase() === 'eternity' || p.name.toLowerCase().includes('eternity'));
       } else if (styleLower === 'stackable') {
         result = result.filter(p => p.style?.toLowerCase() === 'stackable' || p.name.toLowerCase().includes('stackable'));
       } else if (styleLower === 'lab') {
-        result = result.filter(p => p.style?.toLowerCase() === 'lab' || p.name.toLowerCase().includes('lab'));
+        result = result.filter(p => p.style?.toLowerCase() === 'lab' || p.name.toLowerCase().includes('lab') || p.name.toLowerCase().includes('created'));
+      } else if (styleLower === 'natural') {
+        result = result.filter(p => !p.name.toLowerCase().includes('lab') && !p.name.toLowerCase().includes('created'));
       } else if (styleLower === 'solitaire') {
         result = result.filter(p => p.style?.toLowerCase() === 'solitaire' || p.name.toLowerCase().includes('solitaire'));
       } else if (styleLower === 'halo') {
         result = result.filter(p => p.style?.toLowerCase() === 'halo' || (p.name.toLowerCase().includes('halo') && !p.name.toLowerCase().includes('hidden')));
-      } else if (styleLower === 'hidden halo') {
+      } else if (styleLower === 'hidden halo' || styleLower === 'hidden-halo') {
         result = result.filter(p => p.style?.toLowerCase() === 'hidden halo' || p.name.toLowerCase().includes('hidden halo'));
-      } else if (styleLower === 'three-stone') {
-        result = result.filter(p => p.style?.toLowerCase() === 'three-stone' || p.name.toLowerCase().includes('three-stone'));
-      } else if (styleLower === 'hoop') {
+      } else if (styleLower === 'three-stone' || styleLower === 'three stone') {
+        result = result.filter(p => p.style?.toLowerCase() === 'three-stone' || p.name.toLowerCase().includes('three-stone') || p.name.toLowerCase().includes('three stone'));
+      } else if (styleLower === 'hoop' || styleLower === 'hoops') {
         result = result.filter(p => p.style?.toLowerCase() === 'hoop' || p.name.toLowerCase().includes('hoop'));
+      } else if (styleLower === 'stud' || styleLower === 'studs') {
+        result = result.filter(p => p.style?.toLowerCase() === 'stud' || p.name.toLowerCase().includes('stud'));
       } else if (styleLower === 'pave') {
-        result = result.filter(p => p.style?.toLowerCase() === 'pave' || p.name.toLowerCase().includes('pavé') || p.name.toLowerCase().includes('pave'));
-      } else if (styleLower === 'christian') {
+        result = result.filter(p => p.style?.toLowerCase() === 'pave' || p.name.toLowerCase().includes('pav\u00e9') || p.name.toLowerCase().includes('pave'));
+      } else if (styleLower === 'christian' || styleLower === 'vintage') {
         result = result.filter(p => p.style?.toLowerCase() === 'christian' || p.name.toLowerCase().includes('christian') || p.name.toLowerCase().includes('vintage'));
       } else if (styleLower === '1carat') {
         result = result.filter(p => p.carat >= 0.90 && p.carat <= 1.15);
@@ -521,6 +563,77 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
         result = result.filter(p => p.shape.toLowerCase() === 'oval');
       } else if (styleLower === 'engagement') {
         result = result.filter(p => p.category?.toLowerCase() === 'ring' || p.name.toLowerCase().includes('ring'));
+      } else if (styleLower === 'yellow-gold' || styleLower === 'yellow gold') {
+        result = result.filter(p => p.name.toLowerCase().includes('yellow') || (p.name.toLowerCase().includes('gold') && !p.name.toLowerCase().includes('white') && !p.name.toLowerCase().includes('rose')));
+      } else if (styleLower === 'white-gold' || styleLower === 'white gold') {
+        result = result.filter(p => p.name.toLowerCase().includes('white') || p.name.toLowerCase().includes('platinum'));
+      } else if (styleLower === 'rose-gold' || styleLower === 'rose gold') {
+        result = result.filter(p => p.name.toLowerCase().includes('rose'));
+      } else if (styleLower === 'platinum') {
+        result = result.filter(p => p.name.toLowerCase().includes('platinum'));
+      } else if (styleLower === 'silver') {
+        result = result.filter(p => p.name.toLowerCase().includes('silver') || p.name.toLowerCase().includes('platinum') || p.name.toLowerCase().includes('white'));
+      } else if (styleLower === 'vermeil') {
+        result = result.filter(p => p.name.toLowerCase().includes('vermeil') || p.name.toLowerCase().includes('gold'));
+      } else if (styleLower === 'tantalum') {
+        result = result.filter(p => p.name.toLowerCase().includes('tantalum') || p.name.toLowerCase().includes('platinum'));
+      } else if (styleLower === 'classic' || styleLower === 'classic bands') {
+        result = result.filter(p => p.name.toLowerCase().includes('classic') || p.style?.toLowerCase() === 'solitaire');
+      } else if (styleLower === 'curved' || styleLower === 'curved rings') {
+        result = result.filter(p => p.name.toLowerCase().includes('curved') || p.name.toLowerCase().includes('eternity'));
+      } else if (styleLower === 'anniversary' || styleLower === 'anniversary rings') {
+        result = result.filter(p => p.name.toLowerCase().includes('anniversary') || p.name.toLowerCase().includes('eternity'));
+      } else if (styleLower === 'mens-classic') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && (p.name.toLowerCase().includes('classic') || p.style?.toLowerCase() === 'solitaire'));
+      } else if (styleLower === 'mens-matte') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('matte') || p.name.toLowerCase().includes('classic'));
+      } else if (styleLower === 'mens-hammered') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('hammered') || p.name.toLowerCase().includes('gold'));
+      } else if (styleLower === 'mens-engraved') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('engraved') || p.name.toLowerCase().includes('wedding'));
+      } else if (styleLower === 'mens-platinum') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && (p.name.toLowerCase().includes('platinum') || p.name.toLowerCase().includes('white')));
+      } else if (styleLower === 'mens-yellow-gold') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('gold'));
+      } else if (styleLower === 'setting') {
+        result = result.filter(p => p.category?.toLowerCase() === 'ring');
+      } else if (styleLower === 'ready' || styleLower === 'ready-to-ship') {
+        result = result.filter(p => p.isVerified);
+      } else if (styleLower === 'gemstone') {
+        result = result.filter(p => p.style?.toLowerCase() === 'moissanite' || p.name.toLowerCase().includes('moissanite') || p.name.toLowerCase().includes('gemstone'));
+      } else if (styleLower === 'custom') {
+        result = result.filter(p => p.name.toLowerCase().includes('custom') || p.category?.toLowerCase() === 'ring');
+      } else if (styleLower === 'signature') {
+        result = result.filter(p => p.isVerified);
+      } else if (styleLower === 'best-sellers' || styleLower === 'best sellers' || styleLower === 'trending') {
+        result = result.filter(p => p.aiScore >= 9.0);
+      } else if (styleLower === 'luxe') {
+        result = result.filter(p => p.price >= 5000);
+      } else if (styleLower === 'under-250' || styleLower === 'under-500' || styleLower === 'under-1000') {
+        const maxPriceCap = styleLower === 'under-250' ? 2000 : styleLower === 'under-500' ? 4000 : 6000;
+        result = result.filter(p => p.price <= maxPriceCap);
+      } else if (styleLower === 'graduation' || styleLower === 'birthday' || styleLower === 'anniversary-gifts') {
+        result = result.filter(p => p.isVerified || p.isNew);
+      } else if (styleLower === 'him') {
+        result = result.filter(p => p.name.toLowerCase().includes('men') || p.style?.toLowerCase() === 'mens');
+      } else if (styleLower === 'her') {
+        result = result.filter(p => !p.name.toLowerCase().includes('men') && p.style?.toLowerCase() !== 'mens');
+      } else if (styleLower === 'personalized') {
+        result = result.filter(p => p.name.toLowerCase().includes('personalized') || p.name.toLowerCase().includes('initial') || p.category?.toLowerCase() === 'necklace');
+      } else if (styleLower === 'quick-ship') {
+        result = result.filter(p => p.isVerified);
+      } else if (styleLower === 'promise') {
+        result = result.filter(p => p.price < 3000 && p.category?.toLowerCase() === 'ring');
+      } else if (styleLower === 'plain' || styleLower === 'plain metal') {
+        result = result.filter(p => !p.name.toLowerCase().includes('diamond') && !p.name.toLowerCase().includes('brilliant'));
+      } else if (styleLower === 'pendant' || styleLower === 'pendants') {
+        result = result.filter(p => p.name.toLowerCase().includes('pendant') || p.category?.toLowerCase() === 'necklace');
+      } else if (styleLower === 'pearl' || styleLower === 'pearls') {
+        result = result.filter(p => p.name.toLowerCase().includes('pearl'));
+      } else if (styleLower === 'chain' || styleLower === 'chains') {
+        result = result.filter(p => p.name.toLowerCase().includes('chain') || p.name.toLowerCase().includes('choker'));
+      } else if (styleLower === 'bangles' || styleLower === 'bangle') {
+        result = result.filter(p => p.name.toLowerCase().includes('bangle') || p.category?.toLowerCase() === 'bracelet');
       }
     }
 
@@ -549,7 +662,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     }
 
     return result;
-  }, [selectedShape, selectedStyle, selectedCategory, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption]);
+  }, [selectedShape, selectedStyle, selectedCategory, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption, searchQuery, productsList]);
 
   const shapes = ['Round', 'Oval', 'Cushion', 'Emerald', 'Princess', 'Radiant', 'Pear', 'Marquise', 'Asscher', 'Heart'];
   const clarities = ['VVS1', 'VVS2', 'VS1', 'VS2'];

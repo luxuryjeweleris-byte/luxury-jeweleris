@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import './components.css';
 
 export interface Product {
@@ -49,16 +50,80 @@ const TruckIcon = () => (
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
   // Favorite state
   const [isFav, setIsFav] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+
+  // Check if product is favorited on load
+  useEffect(() => {
+    const checkFavorite = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        
+        const { data } = await supabase
+          .from('wishlist')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .eq('product_id', product.id)
+          .maybeSingle();
+        
+        if (data) {
+          setIsFav(true);
+        }
+      } catch (err) {
+        console.error('Failed to check favorite status:', err);
+      }
+    };
+    checkFavorite();
+  }, [product.id]);
+
+  const handleFavClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (favLoading) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // Redirect to login if not authenticated
+        window.location.href = '/login';
+        return;
+      }
+
+      setFavLoading(true);
+      if (isFav) {
+        // Remove from wishlist
+        const { error } = await supabase
+          .from('wishlist')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('product_id', product.id);
+        
+        if (!error) {
+          setIsFav(false);
+        }
+      } else {
+        // Add to wishlist
+        const { error } = await supabase
+          .from('wishlist')
+          .insert({
+            user_id: session.user.id,
+            product_id: product.id
+          });
+        
+        if (!error) {
+          setIsFav(true);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to update favorite status:', err);
+    } finally {
+      setFavLoading(false);
+    }
+  };
 
   // Metal selection state: default based on name, otherwise default to white gold
   const initialMetal = product.name.toLowerCase().includes('platinum') ? 'platinum' :
                        product.name.toLowerCase().includes('gold') ? 'gold' : 'white';
   const [selectedMetal, setSelectedMetal] = useState<'white' | 'gold' | 'rose' | 'platinum'>(initialMetal);
-
-  const handleFavClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsFav(!isFav);
-  };
 
   const selectMetal = (metal: 'white' | 'gold' | 'rose' | 'platinum', e: React.MouseEvent) => {
     e.stopPropagation();

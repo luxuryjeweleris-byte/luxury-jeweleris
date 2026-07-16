@@ -1,11 +1,20 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
 function BraceletsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const shape = searchParams.get('shape') || undefined;
+  const style = searchParams.get('style') || undefined;
+  const search = searchParams.get('search') || undefined;
+
+  const initialFilters = React.useMemo(() => {
+    return { category: 'bracelets', shape, style, search };
+  }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
     router.push(`/diamonds/${product.id}`);
@@ -13,7 +22,7 @@ function BraceletsContent() {
 
   return (
     <ListingView
-      initialFilters={{ category: 'bracelets' }}
+      initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Bracelets"
       pageSubtitle="Luxurious diamond bracelets — from classic tennis bracelets to bold modern bangles."

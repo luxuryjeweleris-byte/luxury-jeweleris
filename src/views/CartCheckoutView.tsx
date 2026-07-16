@@ -26,7 +26,6 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
   onClearCart,
   onNavigate,
 }) => {
-  const [includeInsurance, setIncludeInsurance] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -40,11 +39,10 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
   // Form Errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const insuranceCost = 149;
   const shippingCost = 0; // Free Insured Shipping
 
   const itemsSubtotal = cart.reduce((acc, item) => acc + item.product.price, 0);
-  const totalCost = itemsSubtotal + (includeInsurance ? insuranceCost : 0) + shippingCost;
+  const totalCost = itemsSubtotal + shippingCost;
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -187,28 +185,7 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
                 ))}
               </div>
 
-              {/* Insurance Addon */}
-              <div 
-                className={`insurance-card ${includeInsurance ? 'active' : ''}`}
-                onClick={() => setIncludeInsurance(!includeInsurance)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: '2px' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={includeInsurance}
-                    onChange={() => {}} // toggled by card click
-                    style={{ accentColor: 'var(--color-teal)', width: '16px', height: '16px', cursor: 'pointer' }}
-                  />
-                </div>
-                <div>
-                  <div className="insurance-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Shield size={14} style={{ color: 'var(--color-teal)' }} /> Add Lifetime Loss & Damage Insurance
-                  </div>
-                  <p className="insurance-text">
-                    Protect your investment. Covers full replacement cost for accidental damage, theft, or stone loss. Just $149 flat.
-                  </p>
-                </div>
-              </div>
+
 
               {/* Financing Callout */}
               <div style={{ marginTop: '24px', padding: '16px', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', display: 'flex', gap: '10px' }}>
@@ -306,12 +283,7 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
                     <span>Shipping (Insured overnight):</span>
                     <span style={{ color: 'var(--color-verified)', fontWeight: '600' }}>FREE</span>
                   </div>
-                  {includeInsurance && (
-                    <div className="summary-row">
-                      <span>Lifetime Insurance:</span>
-                      <span>${insuranceCost}</span>
-                    </div>
-                  )}
+
                   <div className="summary-row summary-total">
                     <span>Order Total:</span>
                     <span>${totalCost.toLocaleString()}</span>

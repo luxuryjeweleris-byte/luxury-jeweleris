@@ -17,7 +17,7 @@ interface DetailViewProps {
 export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddToCart }) => {
   const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose'>('gold');
   const [selectedSize, setSelectedSize] = useState('6');
-  const [activeTab, setActiveTab] = useState<'360' | 'cert'>('360');
+  const [activeTab, setActiveTab] = useState<'image' | '360' | 'cert'>('image');
 
   const sizes = ['5', '6', '7', '8', '9'];
 
@@ -39,7 +39,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
           {/* Left Column: Interactive Product Visuals */}
           <div className="detail-gallery">
             <div className="detail-viewer-wrapper">
-              {activeTab === '360' ? (
+              {activeTab === 'image' ? (
+                <div style={{ width: '100%', height: '420px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                  />
+                </div>
+              ) : activeTab === '360' ? (
                 <Ring360Viewer 
                   autoplay={false} 
                   interactive={true} 
@@ -88,23 +96,27 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
             </div>
 
             {/* Thumbnail Selectors */}
-            {product.isVerified && (
-              <div className="detail-thumbs">
-                <button 
-                  className={`detail-thumb ${activeTab === '360' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('360')}
-                >
-                  360° Ring
-                </button>
-                <button 
-                  className={`detail-thumb ${activeTab === 'cert' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('cert')}
-                  style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
-                >
-                  Quality Report
-                </button>
-              </div>
-            )}
+            <div className="detail-thumbs">
+              <button 
+                className={`detail-thumb ${activeTab === 'image' ? 'active' : ''}`}
+                onClick={() => setActiveTab('image')}
+              >
+                Product Image
+              </button>
+              <button 
+                className={`detail-thumb ${activeTab === '360' ? 'active' : ''}`}
+                onClick={() => setActiveTab('360')}
+              >
+                360° Ring
+              </button>
+              <button 
+                className={`detail-thumb ${activeTab === 'cert' ? 'active' : ''}`}
+                onClick={() => setActiveTab('cert')}
+                style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
+              >
+                Quality Report
+              </button>
+            </div>
           </div>
 
           {/* Right Column: Buying Config and Details */}

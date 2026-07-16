@@ -1,11 +1,20 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
 function WeddingBandsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const shape = searchParams.get('shape') || undefined;
+  const style = searchParams.get('style') || undefined;
+  const search = searchParams.get('search') || undefined;
+
+  const initialFilters = React.useMemo(() => {
+    return { category: 'wedding', shape, style, search };
+  }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
     router.push(`/diamonds/${product.id}`);
@@ -13,7 +22,7 @@ function WeddingBandsContent() {
 
   return (
     <ListingView
-      initialFilters={{ category: 'wedding' }}
+      initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Wedding Bands"
       pageSubtitle="Elegant wedding bands for every style — from classic gold to diamond-studded eternity bands."

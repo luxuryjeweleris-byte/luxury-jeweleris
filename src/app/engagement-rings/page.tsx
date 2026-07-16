@@ -1,11 +1,20 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
 function EngagementRingsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const shape = searchParams.get('shape') || undefined;
+  const style = searchParams.get('style') || undefined;
+  const search = searchParams.get('search') || undefined;
+
+  const initialFilters = React.useMemo(() => {
+    return { category: 'engagement', shape, style, search };
+  }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
     router.push(`/diamonds/${product.id}`);
@@ -13,7 +22,7 @@ function EngagementRingsContent() {
 
   return (
     <ListingView
-      initialFilters={{ category: 'engagement' }}
+      initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Engagement Rings"
       pageSubtitle="Find the perfect ring to celebrate your love — crafted with certified diamonds and timeless designs."

@@ -24,6 +24,27 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load cart on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('luxury_cart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.error('Failed to load cart from localStorage', e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save cart on changes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('luxury_cart', JSON.stringify(cart));
+    }
+  }, [cart, isLoaded]);
 
   // Manage Toast duration
   useEffect(() => {

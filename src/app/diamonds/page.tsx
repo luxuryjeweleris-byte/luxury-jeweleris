@@ -10,10 +10,11 @@ function ListingPageContent() {
 
   const shape = searchParams.get('shape') || undefined;
   const style = searchParams.get('style') || undefined;
+  const search = searchParams.get('search') || undefined;
 
   const initialFilters = React.useMemo(() => {
-    return { shape, style };
-  }, [shape, style]);
+    return { shape, style, search };
+  }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
     router.push(`/diamonds/${product.id}`);

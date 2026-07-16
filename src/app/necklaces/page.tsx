@@ -1,11 +1,20 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
 function NecklacesContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const shape = searchParams.get('shape') || undefined;
+  const style = searchParams.get('style') || undefined;
+  const search = searchParams.get('search') || undefined;
+
+  const initialFilters = React.useMemo(() => {
+    return { category: 'necklaces', shape, style, search };
+  }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
     router.push(`/diamonds/${product.id}`);
@@ -13,7 +22,7 @@ function NecklacesContent() {
 
   return (
     <ListingView
-      initialFilters={{ category: 'necklaces' }}
+      initialFilters={initialFilters}
       onProductSelect={handleProductSelect}
       pageTitle="Necklaces"
       pageSubtitle="Exquisite diamond necklaces and pendants — the perfect statement piece for any occasion."
