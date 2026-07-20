@@ -74,7 +74,7 @@ export default function OrdersAdmin() {
     const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { router.push('/admin'); return; }
-      const { data: adminData } = await supabase.from('admin_users').select('email').eq('user_id', session.user.id).eq('is_active', true).single();
+      const { data: adminData } = await supabase.from('admin_users').select('email').eq('user_id', session.user.id).eq('is_active', true).maybeSingle();
       if (!adminData) { router.push('/admin'); return; }
       setAdminEmail(adminData.email);
       await fetchOrders();

@@ -18,14 +18,15 @@ const GoogleIcon = () => (
   </svg>
 );
 
-type AuthMode = 'signin' | 'signup' | 'forgot';
+type AuthMode = 'signin' | 'forgot';
 
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>('signin');
+  const [forgotStep, setForgotStep] = useState<'email' | 'otp' | 'newpass'>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [otp, setOtp] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -60,40 +61,7 @@ export default function LoginPage() {
     setLoading(false);
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !password.trim() || !fullName.trim()) {
-      setError('Please fill in all fields.');
-      return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
-    setError('');
-    setLoading(true);
-    try {
-      const { data, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } },
-      });
-      if (authError) {
-        setError(authError.message || 'Sign up failed. Please try again.');
-      } else if (data.user && !data.session) {
-        // Email confirmation required
-        setSuccessMsg('Account created! Please check your email to verify, then sign in.');
-      } else {
-        setSuccessMsg('Account created successfully! You are now signed in.');
-        setTimeout(() => router.push('/'), 1500);
-      }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Connection error. Check your internet.');
-    }
-    setLoading(false);
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
       setError('Please enter your email.');
@@ -102,16 +70,55 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const { error: authError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`,
+      const res = await fetch('/api/auth/send-reset-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
-      if (authError) {
-        setError(authError.message || 'Failed to send reset email.');
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to send code.');
       } else {
-        setSuccessMsg('Password reset email sent! Check your inbox.');
+        setForgotStep('otp');
       }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Connection error.');
+    } catch {
+      setError('Connection error.');
+    }
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otp.trim()) {
+      setError('Please enter the code sent to your email.');
+      return;
+    }
+    setForgotStep('newpass');
+    setError('');
+  };
+
+  const handleSetNewPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password.trim() || password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: otp.trim(), password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to reset password.');
+      } else {
+        setSuccessMsg('Password reset successfully! You can now sign in.');
+      }
+    } catch {
+      setError('Connection error.');
     }
     setLoading(false);
   };
@@ -128,12 +135,13 @@ export default function LoginPage() {
     setSuccessMsg('');
     setEmail('');
     setPassword('');
-    setFullName('');
+    setOtp('');
   };
 
   const switchMode = (newMode: AuthMode) => {
     resetState();
     setMode(newMode);
+    setForgotStep('email');
   };
 
   return (
@@ -144,23 +152,14 @@ export default function LoginPage() {
           <div className="login-form-header">
             <h1 className="login-title">
               {mode === 'signin' && 'Sign in'}
-              {mode === 'signup' && 'Create account'}
               {mode === 'forgot' && 'Reset password'}
             </h1>
             {mode === 'signin' && (
               <span className="create-account-text">
                 or{' '}
-                <button type="button" className="login-blue-link" onClick={() => switchMode('signup')}>
+                <Link href="/signup" className="login-blue-link">
                   create an account
-                </button>
-              </span>
-            )}
-            {mode === 'signup' && (
-              <span className="create-account-text">
-                Already have one?{' '}
-                <button type="button" className="login-blue-link" onClick={() => switchMode('signin')}>
-                  Sign in
-                </button>
+                </Link>
               </span>
             )}
           </div>
@@ -239,27 +238,17 @@ export default function LoginPage() {
                 </form>
               )}
 
-              {/* Sign Up Form */}
-              {mode === 'signup' && (
-                <form onSubmit={handleSignUp} className="login-form">
+              {/* Forgot Password Flow (OTP-based, bypasses broken recover endpoint) */}
+              {mode === 'forgot' && forgotStep === 'email' && (
+                <form onSubmit={handleSendOtp} className="login-form">
                   {error && <div className="login-error-box">{error}</div>}
+                  <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
+                    Enter your email and we'll send you a code to reset your password.
+                  </p>
 
                   <div className="login-form-group">
                     <input
-                      id="signup-name"
-                      type="text"
-                      className="login-input-field"
-                      placeholder="Full Name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                      autoComplete="name"
-                    />
-                  </div>
-
-                  <div className="login-form-group">
-                    <input
-                      id="signup-email"
+                      id="forgot-email"
                       type="email"
                       className="login-input-field"
                       placeholder="Email"
@@ -270,16 +259,70 @@ export default function LoginPage() {
                     />
                   </div>
 
+                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Send Code'}
+                  </Button>
+
+                  <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                    <button type="button" className="login-blue-link" onClick={() => switchMode('signin')}>
+                      ← Back to Sign In
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {mode === 'forgot' && forgotStep === 'otp' && (
+                <form onSubmit={handleVerifyOtp} className="login-form">
+                  {error && <div className="login-error-box">{error}</div>}
+                  <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
+                    Enter the code sent to <strong>{email}</strong>
+                  </p>
+
+                  <div className="login-form-group">
+                    <input
+                      id="otp-code"
+                      type="text"
+                      className="login-input-field"
+                      placeholder="000000"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      required
+                      autoComplete="one-time-code"
+                      inputMode="numeric"
+                      maxLength={6}
+                    />
+                  </div>
+
+                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Verify Code'}
+                  </Button>
+
+                  <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                    <button type="button" className="login-blue-link" onClick={() => { setForgotStep('email'); setOtp(''); setError(''); }}>
+                      ← Use a different email
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {mode === 'forgot' && forgotStep === 'newpass' && (
+                <form onSubmit={handleSetNewPassword} className="login-form">
+                  {error && <div className="login-error-box">{error}</div>}
+                  <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
+                    Enter your new password.
+                  </p>
+
                   <div className="login-form-group password-group">
                     <input
-                      id="signup-password"
+                      id="new-password"
                       type={showPassword ? 'text' : 'password'}
                       className="login-input-field"
-                      placeholder="Password (min 6 characters)"
+                      placeholder="New password (min 6 characters)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       autoComplete="new-password"
+                      minLength={6}
                     />
                     <button
                       type="button"
@@ -292,44 +335,7 @@ export default function LoginPage() {
                   </div>
 
                   <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
-                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Create Account'}
-                  </Button>
-
-                  <div className="login-separator"><span>or</span></div>
-
-                  <button type="button" className="oauth-btn google-btn" onClick={handleGoogleLogin}>
-                    <GoogleIcon />
-                    Continue with Google
-                  </button>
-
-                  <p className="login-terms-text">
-                    By creating an account you agree to our <Link href="#" className="underline-link">Terms</Link>.
-                  </p>
-                </form>
-              )}
-
-              {/* Forgot Password Form */}
-              {mode === 'forgot' && (
-                <form onSubmit={handleForgotPassword} className="login-form">
-                  {error && <div className="login-error-box">{error}</div>}
-                  <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
-                    Enter your email address and we'll send you a link to reset your password.
-                  </p>
-
-                  <div className="login-form-group">
-                    <input
-                      id="forgot-email"
-                      type="email"
-                      className="login-input-field"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" variant="primary" style={{ width: '100%', height: '48px', fontSize: '14px', fontWeight: 'bold' }} disabled={loading}>
-                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Send Reset Link'}
+                    {loading ? <Loader2 size={18} className="spin-icon" /> : 'Reset Password'}
                   </Button>
 
                   <div style={{ textAlign: 'center', marginTop: '16px' }}>

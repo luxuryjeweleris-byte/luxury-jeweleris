@@ -128,7 +128,7 @@ export default function AdminDashboard() {
         .select('email')
         .eq('user_id', session.user.id)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       if (!adminData) { router.push('/admin'); return; }
       setAdminEmail(adminData.email);

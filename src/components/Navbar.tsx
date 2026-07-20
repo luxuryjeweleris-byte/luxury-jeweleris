@@ -91,7 +91,7 @@ export const Navbar: React.FC = () => {
         .select('id')
         .eq('user_id', userId)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
       setIsAdmin(!!data);
     } catch {
       setIsAdmin(false);
@@ -255,7 +255,10 @@ export const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <Link href="/login">Sign in</Link>
+              <>
+                <Link href="/signup" style={{ marginRight: '16px' }}>Sign up</Link>
+                <Link href="/login">Sign in</Link>
+              </>
             )}
           </div>
         </div>
