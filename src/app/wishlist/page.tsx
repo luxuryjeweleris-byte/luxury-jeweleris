@@ -17,13 +17,13 @@ export default function WishlistPage() {
     const loadWishlist = async () => {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         // Redirect to login if not authenticated
         router.push('/login');
         return;
       }
-      
+
       setUser(session.user);
 
       // Fetch wishlist items
@@ -108,3 +108,4 @@ export default function WishlistPage() {
     </div>
   );
 }
+
