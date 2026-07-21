@@ -7,6 +7,7 @@ import { Search, ShoppingBag, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import Logo from './Logo';
 import { supabase } from '../lib/supabase';
+import type { DbProfile } from '../lib/supabase';
 import './components.css';
 
 // Faceted Diamond Heart SVG Icon for Logo
@@ -79,6 +80,7 @@ export const Navbar: React.FC = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [profileIncomplete, setProfileIncomplete] = useState(false);
   
   // Search state
   const [searchOpen, setSearchOpen] = useState(false);
@@ -123,6 +125,26 @@ export const Navbar: React.FC = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setProfileIncomplete(false);
+      return;
+    }
+    const checkProfile = async () => {
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('phone, address_line1')
+          .eq('id', user.id)
+          .single();
+        setProfileIncomplete(!data?.phone && !data?.address_line1);
+      } catch {
+        setProfileIncomplete(false);
+      }
+    };
+    checkProfile();
+  }, [user]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -228,6 +250,23 @@ export const Navbar: React.FC = () => {
                     <p className="contact-dropdown-subtitle" style={{ fontSize: '11px', wordBreak: 'break-all' }}>{user.email}</p>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '12px' }}>
+                      <div style={{ position: 'relative' }}>
+                        <Link 
+                          href="/account" 
+                          className="contact-dropdown-chat-btn" 
+                          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0E8C8A' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          My Profile
+                        </Link>
+                        {profileIncomplete && (
+                          <span style={{
+                            position: 'absolute', top: -2, right: -2, width: 10, height: 10,
+                            borderRadius: '50%', background: '#dc2626', border: '2px solid white'
+                          }} />
+                        )}
+                      </div>
+
                       {isAdmin && (
                         <Link 
                           href="/admin/dashboard" 

@@ -56,8 +56,8 @@ export default function SignUpPage() {
       } else if (data.user && !data.session) {
         setSuccessMsg('Account created! Please check your email to verify, then sign in.');
       } else {
-        setSuccessMsg('Account created successfully! You are now signed in.');
-        setTimeout(() => router.push('/'), 1500);
+        setSuccessMsg('Account created successfully! Welcome to Luxury Jeweleris.');
+        setTimeout(() => router.push('/account?welcome=1'), 1500);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Connection error. Check your internet.');

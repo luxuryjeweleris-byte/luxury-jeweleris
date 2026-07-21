@@ -1,0 +1,292 @@
+.account-page {
+  background-color: #ffffff;
+  min-height: calc(100vh - 120px);
+  padding: 60px 0;
+}
+
+.account-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 32px;
+  border-bottom: 1.5px solid #F0F2F5;
+  padding-bottom: 12px;
+}
+
+.account-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #10151a;
+  margin: 0;
+}
+
+.account-saved {
+  font-size: 13px;
+  color: #12805F;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 200ms ease;
+}
+
+.account-card {
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 32px;
+  background-color: #FDFEFE;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.015);
+}
+
+.account-card-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #0f172a;
+  margin-bottom: 24px;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.account-form-group {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.account-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.account-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.account-input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.account-input-field:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.account-input-field:disabled {
+  background-color: #F8FAFC;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.account-select-field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  background-color: #ffffff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+.account-select-field:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.account-section {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid #F0F2F5;
+}
+
+.account-section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.account-error-box {
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #991B1B;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.account-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: #64748b;
+}
+
+.account-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid #F0F2F5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 21, 26, 0.6);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.welcome-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 32px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 24px 48px rgba(16, 21, 26, 0.2);
+}
+
+.welcome-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.welcome-close:hover {
+  background: #F1F5F9;
+  color: #1e293b;
+}
+
+.welcome-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #EAF6F6, #0E8C8A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 16px;
+}
+
+.welcome-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #10151a;
+  margin-bottom: 8px;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.welcome-field {
+  margin-bottom: 12px;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.welcome-skip {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 120ms ease;
+}
+
+.welcome-skip:hover {
+  color: #1e293b;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms ease-out;
+}
+
+@media (max-width: 600px) {
+  .account-page {
+    padding: 30px 0;
+  }
+  .account-card {
+    padding: 20px;
+  }
+  .account-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
