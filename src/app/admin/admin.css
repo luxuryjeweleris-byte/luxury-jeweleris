@@ -446,6 +446,22 @@ table.admin-table {
   margin-top: 20px;
 }
 
+.admin-upload-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #1a2035;
+  border: 1px dashed #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.admin-upload-label:hover {
+  border-color: #6366f1;
+  background: #1e293b;
+}
+
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }

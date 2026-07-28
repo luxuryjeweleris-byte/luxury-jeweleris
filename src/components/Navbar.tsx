@@ -137,7 +137,7 @@ export const Navbar: React.FC = () => {
           .from('profiles')
           .select('phone, address_line1')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         setProfileIncomplete(!data?.phone && !data?.address_line1);
       } catch {
         setProfileIncomplete(false);
