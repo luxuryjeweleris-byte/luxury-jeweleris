@@ -16,11 +16,6 @@ export const TrustStrip: React.FC = () => {
           </div>
           <span className="trust-separator">·</span>
           <div className="trust-item">
-            <span style={{ color: 'var(--color-teal)', fontWeight: 'bold' }}>AI</span>
-            <span>price & quality scores</span>
-          </div>
-          <span className="trust-separator">·</span>
-          <div className="trust-item">
             <span>Free insured shipping & 30-day returns</span>
           </div>
         </div>

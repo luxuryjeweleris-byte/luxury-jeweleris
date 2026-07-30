@@ -1,11 +1,9 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Ring360Viewer from '../components/Ring360Viewer';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
-import { ArrowLeft, Sparkles, ShieldCheck, Download } from 'lucide-react';
-import type { Product } from '../components/ProductCard';
+import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import ProductCard, { type Product, getAvailableMetals } from '../components/ProductCard';
 import './views.css';
 
 interface DetailViewProps {
@@ -15,11 +13,105 @@ interface DetailViewProps {
 }
 
 export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddToCart }) => {
-  const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose'>('gold');
+  const availableMetals = useMemo(() => getAvailableMetals(product), [product]);
+
+  const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose' | 'silver' | 'white'>(() => {
+    return (availableMetals[0]?.key as any) || 'gold';
+  });
+
+  useEffect(() => {
+    if (availableMetals.length > 0 && !availableMetals.some(m => m.key === metal)) {
+      setMetal(availableMetals[0].key as any);
+    }
+  }, [availableMetals, metal]);
+
   const [selectedSize, setSelectedSize] = useState('6');
-  const [activeTab, setActiveTab] = useState<'image' | '360' | 'cert'>('image');
+  const [activeTab, setActiveTab] = useState<'image' | '360'>('image');
 
   const sizes = ['5', '6', '7', '8', '9'];
+
+  // Retrieve ONLY the images for the currently selected metal color (max 5 photos per metal)
+  const activeMetalImages = useMemo(() => {
+    let list: string[] = [];
+    if (metal === 'gold') {
+      list = (product.imagesYellowGold && product.imagesYellowGold.length > 0)
+        ? product.imagesYellowGold
+        : (product.imageYellowGold ? [product.imageYellowGold] : []);
+    } else if (metal === 'rose') {
+      list = (product.imagesRoseGold && product.imagesRoseGold.length > 0)
+        ? product.imagesRoseGold
+        : (product.imageRoseGold ? [product.imageRoseGold] : []);
+    } else if (metal === 'platinum') {
+      list = (product.imagesPlatinum && product.imagesPlatinum.length > 0)
+        ? product.imagesPlatinum
+        : (product.imagePlatinum ? [product.imagePlatinum] : []);
+    } else if (metal === 'silver') {
+      list = (product.imagesSilver && product.imagesSilver.length > 0)
+        ? product.imagesSilver
+        : (product.imageSilver ? [product.imageSilver] : []);
+    } else {
+      // White Gold / Default
+      list = (product.imagesWhiteGold && product.imagesWhiteGold.length > 0)
+        ? product.imagesWhiteGold
+        : (product.image ? [product.image] : []);
+    }
+    // Fallback to default product image if list is empty
+    if (list.length === 0 && product.image) {
+      list = [product.image];
+    }
+    return list.slice(0, 5);
+  }, [metal, product]);
+
+  const [selectedImgIndex, setSelectedImgIndex] = useState(0);
+  const [isHoveringImage, setIsHoveringImage] = useState(false);
+  const [lensPos, setLensPos] = useState({ x: 0, y: 0, xPercent: 50, yPercent: 50 });
+
+  const LENS_SIZE = 140; // width & height of translucent lens box in px
+
+  const handleMouseMoveImage = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const lensX = Math.max(0, Math.min(rect.width - LENS_SIZE, mouseX - LENS_SIZE / 2));
+    const lensY = Math.max(0, Math.min(rect.height - LENS_SIZE, mouseY - LENS_SIZE / 2));
+
+    const xPercent = Math.max(0, Math.min(100, (mouseX / rect.width) * 100));
+    const yPercent = Math.max(0, Math.min(100, (mouseY / rect.height) * 100));
+
+    setLensPos({ x: lensX, y: lensY, xPercent, yPercent });
+  };
+
+  // Reset selected image index when metal changes
+  useEffect(() => {
+    setSelectedImgIndex(0);
+  }, [metal]);
+
+  const currentDisplayedImage = activeMetalImages[selectedImgIndex] || activeMetalImages[0] || (
+    metal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
+    metal === 'rose' && product.imageRoseGold ? product.imageRoseGold :
+    metal === 'platinum' && product.imagePlatinum ? product.imagePlatinum :
+    metal === 'silver' && product.imageSilver ? product.imageSilver :
+    product.image
+  );
+
+  const handleNextImg = () => {
+    if (activeTab === '360') {
+      setActiveTab('image');
+      setSelectedImgIndex(0);
+    } else {
+      setSelectedImgIndex((prev) => (prev + 1) % activeMetalImages.length);
+    }
+  };
+
+  const handlePrevImg = () => {
+    if (activeTab === '360') {
+      setActiveTab('image');
+      setSelectedImgIndex(activeMetalImages.length - 1);
+    } else {
+      setSelectedImgIndex((prev) => (prev - 1 + activeMetalImages.length) % activeMetalImages.length);
+    }
+  };
 
   const handleAddToCart = () => {
     onAddToCart(product, { metal, size: selectedSize });
@@ -39,83 +131,139 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
           {/* Left Column: Interactive Product Visuals */}
           <div className="detail-gallery">
             <div className="detail-viewer-wrapper">
+              {/* Overlay Badge */}
+              <div className="gallery-badge">
+                <Sparkles size={13} style={{ color: 'var(--color-teal)' }} />
+                <span>
+                  {activeTab === 'image' 
+                    ? `Studio Visualizer (${selectedImgIndex + 1}/${activeMetalImages.length})` 
+                    : '360° Interactive 3D'}
+                </span>
+              </div>
+
+              {/* Navigation Arrows for 2D images */}
+              {activeMetalImages.length > 1 && (
+                <>
+                  <button className="gallery-nav-btn prev" onClick={handlePrevImg} title="Previous View">
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button className="gallery-nav-btn next" onClick={handleNextImg} title="Next View">
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
+
+              {/* Main Image or 360 Viewer */}
               {activeTab === 'image' ? (
-                <div style={{ width: '100%', height: '420px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+                <div 
+                  onMouseEnter={() => setIsHoveringImage(true)}
+                  onMouseLeave={() => setIsHoveringImage(false)}
+                  onMouseMove={handleMouseMoveImage}
+                  style={{ 
+                    width: '100%', 
+                    height: '420px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    cursor: 'crosshair',
+                    position: 'relative'
+                  }}
+                >
                   <img 
-                    src={product.image} 
+                    src={currentDisplayedImage} 
                     alt={product.name} 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '100%', 
+                      objectFit: 'contain',
+                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }} 
                   />
+
+                  {/* Translucent Hover Magnifier Lens Overlay Box */}
+                  {isHoveringImage && (
+                    <div 
+                      className="gallery-lens"
+                      style={{
+                        left: `${lensPos.x}px`,
+                        top: `${lensPos.y}px`,
+                        width: `${LENS_SIZE}px`,
+                        height: `${LENS_SIZE}px`,
+                      }}
+                    />
+                  )}
                 </div>
-              ) : activeTab === '360' ? (
+              ) : (
                 <Ring360Viewer 
                   autoplay={false} 
                   interactive={true} 
-                  metalColor={metal} 
+                  metalColor={metal === 'white' ? 'platinum' : metal} 
                   caratSize={product.carat}
                   width={420} 
                   height={420} 
                 />
-              ) : (
-                <div className="cert-panel-view" style={{ width: '100%', height: '420px', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid var(--color-border)', paddingBottom: '16px', marginBottom: '16px' }}>
-                      <div>
-                        <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: 'bold', color: 'var(--color-ink)' }}>Stone Quality Report</h4>
-                        <span className="caption-text">Report Number: RC-2394012034</span>
-                      </div>
-                      <ShieldCheck size={36} style={{ color: 'var(--color-verified)' }} />
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <div>
-                        <span className="label-text">Shape and Cutting Style</span>
-                        <div style={{ fontWeight: '600', fontSize: '15px', color: 'var(--color-ink)', marginBottom: '8px' }}>{product.shape} Brilliant</div>
-
-                        <span className="label-text">Carat Weight</span>
-                        <div style={{ fontWeight: '600', fontSize: '15px', color: 'var(--color-ink)', marginBottom: '8px' }}>{product.carat} Carat</div>
-                      </div>
-
-                      <div>
-                        <span className="label-text">Clarity Grade</span>
-                        <div style={{ fontWeight: '600', fontSize: '15px', color: 'var(--color-ink)', marginBottom: '8px' }}>{product.clarity}</div>
-
-                        <span className="label-text">Cut Grade</span>
-                        <div style={{ fontWeight: '600', fontSize: '15px', color: 'var(--color-ink)', marginBottom: '8px' }}>{product.cut}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
-                    <Button variant="outline" size="sm" onClick={() => alert('Grading report downloaded successfully!')} style={{ flexGrow: 1 }}>
-                      <Download size={14} /> Download PDF Report
-                    </Button>
-                  </div>
-                </div>
               )}
             </div>
 
-            {/* Thumbnail Selectors */}
-            <div className="detail-thumbs">
-              <button 
-                className={`detail-thumb ${activeTab === 'image' ? 'active' : ''}`}
-                onClick={() => setActiveTab('image')}
-              >
-                Product Image
-              </button>
-              <button 
-                className={`detail-thumb ${activeTab === '360' ? 'active' : ''}`}
-                onClick={() => setActiveTab('360')}
-              >
-                360° Ring
-              </button>
-              <button 
-                className={`detail-thumb ${activeTab === 'cert' ? 'active' : ''}`}
-                onClick={() => setActiveTab('cert')}
-                style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}
-              >
-                Quality Report
-              </button>
+            {/* Side Magnifier Popout Panel (Placed in detail-gallery so it isn't clipped) */}
+            {isHoveringImage && activeTab === 'image' && (
+              <div className="detail-zoom-popout">
+                <div className="detail-zoom-badge">
+                  <span>3.0X ULTRA-HD LOUPE ZOOM</span>
+                </div>
+                <div 
+                  className="detail-zoom-canvas"
+                  style={{
+                    backgroundImage: `url(${currentDisplayedImage})`,
+                    backgroundPosition: `${lensPos.xPercent}% ${lensPos.yPercent}%`,
+                    backgroundSize: '280% 280%',
+                    backgroundRepeat: 'no-repeat'
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Gallery Thumbnails */}
+            <div className="detail-thumbs-container">
+              <div className="detail-thumbs-label">
+                <span>Select View Angle</span>
+                <span style={{ fontSize: '10px', textTransform: 'none', color: '#94a3b8' }}>
+                  {activeMetalImages.length} Photos + 3D Model
+                </span>
+              </div>
+
+              <div className="detail-thumbs">
+                {activeMetalImages.map((imgSrc, idx) => {
+                  const isActive = activeTab === 'image' && selectedImgIndex === idx;
+                  return (
+                    <button 
+                      key={idx}
+                      className={`detail-thumb-card ${isActive ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveTab('image');
+                        setSelectedImgIndex(idx);
+                      }}
+                      title={`View Angle ${idx + 1}`}
+                    >
+                      <img 
+                        src={imgSrc} 
+                        alt={`Angle ${idx + 1}`} 
+                        className="detail-thumb-img" 
+                      />
+                      {isActive && <div className="thumb-active-indicator" />}
+                    </button>
+                  );
+                })}
+
+                <button 
+                  className={`detail-thumb-360 ${activeTab === '360' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('360')}
+                  title="360° Interactive 3D Ring Viewer"
+                >
+                  <RotateCcw size={18} className="detail-thumb-360-icon" />
+                  <span className="detail-thumb-360-text">360° View</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -125,7 +273,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               <div className="detail-badges">
                 {product.isVerified && <Badge type="verified">✓ Premium Quality</Badge>}
                 {product.isNew && <Badge type="featured">New Arrival</Badge>}
-                <Badge type="ai">AI Quality Score {product.aiScore}</Badge>
               </div>
               <h1 className="h1-text detail-title">{product.name}</h1>
               <p className="body-sm-text" style={{ color: 'var(--color-slate-muted)' }}>
@@ -141,43 +288,27 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               </div>
             </div>
 
-            {/* AI Advisor Callout Box */}
-            <div className="ai-insight-box">
-              <Sparkles className="ai-icon" size={18} />
-              <div>
-                <h4 className="ai-insight-title">AI Stone Pricing Advisor</h4>
-                <p className="ai-insight-text">
-                  This listing is rated a <strong>"Great Deal"</strong>. It is priced 14% below standard retailer values for a {product.carat} ct {product.shape} shape, {product.clarity} clarity, and {product.cut} cut grade. Excellent light performance.
-                </p>
+            {/* Config: Metal Color (Render ONLY metals with uploaded photos in Admin) */}
+            {availableMetals.length > 0 && (
+              <div className="config-group">
+                <div className="config-label">
+                  Select Metal: <span style={{ color: 'var(--color-ink)', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                    {availableMetals.find(m => m.key === metal)?.label || 'Yellow Gold'}
+                  </span>
+                </div>
+                <div className="config-options" style={{ gap: '12px' }}>
+                  {availableMetals.map((m) => (
+                    <button 
+                      key={m.key}
+                      className={`metal-circle ${metal === m.key ? 'active' : ''}`}
+                      style={{ backgroundColor: m.color }}
+                      onClick={() => setMetal(m.key as any)}
+                      title={m.label}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Config: Metal Color */}
-            <div className="config-group">
-              <div className="config-label">
-                Select Metal: <span style={{ color: 'var(--color-ink)', fontWeight: 'bold', textTransform: 'capitalize' }}>{metal === 'gold' ? '18K Yellow Gold' : metal === 'rose' ? '14K Rose Gold' : 'Platinum'}</span>
-              </div>
-              <div className="config-options" style={{ gap: '12px' }}>
-                <button 
-                  className={`metal-circle ${metal === 'gold' ? 'active' : ''}`}
-                  style={{ backgroundColor: '#E9B646' }}
-                  onClick={() => setMetal('gold')}
-                  title="18K Yellow Gold"
-                />
-                <button 
-                  className={`metal-circle ${metal === 'platinum' ? 'active' : ''}`}
-                  style={{ backgroundColor: '#E5E9EC' }}
-                  onClick={() => setMetal('platinum')}
-                  title="Platinum"
-                />
-                <button 
-                  className={`metal-circle ${metal === 'rose' ? 'active' : ''}`}
-                  style={{ backgroundColor: '#E0A391' }}
-                  onClick={() => setMetal('rose')}
-                  title="14K Rose Gold"
-                />
-              </div>
-            </div>
+            )}
 
             {/* Config: Size */}
             <div className="config-group">
@@ -211,10 +342,6 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   <tr>
                     <td>Color Grade</td>
                     <td>{product.color} (Rare White)</td>
-                  </tr>
-                  <tr>
-                    <td>Clarity</td>
-                    <td>{product.clarity} (Very Slightly Included)</td>
                   </tr>
                   <tr>
                     <td>Cut Quality</td>

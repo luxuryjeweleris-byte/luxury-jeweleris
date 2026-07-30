@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <CartProvider>
           <div className="app-container">
             <Navbar />

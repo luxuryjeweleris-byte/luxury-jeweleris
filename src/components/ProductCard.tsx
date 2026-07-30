@@ -10,12 +10,19 @@ export interface Product {
   price: number;
   compPrice: number;
   image: string;
+  imageYellowGold?: string;
+  imageRoseGold?: string;
+  imagePlatinum?: string;
+  imageSilver?: string;
+  imagesWhiteGold?: string[];
+  imagesYellowGold?: string[];
+  imagesRoseGold?: string[];
+  imagesPlatinum?: string[];
+  imagesSilver?: string[];
   shape: string;
   carat: number;
   color: string;
-  clarity: string;
   cut: string;
-  aiScore: number;
   isVerified: boolean;
   isNew: boolean;
   savePct?: number;
@@ -47,10 +54,89 @@ const TruckIcon = () => (
   </svg>
 );
 
+export interface MetalOption {
+  key: 'gold' | 'platinum' | 'rose' | 'silver' | 'white';
+  label: string;
+  color: string;
+}
+
+export function getAvailableMetals(product: Product): MetalOption[] {
+  const options: MetalOption[] = [];
+
+  const hasGold = Boolean(
+    product.imageYellowGold || 
+    (product.imagesYellowGold && product.imagesYellowGold.length > 0)
+  );
+  const hasRose = Boolean(
+    product.imageRoseGold || 
+    (product.imagesRoseGold && product.imagesRoseGold.length > 0)
+  );
+  const hasPlatinum = Boolean(
+    product.imagePlatinum || 
+    (product.imagesPlatinum && product.imagesPlatinum.length > 0)
+  );
+  const hasSilver = Boolean(
+    product.imageSilver || 
+    (product.imagesSilver && product.imagesSilver.length > 0)
+  );
+  const hasWhiteGold = Boolean(
+    product.imagesWhiteGold && product.imagesWhiteGold.length > 0
+  );
+
+  // Add metals that have specific images uploaded by Admin
+  if (hasGold) {
+    options.push({ key: 'gold', label: 'Yellow Gold', color: '#E2C379' });
+  }
+  if (hasPlatinum) {
+    options.push({ key: 'platinum', label: 'Platinum', color: '#C8CDD0' });
+  }
+  if (hasRose) {
+    options.push({ key: 'rose', label: 'Rose Gold', color: '#D99F8D' });
+  }
+  if (hasSilver) {
+    options.push({ key: 'silver', label: 'Silver', color: '#D2D7DF' });
+  }
+  if (hasWhiteGold) {
+    options.push({ key: 'white', label: 'White Gold', color: '#E2E7EB' });
+  }
+
+  // Fallback: If no specific metal variant images were uploaded by admin (only main product.image exists)
+  if (options.length === 0 && product.image) {
+    const titleLower = product.name.toLowerCase();
+    if (titleLower.includes('rose')) {
+      options.push({ key: 'rose', label: 'Rose Gold', color: '#D99F8D' });
+    } else if (titleLower.includes('platinum')) {
+      options.push({ key: 'platinum', label: 'Platinum', color: '#C8CDD0' });
+    } else if (titleLower.includes('silver')) {
+      options.push({ key: 'silver', label: 'Silver', color: '#D2D7DF' });
+    } else if (titleLower.includes('gold')) {
+      options.push({ key: 'gold', label: 'Yellow Gold', color: '#E2C379' });
+    } else {
+      options.push({ key: 'gold', label: 'Yellow Gold', color: '#E2C379' });
+    }
+  }
+
+  return options;
+}
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
   // Favorite state
   const [isFav, setIsFav] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+
+  // Calculate available metals with uploaded images
+  const availableMetals = React.useMemo(() => getAvailableMetals(product), [product]);
+
+  // Metal selection state: default to first available metal
+  const [selectedMetal, setSelectedMetal] = useState<string>(() => {
+    return availableMetals[0]?.key || 'gold';
+  });
+
+  useEffect(() => {
+    if (availableMetals.length > 0 && !availableMetals.some(m => m.key === selectedMetal)) {
+      setSelectedMetal(availableMetals[0].key);
+    }
+  }, [availableMetals, selectedMetal]);
 
   // Check if product is favorited on load
   useEffect(() => {
@@ -83,14 +169,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        // Redirect to login if not authenticated
         window.location.href = '/login';
         return;
       }
 
       setFavLoading(true);
       if (isFav) {
-        // Remove from wishlist
         const { error } = await supabase
           .from('wishlist')
           .delete()
@@ -101,7 +185,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           setIsFav(false);
         }
       } else {
-        // Add to wishlist
         const { error } = await supabase
           .from('wishlist')
           .insert({
@@ -120,24 +203,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
     }
   };
 
-  // Metal selection state: default based on name, otherwise default to white gold
-  const initialMetal = product.name.toLowerCase().includes('platinum') ? 'platinum' :
-                       product.name.toLowerCase().includes('gold') ? 'gold' : 'white';
-  const [selectedMetal, setSelectedMetal] = useState<'white' | 'gold' | 'rose' | 'platinum'>(initialMetal);
-
-  const selectMetal = (metal: 'white' | 'gold' | 'rose' | 'platinum', e: React.MouseEvent) => {
+  const selectMetal = (metalKey: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedMetal(metal);
+    setSelectedMetal(metalKey);
   };
 
   // Metal label mapping
   const getMetalLabel = () => {
-    switch (selectedMetal) {
-      case 'white': return '14K White Gold';
-      case 'gold': return '14K Yellow Gold';
-      case 'rose': return '14K Rose Gold';
-      case 'platinum': return 'Platinum';
-    }
+    const match = availableMetals.find(m => m.key === selectedMetal);
+    return match ? match.label : 'Yellow Gold';
   };
 
   // Feature badge text helper
@@ -166,6 +240,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         <button 
           className={`card-fav-btn ${isFav ? 'active' : ''}`}
           onClick={handleFavClick}
+          disabled={favLoading}
           aria-label="Add to favorites"
         >
           <svg viewBox="0 0 24 24" width="18" height="18" fill={isFav ? '#C23636' : 'none'} stroke={isFav ? '#C23636' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -175,7 +250,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
 
         {/* Product Image */}
         <img
-          src={product.image}
+          src={
+            selectedMetal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
+            selectedMetal === 'rose' && product.imageRoseGold ? product.imageRoseGold :
+            selectedMetal === 'platinum' && product.imagePlatinum ? product.imagePlatinum :
+            selectedMetal === 'silver' && product.imageSilver ? product.imageSilver :
+            product.image
+          }
           alt={product.name}
           className="prod-card-img"
           loading="lazy"
@@ -187,33 +268,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
 
       {/* Info Details below image */}
       <div className="prod-card-info">
-        {/* Metal Selector Dots */}
-        <div className="card-metal-selector-row">
-          <span 
-            className={`card-metal-dot ${selectedMetal === 'white' ? 'active' : ''}`}
-            style={{ backgroundColor: '#E2E7EB' }}
-            onClick={(e) => selectMetal('white', e)}
-            title="White Gold"
-          />
-          <span 
-            className={`card-metal-dot ${selectedMetal === 'gold' ? 'active' : ''}`}
-            style={{ backgroundColor: '#E2C379' }}
-            onClick={(e) => selectMetal('gold', e)}
-            title="Yellow Gold"
-          />
-          <span 
-            className={`card-metal-dot ${selectedMetal === 'rose' ? 'active' : ''}`}
-            style={{ backgroundColor: '#D99F8D' }}
-            onClick={(e) => selectMetal('rose', e)}
-            title="Rose Gold"
-          />
-          <span 
-            className={`card-metal-dot ${selectedMetal === 'platinum' ? 'active' : ''}`}
-            style={{ backgroundColor: '#C8CDD0' }}
-            onClick={(e) => selectMetal('platinum', e)}
-            title="Platinum"
-          />
-        </div>
+        {/* Metal Selector Dots (Only render if admin has added photos for multiple metals) */}
+        {availableMetals.length > 1 && (
+          <div className="card-metal-selector-row">
+            {availableMetals.map((m) => (
+              <span 
+                key={m.key}
+                className={`card-metal-dot ${selectedMetal === m.key ? 'active' : ''}`}
+                style={{ backgroundColor: m.color }}
+                onClick={(e) => selectMetal(m.key, e)}
+                title={m.label}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Title */}
         <h3 className="prod-card-title">{product.name}</h3>

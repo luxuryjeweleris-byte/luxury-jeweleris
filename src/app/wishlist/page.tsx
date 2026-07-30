@@ -38,7 +38,7 @@ export default function WishlistPage() {
         return;
       }
 
-      const productIds = wishlistData.map(item => item.product_id);
+      const productIds = (wishlistData as { product_id: string }[]).map((item) => item.product_id);
 
       // Fetch products matching the IDs
       const { data: productsData, error: productsError } = await supabase

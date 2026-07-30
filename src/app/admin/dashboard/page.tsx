@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, TrendingUp, DollarSign, Star, Activity, Loader2,
-  ChevronRight,
+  ChevronRight, Grid,
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import type { DbOrder, DbProduct } from '../../../lib/supabase';
@@ -16,6 +16,7 @@ import '../../admin/admin.css';
 const navItems = [
   { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
   { href: '/admin/dashboard/products', label: 'Products', icon: Package },
+  { href: '/admin/dashboard/categories', label: 'Category Circles', icon: Grid },
   { href: '/admin/dashboard/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/admin/dashboard/customers', label: 'Customers', icon: Users },
   { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
@@ -222,7 +223,7 @@ export default function AdminDashboard() {
                   <tr>
                     <th>Product</th>
                     <th>Price</th>
-                    <th>Score</th>
+                    <th>Category</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -239,9 +240,7 @@ export default function AdminDashboard() {
                         </td>
                         <td style={{ fontWeight: 700 }}>${p.price.toLocaleString()}</td>
                         <td>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#fbbf24' }}>
-                            <Star size={12} fill="#fbbf24" /> {p.ai_score}
-                          </span>
+                          <span className="badge badge-confirmed">{p.category}</span>
                         </td>
                       </tr>
                     ))

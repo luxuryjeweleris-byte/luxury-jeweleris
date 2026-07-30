@@ -22,14 +22,20 @@ export interface DbProduct {
   shape: string | null;
   carat: number | null;
   color: string | null;
-  clarity: string | null;
   cut: string | null;
   metal: string | null;
   style: string | null;
   category: string;
-  category_id: string | null;
   image: string | null;
-  ai_score: number;
+  image_yellow_gold?: string | null;
+  image_rose_gold?: string | null;
+  image_platinum?: string | null;
+  image_silver?: string | null;
+  images_white_gold?: string[] | null;
+  images_yellow_gold?: string[] | null;
+  images_rose_gold?: string[] | null;
+  images_platinum?: string[] | null;
+  images_silver?: string[] | null;
   is_verified: boolean;
   is_new: boolean;
   is_featured: boolean;
@@ -147,12 +153,19 @@ export function dbProductToProduct(p: DbProduct): Product {
     price: p.price,
     compPrice: p.comp_price ?? p.price,
     image: p.image ?? 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
+    imageYellowGold: p.image_yellow_gold ?? undefined,
+    imageRoseGold: p.image_rose_gold ?? undefined,
+    imagePlatinum: p.image_platinum ?? undefined,
+    imageSilver: p.image_silver ?? undefined,
+    imagesWhiteGold: (p.images_white_gold && p.images_white_gold.length > 0) ? p.images_white_gold : (p.image ? [p.image] : []),
+    imagesYellowGold: (p.images_yellow_gold && p.images_yellow_gold.length > 0) ? p.images_yellow_gold : (p.image_yellow_gold ? [p.image_yellow_gold] : []),
+    imagesRoseGold: (p.images_rose_gold && p.images_rose_gold.length > 0) ? p.images_rose_gold : (p.image_rose_gold ? [p.image_rose_gold] : []),
+    imagesPlatinum: (p.images_platinum && p.images_platinum.length > 0) ? p.images_platinum : (p.image_platinum ? [p.image_platinum] : []),
+    imagesSilver: (p.images_silver && p.images_silver.length > 0) ? p.images_silver : (p.image_silver ? [p.image_silver] : []),
     shape: p.shape ?? 'Round',
     carat: p.carat ?? 1.0,
     color: p.color ?? 'F',
-    clarity: p.clarity ?? 'VS1',
     cut: p.cut ?? 'Excellent',
-    aiScore: p.ai_score,
     isVerified: p.is_verified,
     isNew: p.is_new,
     savePct: p.save_pct ?? undefined,

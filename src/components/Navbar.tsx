@@ -579,7 +579,6 @@ export const Navbar: React.FC = () => {
                   <ul className="menu-column-list" style={{ gap: '10px' }}>
                     <li><Link href="/diamonds?style=lab" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond cut guide</Link></li>
                     <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond color guide</Link></li>
-                    <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond clarity guide</Link></li>
                     <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond carat guide</Link></li>
                     <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond 101 guide</Link></li>
                     <li><Link href="/diamonds" className="menu-item-link" style={{ fontSize: '13px' }}>Diamond trends</Link></li>

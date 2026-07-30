@@ -18,9 +18,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Oval',
     carat: 1.20,
     color: 'E',
-    clarity: 'VVS2',
     cut: 'Excellent',
-    aiScore: 9.4,
     isVerified: true,
     isNew: true,
     category: 'Ring',
@@ -35,9 +33,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 0.90,
     color: 'F',
-    clarity: 'VS1',
     cut: 'Ideal',
-    aiScore: 9.1,
     isVerified: true,
     isNew: false,
     category: 'Ring',
@@ -52,9 +48,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Cushion',
     carat: 1.50,
     color: 'D',
-    clarity: 'VVS1',
     cut: 'Ideal',
-    aiScore: 9.7,
     isVerified: true,
     isNew: true,
     category: 'Ring',
@@ -69,9 +63,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Princess',
     carat: 2.10,
     color: 'G',
-    clarity: 'VS2',
     cut: 'Excellent',
-    aiScore: 8.9,
     isVerified: false,
     isNew: false,
     category: 'Ring',
@@ -86,9 +78,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Emerald',
     carat: 1.70,
     color: 'E',
-    clarity: 'VS1',
     cut: 'Very Good',
-    aiScore: 9.2,
     isVerified: false,
     isNew: false,
     category: 'Ring',
@@ -103,9 +93,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Pear',
     carat: 1.05,
     color: 'H',
-    clarity: 'VVS2',
     cut: 'Excellent',
-    aiScore: 9.5,
     isVerified: true,
     isNew: false,
     category: 'Ring',
@@ -120,9 +108,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Cushion',
     carat: 0.75,
     color: 'F',
-    clarity: 'VS2',
     cut: 'Excellent',
-    aiScore: 8.8,
     isVerified: false,
     isNew: false,
     category: 'Ring',
@@ -137,9 +123,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 1.80,
     color: 'D',
-    clarity: 'VVS1',
     cut: 'Ideal',
-    aiScore: 9.8,
     isVerified: true,
     isNew: true,
     category: 'Ring',
@@ -154,9 +138,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Oval',
     carat: 2.30,
     color: 'E',
-    clarity: 'VVS2',
     cut: 'Ideal',
-    aiScore: 9.6,
     isVerified: true,
     isNew: false,
     category: 'Ring',
@@ -171,9 +153,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Emerald',
     carat: 1.10,
     color: 'F',
-    clarity: 'VS1',
     cut: 'Excellent',
-    aiScore: 9.0,
     isVerified: true,
     isNew: false,
     category: 'Ring',
@@ -188,9 +168,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 0.60,
     color: 'G',
-    clarity: 'VS2',
     cut: 'Very Good',
-    aiScore: 8.6,
     isVerified: false,
     isNew: false,
     category: 'Ring',
@@ -205,9 +183,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Princess',
     carat: 1.30,
     color: 'E',
-    clarity: 'VVS1',
     cut: 'Excellent',
-    aiScore: 9.3,
     isVerified: true,
     isNew: false,
     category: 'Ring',
@@ -222,9 +198,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 1.50,
     color: 'E',
-    clarity: 'VVS2',
     cut: 'Ideal',
-    aiScore: 9.5,
     isVerified: true,
     isNew: true,
     category: 'Earrings',
@@ -239,9 +213,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 0.80,
     color: 'F',
-    clarity: 'VS1',
     cut: 'Excellent',
-    aiScore: 9.0,
     isVerified: true,
     isNew: false,
     category: 'Earrings',
@@ -256,9 +228,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 1.00,
     color: 'E',
-    clarity: 'VVS1',
     cut: 'Ideal',
-    aiScore: 9.6,
     isVerified: true,
     isNew: true,
     category: 'Necklace',
@@ -273,9 +243,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 2.20,
     color: 'F',
-    clarity: 'VS2',
     cut: 'Excellent',
-    aiScore: 9.1,
     isVerified: false,
     isNew: false,
     category: 'Necklace',
@@ -290,9 +258,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 4.50,
     color: 'G',
-    clarity: 'VS1',
     cut: 'Excellent',
-    aiScore: 9.2,
     isVerified: true,
     isNew: false,
     category: 'Bracelet',
@@ -307,9 +273,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 0.40,
     color: 'H',
-    clarity: 'VS2',
     cut: 'Excellent',
-    aiScore: 8.7,
     isVerified: false,
     isNew: false,
     category: 'Wedding Band',
@@ -324,9 +288,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 1.80,
     color: 'E',
-    clarity: 'VVS2',
     cut: 'Ideal',
-    aiScore: 9.4,
     isVerified: true,
     isNew: true,
     category: 'Wedding Band',
@@ -341,9 +303,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 0.50,
     color: 'F',
-    clarity: 'VS1',
     cut: 'Excellent',
-    aiScore: 8.9,
     isVerified: false,
     isNew: false,
     category: 'Wedding Band',
@@ -358,9 +318,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Oval',
     carat: 1.01,
     color: 'D',
-    clarity: 'VVS1',
     cut: 'Ideal',
-    aiScore: 9.8,
     isVerified: true,
     isNew: true,
     category: 'Loose Gemstone',
@@ -375,9 +333,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     shape: 'Round',
     carat: 1.50,
     color: 'E',
-    clarity: 'VVS2',
     cut: 'Ideal',
-    aiScore: 9.7,
     isVerified: true,
     isNew: false,
     category: 'Loose Gemstone',
@@ -411,7 +367,6 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   const [searchQuery, setSearchQuery] = useState<string | null>(initialFilters?.search || null);
   const [maxCarat, setMaxCarat] = useState<number>(5.0);
   const [maxPrice, setMaxPrice] = useState<number>(15000);
-  const [selectedClarity, setSelectedClarity] = useState<string[]>([]);
   const [selectedCut, setSelectedCut] = useState<string[]>([]);
   const [isVerifiedOnly, setIsVerifiedOnly] = useState<boolean>(false);
 
@@ -458,13 +413,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   // Trigger loading on filter changes
   useEffect(() => {
     triggerLoading();
-  }, [selectedShape, selectedStyle, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption, searchQuery]);
-
-  const toggleClarity = (clarity: string) => {
-    setSelectedClarity(prev => 
-      prev.includes(clarity) ? prev.filter(c => c !== clarity) : [...prev, clarity]
-    );
-  };
+  }, [selectedShape, selectedStyle, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery]);
 
   const toggleCut = (cut: string) => {
     setSelectedCut(prev => 
@@ -478,7 +427,6 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     setSearchQuery(null);
     setMaxCarat(5.0);
     setMaxPrice(15000);
-    setSelectedClarity([]);
     setSelectedCut([]);
     setIsVerifiedOnly(false);
     setSortOption('score-desc');
@@ -607,7 +555,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
       } else if (styleLower === 'signature') {
         result = result.filter(p => p.isVerified);
       } else if (styleLower === 'best-sellers' || styleLower === 'best sellers' || styleLower === 'trending') {
-        result = result.filter(p => p.aiScore >= 9.0);
+        result = result.filter(p => p.isVerified || p.isNew);
       } else if (styleLower === 'luxe') {
         result = result.filter(p => p.price >= 5000);
       } else if (styleLower === 'under-250' || styleLower === 'under-500' || styleLower === 'under-1000') {
@@ -641,10 +589,6 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     result = result.filter(p => p.carat <= maxCarat);
     result = result.filter(p => p.price <= maxPrice);
 
-    if (selectedClarity.length > 0) {
-      result = result.filter(p => selectedClarity.includes(p.clarity));
-    }
-
     if (selectedCut.length > 0) {
       result = result.filter(p => selectedCut.includes(p.cut));
     }
@@ -659,14 +603,13 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     } else if (sortOption === 'price-desc') {
       result.sort((a, b) => b.price - a.price);
     } else {
-      result.sort((a, b) => b.aiScore - a.aiScore);
+      result.sort((a, b) => (b.isVerified ? 1 : 0) - (a.isVerified ? 1 : 0));
     }
 
     return result;
-  }, [selectedShape, selectedStyle, selectedCategory, maxCarat, maxPrice, selectedClarity, selectedCut, isVerifiedOnly, sortOption, searchQuery, productsList]);
+  }, [selectedShape, selectedStyle, selectedCategory, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery, productsList]);
 
   const shapes = ['Round', 'Oval', 'Cushion', 'Emerald', 'Princess', 'Radiant', 'Pear', 'Marquise', 'Asscher', 'Heart'];
-  const clarities = ['VVS1', 'VVS2', 'VS1', 'VS2'];
   const cuts = ['Ideal', 'Excellent', 'Very Good'];
 
   return (
@@ -709,7 +652,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
             </span>
           )}
           
-          {(selectedShape || selectedStyle || maxCarat < 5.0 || maxPrice < 15000 || selectedClarity.length > 0 || selectedCut.length > 0 || isVerifiedOnly) && (
+          {(selectedShape || selectedStyle || maxCarat < 5.0 || maxPrice < 15000 || selectedCut.length > 0 || isVerifiedOnly) && (
             <button className="filter-chip" onClick={resetFilters} style={{ borderStyle: 'dashed', color: 'var(--color-teal)' }}>
               <RotateCcw size={12} /> Clear all
             </button>
@@ -773,24 +716,6 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
               </div>
             </div>
 
-            {/* Clarity Checkbox List */}
-            <div className="sidebar-section">
-              <div className="sidebar-section-title">Clarity</div>
-              <div className="checkbox-list">
-                {clarities.map((clarity) => (
-                  <label key={clarity} className="checkbox-label">
-                    <input 
-                      type="checkbox"
-                      checked={selectedClarity.includes(clarity)}
-                      onChange={() => toggleClarity(clarity)}
-                      className="checkbox-input"
-                    />
-                    {clarity}
-                  </label>
-                ))}
-              </div>
-            </div>
-
             {/* Cut Quality Checkbox List */}
             <div className="sidebar-section">
               <div className="sidebar-section-title">Cut Quality</div>
@@ -843,7 +768,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value)}
                 >
-                  <option value="score-desc">AI Score: High to Low</option>
+                  <option value="score-desc">Featured</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
                 </select>

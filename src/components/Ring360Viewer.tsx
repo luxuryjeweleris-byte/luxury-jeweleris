@@ -6,7 +6,7 @@ import './components.css';
 interface Ring360ViewerProps {
   autoplay?: boolean;
   interactive?: boolean;
-  metalColor?: 'gold' | 'platinum' | 'rose';
+  metalColor?: 'gold' | 'platinum' | 'rose' | 'silver';
   caratSize?: number; // scale multiplier for the stone
   width?: number;
   height?: number;
@@ -33,6 +33,8 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
       colors = ['#F9D976', '#E9B646', '#C1932E', '#E9B646', '#FFF3D1', '#C1932E'];
     } else if (metalColor === 'rose') {
       colors = ['#F5C2B3', '#E0A391', '#C57E6B', '#E0A391', '#F9DCD3', '#C57E6B'];
+    } else if (metalColor === 'silver') {
+      colors = ['#F0F3F6', '#D2D7DF', '#A5B0BC', '#D2D7DF', '#FFFFFF', '#A5B0BC'];
     } else {
       // Platinum / White Gold
       colors = ['#E5E9EC', '#BCC3C8', '#949CA2', '#BCC3C8', '#F5F7F8', '#949CA2'];
