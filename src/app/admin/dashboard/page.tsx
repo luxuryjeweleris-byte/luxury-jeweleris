@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       supabase.from('profiles').select('*', { count: 'exact', head: true }),
     ]);
 
-    const revenue = (orders ?? []).reduce((sum, o) => sum + (o.total ?? 0), 0);
+    const revenue = (orders ?? []).reduce((sum: number, o: any) => sum + (o.total ?? 0), 0);
 
     setStats({
       products: productCount ?? 0,

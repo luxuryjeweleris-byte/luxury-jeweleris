@@ -4,6 +4,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import './components.css';
 
 interface Ring360ViewerProps {
+  images360?: string[];
+  url360?: string;
   autoplay?: boolean;
   interactive?: boolean;
   metalColor?: 'gold' | 'platinum' | 'rose' | 'silver';
@@ -13,6 +15,8 @@ interface Ring360ViewerProps {
 }
 
 export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
+  images360 = [],
+  url360 = '',
   autoplay = true,
   interactive = false,
   metalColor = 'gold',
@@ -270,6 +274,23 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
     setAngle(newAngle < 0 ? newAngle + 360 : newAngle);
   };
 
+  // Preload 360 image sequence if provided
+  useEffect(() => {
+    if (images360 && images360.length > 0) {
+      images360.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    }
+  }, [images360]);
+
+  const hasCustomImages = images360 && images360.length > 0;
+  const hasWebGLUrl = Boolean(url360 && url360.trim());
+
+  const currentFrameIndex = hasCustomImages
+    ? Math.min(images360.length - 1, Math.max(0, Math.floor((angle / 360) * images360.length)))
+    : 0;
+
   return (
     <div 
       className="ring-360-container"
@@ -290,12 +311,41 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
         userSelect: 'none',
       }}
     >
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
-      {interactive && (
+      {hasWebGLUrl ? (
+        <iframe
+          src={url360}
+          title="360° Interactive WebGL Model"
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            borderRadius: 'var(--radius-lg)',
+          }}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      ) : hasCustomImages ? (
+        <img
+          src={images360[currentFrameIndex]}
+          alt={`360 View Angle ${currentFrameIndex + 1}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            pointerEvents: 'none',
+            display: 'block',
+          }}
+        />
+      ) : (
+        <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+      )}
+
+      {interactive && !hasWebGLUrl && (
         <div className="ring-360-hint">
-          <span>← Drag to Rotate 360° →</span>
+          <span>{hasCustomImages ? `← Drag 360° Photo (${currentFrameIndex + 1}/${images360.length}) →` : '← Drag to Rotate 360° →'}</span>
         </div>
       )}
+
       <style>{`
         .ring-360-container {
           display: flex;

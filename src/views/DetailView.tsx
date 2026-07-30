@@ -137,7 +137,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                 <span>
                   {activeTab === 'image' 
                     ? `Studio Visualizer (${selectedImgIndex + 1}/${activeMetalImages.length})` 
-                    : '360° Interactive 3D'}
+                    : (product.url360 ? 'Interactive 3D WebGL Model' : product.images360 && product.images360.length > 0 ? `360° Photo Spin (${product.images360.length} Angles)` : '360° Interactive 3D')}
                 </span>
               </div>
 
@@ -195,6 +195,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                 </div>
               ) : (
                 <Ring360Viewer 
+                  images360={product.images360}
+                  url360={product.url360}
                   autoplay={false} 
                   interactive={true} 
                   metalColor={metal === 'white' ? 'platinum' : metal} 
@@ -261,7 +263,9 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   title="360° Interactive 3D Ring Viewer"
                 >
                   <RotateCcw size={18} className="detail-thumb-360-icon" />
-                  <span className="detail-thumb-360-text">360° View</span>
+                  <span className="detail-thumb-360-text">
+                    {product.url360 ? '3D WebGL' : product.images360 && product.images360.length > 0 ? '360° Photos' : '360° View'}
+                  </span>
                 </button>
               </div>
             </div>

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -42,6 +43,8 @@ export interface DbProduct {
   is_active: boolean;
   stock_qty: number;
   tags: string[] | null;
+  images_360?: string[] | null;
+  url_360?: string | null;
   recipient: string | null;
   occasion: string | null;
   created_at: string;
@@ -171,5 +174,7 @@ export function dbProductToProduct(p: DbProduct): Product {
     savePct: p.save_pct ?? undefined,
     category: p.category,
     style: p.style ?? undefined,
+    images360: (p.images_360 && p.images_360.length > 0) ? p.images_360 : undefined,
+    url360: p.url_360 ?? undefined,
   };
 }

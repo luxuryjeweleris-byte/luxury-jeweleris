@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   // Redirect if already logged in
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: any) => {
       if (data.session) router.push('/');
     });
   }, [router]);

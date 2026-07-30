@@ -101,7 +101,7 @@ export const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       if (currentUser) {
@@ -111,7 +111,7 @@ export const Navbar: React.FC = () => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       if (currentUser) {

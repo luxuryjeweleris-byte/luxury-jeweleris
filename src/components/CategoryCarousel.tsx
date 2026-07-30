@@ -46,7 +46,7 @@ export const CategoryCarousel: React.FC = () => {
           .order('sort_order', { ascending: true });
 
         if (!error && data && data.length > 0) {
-          setCategories(data.map(item => ({
+          setCategories(data.map((item: any) => ({
             name: item.name,
             img: item.img,
             link: item.link || '/'

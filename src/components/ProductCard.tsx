@@ -28,6 +28,8 @@ export interface Product {
   savePct?: number;
   category?: string;
   style?: string;
+  images360?: string[];
+  url360?: string;
 }
 
 interface ProductCardProps {

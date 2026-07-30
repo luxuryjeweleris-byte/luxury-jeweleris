@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
   LogOut, Plus, Pencil, Trash2, Loader2, Search, X, Star, Image, Upload, Trash,
-  Filter, Grid, List, CheckCircle2, AlertCircle, Eye, EyeOff, ChevronLeft, ChevronRight, SlidersHorizontal, Layers
+  Filter, Grid, List, CheckCircle2, AlertCircle, Eye, EyeOff, ChevronLeft, ChevronRight, SlidersHorizontal, Layers, RotateCcw
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import type { DbProduct } from '../../../../lib/supabase';
@@ -48,6 +48,7 @@ const EMPTY_PRODUCT: Partial<DbProduct> = {
   carat: 1.0, color: 'F', cut: 'Excellent', metal: 'White Gold',
   image: '', description: '', is_verified: false, is_new: false,
   is_featured: false, is_active: true, stock_qty: 10, tags: [],
+  images_360: [], url_360: '',
 };
 
 export default function ProductsAdmin() {
@@ -1376,7 +1377,111 @@ export default function ProductsAdmin() {
               })()}
             </div>
 
-            {/* Section 5: Badges & Display Status */}
+            {/* Section 5: 360° Interactive View & WebGL 3D Model */}
+            <div className="admin-form-section">
+              <div className="admin-form-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <RotateCcw size={16} color="#6366f1" /> 360° Interactive Viewer & WebGL 3D Model
+                </div>
+                <span className="badge badge-confirmed" style={{ fontSize: '11px', textTransform: 'none', fontWeight: 600 }}>
+                  {(form.images_360?.length || 0)} 360° Frames Uploaded
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* WebGL Embed URL Input */}
+                <div>
+                  <label className="admin-label">WebGL / 3D Viewer Embed URL (Optional)</label>
+                  <input
+                    className="admin-input"
+                    style={{ marginBottom: 0 }}
+                    placeholder="e.g. https://sketchfab.com/models/.../embed or WebGL viewer link"
+                    value={form.url_360 ?? ''}
+                    onChange={e => setField('url_360', e.target.value)}
+                  />
+                  <span style={{ fontSize: '11px', color: '#64748b', marginTop: '4px', display: 'block' }}>
+                    Provide an interactive WebGL or 3D iframe URL to render a 3D model on the product detail page.
+                  </span>
+                </div>
+
+                {/* 360 Photo Sequence Upload */}
+                <div>
+                  <label className="admin-label">Upload 360° Angle Photo Sequence (Multiple Files)</label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '12px' }}>
+                    <label className="admin-btn admin-btn-primary" style={{ cursor: 'pointer', padding: '8px 16px', fontSize: '12.5px' }}>
+                      <Upload size={14} /> Upload 360° Frames
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/jpeg,image/png,image/webp"
+                        style={{ display: 'none' }}
+                        onChange={async (e) => {
+                          const files = Array.from(e.target.files || []);
+                          if (files.length === 0) return;
+                          setUploadingImage(true);
+                          try {
+                            const uploadedUrls: string[] = [];
+                            for (const file of files) {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                              if (res.ok) {
+                                const data = await res.json();
+                                if (data.url) uploadedUrls.push(data.url);
+                              }
+                            }
+                            if (uploadedUrls.length > 0) {
+                              setForm(prev => ({
+                                ...prev,
+                                images_360: [...(prev.images_360 || []), ...uploadedUrls]
+                              }));
+                            }
+                          } catch (err) {
+                            console.error('360 upload error:', err);
+                            alert('Failed to upload 360 frames');
+                          } finally {
+                            setUploadingImage(false);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </label>
+                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      Select 12, 24, or 36 photos of the product taken from consecutive angles.
+                    </span>
+                  </div>
+
+                  {/* 360 Frames Preview Strip */}
+                  {form.images_360 && form.images_360.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '10px', maxHeight: '180px', overflowY: 'auto', background: '#0b0f19', padding: '10px', borderRadius: '8px', border: '1px solid #1e293b' }}>
+                      {form.images_360.map((url, idx) => (
+                        <div key={idx} style={{ position: 'relative', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #334155' }}>
+                          <img src={url} alt={`Frame ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <span style={{ position: 'absolute', bottom: 2, left: 2, background: 'rgba(0,0,0,0.8)', color: '#fff', fontSize: '9px', padding: '1px 4px', borderRadius: '3px' }}>
+                            #{idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setForm(prev => ({
+                                ...prev,
+                                images_360: (prev.images_360 || []).filter((_, i) => i !== idx)
+                              }));
+                            }}
+                            style={{ position: 'absolute', top: 3, right: 3, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '18px', height: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Remove frame"
+                          >
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 6: Badges & Display Status */}
             <div className="admin-form-section" style={{ marginBottom: 0 }}>
               <div className="admin-form-section-title">
                 <Star size={16} color="#10b981" /> Visibility & Store Badges
