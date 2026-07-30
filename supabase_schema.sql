@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- LUXURY JEWELERIS - COMPLETE SUPABASE SQL SCHEMA
 -- Paste this entire file into Supabase SQL Editor and Run
 -- ============================================================
@@ -47,8 +47,10 @@ CREATE TABLE IF NOT EXISTS products (
   is_new BOOLEAN DEFAULT FALSE,
   is_featured BOOLEAN DEFAULT FALSE,
   is_active BOOLEAN DEFAULT TRUE,
-  stock_qty INT DEFAULT 10,
-  tags TEXT[],
+  images_360 TEXT[],
+  url_360 TEXT,
+  video_url TEXT,
+  config_360 JSONB,
   recipient TEXT,
   occasion TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),

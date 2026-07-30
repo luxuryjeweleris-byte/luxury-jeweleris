@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cloudinary from 'cloudinary';
+import { Readable } from 'stream';
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -15,14 +16,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const base64 = buffer.toString('base64');
-    const dataUri = `data:${file.type};base64,${base64}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const result = await cloudinary.v2.uploader.upload(dataUri, {
-      folder: 'products',
-      overwrite: true,
-      resource_type: 'image',
+    // Stream upload directly to Cloudinary (supports large videos up to 100MB+)
+    const result = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.v2.uploader.upload_stream(
+        {
+          folder: 'products',
+          resource_type: 'auto',
+        },
+        (error, result) => {
+          if (error || !result) reject(error || new Error('Upload failed'));
+          else resolve(result);
+        }
+      );
+
+      Readable.from(buffer).pipe(uploadStream);
     });
 
     return NextResponse.json({ url: result.secure_url, public_id: result.public_id });

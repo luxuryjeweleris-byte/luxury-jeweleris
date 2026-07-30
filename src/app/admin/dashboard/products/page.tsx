@@ -48,7 +48,7 @@ const EMPTY_PRODUCT: Partial<DbProduct> = {
   carat: 1.0, color: 'F', cut: 'Excellent', metal: 'White Gold',
   image: '', description: '', is_verified: false, is_new: false,
   is_featured: false, is_active: true, stock_qty: 10, tags: [],
-  images_360: [], url_360: '',
+  images_360: [], url_360: '', video_url: '',
 };
 
 export default function ProductsAdmin() {
@@ -65,8 +65,11 @@ export default function ProductsAdmin() {
   const [activeMetalTab, setActiveMetalTab] = useState<'default' | 'yellow' | 'rose' | 'platinum' | 'silver'>('default');
   const [uploadingSlotIndex, setUploadingSlotIndex] = useState<number | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [isDraggingVideo, setIsDraggingVideo] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [jsonInputText, setJsonInputText] = useState<string>('');
 
   const fetchProducts = useCallback(async () => {
     const { data } = await supabase
@@ -95,6 +98,7 @@ export default function ProductsAdmin() {
     setActiveMetalTab('default');
     setImagePreview('');
     setImageFile(null);
+    setJsonInputText('');
     setShowModal(true);
   };
 
@@ -104,6 +108,17 @@ export default function ProductsAdmin() {
     const initialTab = p.metal === 'Yellow Gold' ? 'yellow' : p.metal === 'Rose Gold' ? 'rose' : p.metal === 'Platinum' ? 'platinum' : 'default';
     setActiveMetalTab(initialTab);
     setImagePreview(p.image || '');
+
+    if (p.config_360) {
+      if (typeof p.config_360 === 'string') {
+        setJsonInputText(p.config_360);
+      } else {
+        setJsonInputText(JSON.stringify(p.config_360, null, 2));
+      }
+    } else {
+      setJsonInputText('');
+    }
+
     setShowModal(true);
   };
 
@@ -208,19 +223,49 @@ export default function ProductsAdmin() {
   };
 
   const handleSave = async () => {
-    if (!form.name?.trim() || !form.price) return;
+    if (!form.name?.trim() || !form.price) {
+      alert('Please fill in required fields: Product Name and Price');
+      return;
+    }
     setSaving(true);
     try {
-      if (editing) {
-        await supabase.from('products').update({ ...form, updated_at: new Date().toISOString() }).eq('id', editing.id);
+      let finalConfig360 = form.config_360;
+      if (jsonInputText && jsonInputText.trim()) {
+        try {
+          finalConfig360 = JSON.parse(jsonInputText);
+        } catch {
+          finalConfig360 = jsonInputText.trim();
+        }
       } else {
-        await supabase.from('products').insert({ ...form });
+        finalConfig360 = null;
+      }
+
+      const payload = {
+        ...form,
+        config_360: finalConfig360,
+      };
+
+      if (editing) {
+        const { error } = await supabase.from('products').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editing.id);
+        if (error) {
+          console.error('Database update error:', error);
+          alert(`Failed to save to database: ${error.message}\n(Make sure to run the Supabase SQL migration script!)`);
+          return;
+        }
+      } else {
+        const { error } = await supabase.from('products').insert({ ...payload });
+        if (error) {
+          console.error('Database insert error:', error);
+          alert(`Failed to save to database: ${error.message}\n(Make sure to run the Supabase SQL migration script!)`);
+          return;
+        }
       }
       setSaving(false);
       setShowModal(false);
       await fetchProducts();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving product:', error);
+      alert('Save error: ' + (error.message || 'Unknown error'));
     } finally {
       setSaving(false);
     }
@@ -1377,18 +1422,201 @@ export default function ProductsAdmin() {
               })()}
             </div>
 
-            {/* Section 5: 360° Interactive View & WebGL 3D Model */}
+            {/* Section 5: 360° Interactive View & Product Video Upload */}
             <div className="admin-form-section">
               <div className="admin-form-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <RotateCcw size={16} color="#6366f1" /> 360° Interactive Viewer & WebGL 3D Model
+                  <RotateCcw size={16} color="#6366f1" /> Product Video & 360° Interactive Media
                 </div>
                 <span className="badge badge-confirmed" style={{ fontSize: '11px', textTransform: 'none', fontWeight: 600 }}>
-                  {(form.images_360?.length || 0)} 360° Frames Uploaded
+                  {form.video_url ? '✓ MP4 Video Uploaded' : 'Cloudinary Video Support'}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                {/* 1. Cloudinary MP4 Video Upload */}
+                <div style={{ background: '#0b0f19', padding: '16px', borderRadius: '12px', border: '1px solid #1e293b' }}>
+                  <label className="admin-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>Product Video (MP4 / WebM Upload to Cloudinary)</span>
+                    {form.video_url && (
+                      <span className="badge badge-confirmed" style={{ fontSize: '10px' }}>Cloudinary Hosted</span>
+                    )}
+                  </label>
+
+                  {form.video_url ? (
+                    <div style={{ position: 'relative', marginTop: '10px', borderRadius: '10px', overflow: 'hidden', border: '1px solid #6366f1', background: '#000' }}>
+                      <video
+                        src={form.video_url}
+                        controls
+                        autoPlay
+                        loop
+                        muted
+                        style={{ width: '100%', maxHeight: '240px', objectFit: 'contain', display: 'block' }}
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const currentVideo = form.video_url;
+                          if (currentVideo && currentVideo.includes('cloudinary.com')) {
+                            const publicId = extractPublicId(currentVideo);
+                            if (publicId) {
+                              try {
+                                await fetch('/api/upload/delete', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ public_id: publicId, resource_type: 'video' }),
+                                });
+                              } catch (err) {
+                                console.error('Error deleting video from Cloudinary:', err);
+                              }
+                            }
+                          }
+                          setField('video_url', '');
+                        }}
+                        style={{
+                          position: 'absolute', top: '10px', right: '10px',
+                          background: '#ef4444', color: 'white', border: 'none',
+                          borderRadius: '6px', padding: '6px 12px', cursor: 'pointer',
+                          fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px'
+                        }}
+                      >
+                        <Trash2 size={12} /> Remove Video
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ marginTop: '8px' }}>
+                      <label
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setIsDraggingVideo(true);
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          setIsDraggingVideo(false);
+                        }}
+                        onDrop={async (e) => {
+                          e.preventDefault();
+                          setIsDraggingVideo(false);
+                          const file = e.dataTransfer.files?.[0];
+                          if (!file) return;
+
+                          if (!file.type.startsWith('video/')) {
+                            alert('Please drop a valid video file (MP4, WebM, MOV)');
+                            return;
+                          }
+
+                          setUploadingVideo(true);
+                          try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                            if (!res.ok) {
+                              const errData = await res.json().catch(() => ({}));
+                              alert(`Video upload failed: ${errData.error || res.statusText}`);
+                              return;
+                            }
+                            const data = await res.json();
+                            if (data.url) {
+                              setField('video_url', data.url);
+                            }
+                          } catch (err: any) {
+                            console.error('Video drop error:', err);
+                            alert('Failed to upload video. Please try again.');
+                          } finally {
+                            setUploadingVideo(false);
+                          }
+                        }}
+                        style={{
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                          padding: '28px 24px',
+                          border: isDraggingVideo ? '2px dashed #6366f1' : '2px dashed #334155',
+                          borderRadius: '12px', cursor: 'pointer',
+                          background: isDraggingVideo ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.02)',
+                          boxShadow: isDraggingVideo ? '0 0 20px rgba(99,102,241,0.25)' : 'none',
+                          transition: 'all 200ms ease'
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="video/mp4,video/webm,video/quicktime"
+                          style={{ display: 'none' }}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+
+                            if (!file.type.startsWith('video/')) {
+                              alert('Please select a valid video file (MP4, WebM, MOV)');
+                              return;
+                            }
+
+                            setUploadingVideo(true);
+                            try {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                              if (!res.ok) { alert('Video upload failed'); return; }
+                              const data = await res.json();
+                              if (data.url) {
+                                setField('video_url', data.url);
+                              }
+                            } catch (err) {
+                              console.error('Video upload error:', err);
+                              alert('Video upload error');
+                            } finally {
+                              setUploadingVideo(false);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                        {uploadingVideo ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                            <Loader2 size={26} className="admin-spin" color="#6366f1" />
+                            <span style={{ fontSize: '13.5px', color: '#a5b4fc', fontWeight: 600 }}>Uploading Video to Cloudinary...</span>
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>Please wait a few seconds</span>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
+                            <Upload size={28} color={isDraggingVideo ? '#818cf8' : '#6366f1'} />
+                            <span style={{ fontSize: '14px', color: isDraggingVideo ? '#818cf8' : '#f8fafc', fontWeight: 700 }}>
+                              {isDraggingVideo ? 'Drop Video File Here Now!' : 'Drag & Drop Video File Here or Click to Browse'}
+                            </span>
+                            <span style={{ fontSize: '11.5px', color: '#94a3b8' }}>
+                              Supports MP4, WebM, MOV · Auto-uploaded & stored on Cloudinary
+                            </span>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                {/* RareCarat / Supplier 360 Metadata JSON Input */}
+                <div>
+                  <label className="admin-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>RareCarat / Supplier 360° Metadata JSON Payload</span>
+                    <span className="badge badge-confirmed" style={{ fontSize: '10px' }}>Zero Storage Recommended</span>
+                  </label>
+                  <textarea
+                    className="admin-input"
+                    style={{ marginBottom: 0, height: '120px', fontFamily: 'monospace', fontSize: '11.5px', lineHeight: '1.4' }}
+                    placeholder={`Paste the 360 JSON here, e.g.:\n{\n  "retailerId": 58,\n  "itemId": "JNB0891-14KY-LAB",\n  "shapes": { "default": { "frameCount": 256, "baseUrl": "https://..." } }\n}`}
+                    value={jsonInputText}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setJsonInputText(val);
+                      try {
+                        const parsed = JSON.parse(val);
+                        setField('config_360', parsed);
+                      } catch {
+                        setField('config_360', val);
+                      }
+                    }}
+                  />
+                  <span style={{ fontSize: '11px', color: '#a5b4fc', marginTop: '4px', display: 'block' }}>
+                    💡 <strong>No Image Upload Needed!</strong> Paste the 360 JSON payload provided by the diamond supplier. The website will automatically render the interactive 360° viewer without saving any images on Cloudinary!
+                  </span>
+                </div>
+
                 {/* WebGL Embed URL Input */}
                 <div>
                   <label className="admin-label">WebGL / 3D Viewer Embed URL (Optional)</label>

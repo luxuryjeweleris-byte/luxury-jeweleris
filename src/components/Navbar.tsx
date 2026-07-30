@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingBag, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import Logo from './Logo';
 import { supabase } from '../lib/supabase';
 import type { DbProfile } from '../lib/supabase';
 import './components.css';
@@ -307,7 +306,40 @@ export const Navbar: React.FC = () => {
       <div className="container navbar-container">
         {/* Left: Brand Logo */}
         <Link href="/" className="navbar-logo-container" style={{ display: 'flex', alignItems: 'center' }}>
-          <Logo theme="light" height={44} />
+          <div style={{ display: 'flex', alignItems: 'center', height: '44px', gap: '10px' }}>
+            <img src="/logo.png" alt="Luxury Jeweleris" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ 
+                fontFamily: "var(--font-display-outfit, 'Outfit', sans-serif)", 
+                fontSize: '18px', 
+                fontWeight: 700, 
+                letterSpacing: '0.5px',
+                lineHeight: 1.1
+              }}>
+                <span style={{ color: '#10151a' }}>LUXURY </span>
+                <span style={{ 
+                  background: 'linear-gradient(135deg, #FCE0AD 0%, #DFAC6C 35%, #C68B45 70%, #8E5E24 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'inline-block'
+                }}>
+                  JEWELERIS
+                </span>
+              </div>
+              <div style={{ 
+                fontFamily: "var(--font-sans, 'Inter', sans-serif)", 
+                fontSize: '8px', 
+                fontWeight: 600, 
+                letterSpacing: '1.6px', 
+                color: '#8792A0',
+                opacity: 0.95,
+                marginTop: '1px',
+                textTransform: 'uppercase'
+              }}>
+                ENHANCE YOUR BEAUTY
+              </div>
+            </div>
+          </div>
         </Link>
 
         {/* Center: Desktop Navigation Links (with custom rich mega menus) */}

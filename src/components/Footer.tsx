@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Logo from './Logo';
 
 const FacebookIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -24,7 +23,40 @@ export const Footer: React.FC = () => {
         <div className="footer-grid">
           <div className="footer-col">
             <Link href="/" style={{ display: 'inline-block', marginBottom: '12px' }}>
-              <Logo theme="dark" height={44} />
+              <div style={{ display: 'flex', alignItems: 'center', height: '44px', gap: '10px' }}>
+                <img src="/logo.png" alt="Luxury Jeweleris" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div style={{ 
+                    fontFamily: "var(--font-display-outfit, 'Outfit', sans-serif)", 
+                    fontSize: '18px', 
+                    fontWeight: 700, 
+                    letterSpacing: '0.5px',
+                    lineHeight: 1.1
+                  }}>
+                    <span style={{ color: '#ffffff' }}>LUXURY </span>
+                    <span style={{ 
+                      background: 'linear-gradient(135deg, #FCE0AD 0%, #DFAC6C 35%, #C68B45 70%, #8E5E24 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      display: 'inline-block'
+                    }}>
+                      JEWELERIS
+                    </span>
+                  </div>
+                  <div style={{ 
+                    fontFamily: "var(--font-sans, 'Inter', sans-serif)", 
+                    fontSize: '8px', 
+                    fontWeight: 600, 
+                    letterSpacing: '1.6px', 
+                    color: '#8792A0',
+                    opacity: 0.95,
+                    marginTop: '1px',
+                    textTransform: 'uppercase'
+                  }}>
+                    ENHANCE YOUR BEAUTY
+                  </div>
+                </div>
+              </div>
             </Link>
             <p className="body-sm-text" style={{ color: 'var(--color-slate-muted)', marginTop: '4px', lineHeight: '1.6' }}>
               Luxury Jeweleris crafts timeless jewelry with exceptional artistry. From engagement rings to everyday elegance, each piece is designed to celebrate life&apos;s most precious moments.

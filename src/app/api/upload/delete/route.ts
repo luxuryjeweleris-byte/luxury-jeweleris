@@ -9,12 +9,13 @@ cloudinary.v2.config({
 
 export async function POST(request: NextRequest) {
   try {
-    const { public_id } = await request.json();
+    const { public_id, resource_type } = await request.json();
     if (!public_id) {
       return NextResponse.json({ error: 'No public_id provided' }, { status: 400 });
     }
 
-    await cloudinary.v2.uploader.destroy(public_id);
+    const type = resource_type || 'image';
+    await cloudinary.v2.uploader.destroy(public_id, { resource_type: type });
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Cloudinary delete error:', error);

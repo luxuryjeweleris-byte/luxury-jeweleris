@@ -30,6 +30,8 @@ export interface Product {
   style?: string;
   images360?: string[];
   url360?: string;
+  config360?: any;
+  videoUrl?: string;
 }
 
 interface ProductCardProps {

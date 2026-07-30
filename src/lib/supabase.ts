@@ -45,6 +45,8 @@ export interface DbProduct {
   tags: string[] | null;
   images_360?: string[] | null;
   url_360?: string | null;
+  config_360?: any;
+  video_url?: string | null;
   recipient: string | null;
   occasion: string | null;
   created_at: string;
@@ -176,5 +178,7 @@ export function dbProductToProduct(p: DbProduct): Product {
     style: p.style ?? undefined,
     images360: (p.images_360 && p.images_360.length > 0) ? p.images_360 : undefined,
     url360: p.url_360 ?? undefined,
+    config360: p.config_360 ?? undefined,
+    videoUrl: p.video_url ?? undefined,
   };
 }

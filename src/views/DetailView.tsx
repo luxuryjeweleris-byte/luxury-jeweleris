@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Ring360Viewer from '../components/Ring360Viewer';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
-import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Video } from 'lucide-react';
 import ProductCard, { type Product, getAvailableMetals } from '../components/ProductCard';
 import './views.css';
 
@@ -26,7 +26,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
   }, [availableMetals, metal]);
 
   const [selectedSize, setSelectedSize] = useState('6');
-  const [activeTab, setActiveTab] = useState<'image' | '360'>('image');
+  const [activeTab, setActiveTab] = useState<'image' | '360' | 'video'>('image');
 
   const sizes = ['5', '6', '7', '8', '9'];
 
@@ -193,8 +193,20 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                     />
                   )}
                 </div>
+              ) : activeTab === 'video' ? (
+                <div style={{ width: '100%', height: '420px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', borderRadius: '12px', overflow: 'hidden' }}>
+                  <video
+                    src={product.videoUrl}
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </div>
               ) : (
                 <Ring360Viewer 
+                  config360={product.config360}
                   images360={product.images360}
                   url360={product.url360}
                   autoplay={false} 
@@ -203,6 +215,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   caratSize={product.carat}
                   width={420} 
                   height={420} 
+                  showControls={true}
+                  showJsonTester={true}
                 />
               )}
             </div>
@@ -230,7 +244,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               <div className="detail-thumbs-label">
                 <span>Select View Angle</span>
                 <span style={{ fontSize: '10px', textTransform: 'none', color: '#94a3b8' }}>
-                  {activeMetalImages.length} Photos + 3D Model
+                  {activeMetalImages.length} Photos + Media
                 </span>
               </div>
 
@@ -257,16 +271,34 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   );
                 })}
 
-                <button 
-                  className={`detail-thumb-360 ${activeTab === '360' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('360')}
-                  title="360° Interactive 3D Ring Viewer"
-                >
-                  <RotateCcw size={18} className="detail-thumb-360-icon" />
-                  <span className="detail-thumb-360-text">
-                    {product.url360 ? '3D WebGL' : product.images360 && product.images360.length > 0 ? '360° Photos' : '360° View'}
-                  </span>
-                </button>
+                {/* Cloudinary Product Video Tab Button */}
+                {product.videoUrl && (
+                  <button 
+                    className={`detail-thumb-360 ${activeTab === 'video' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('video')}
+                    title="Watch HD Product Video"
+                    style={{ borderColor: activeTab === 'video' ? '#6366f1' : undefined }}
+                  >
+                    <Video size={18} className="detail-thumb-360-icon" style={{ color: '#6366f1' }} />
+                    <span className="detail-thumb-360-text">
+                      HD Video
+                    </span>
+                  </button>
+                )}
+
+                {/* 360° View Thumbnail Button (Only rendered if product has 360 media) */}
+                {(product.config360 || (product.images360 && product.images360.length > 0) || product.url360) && (
+                  <button 
+                    className={`detail-thumb-360 ${activeTab === '360' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('360')}
+                    title="360° Interactive 3D Ring Viewer"
+                  >
+                    <RotateCcw size={18} className="detail-thumb-360-icon" />
+                    <span className="detail-thumb-360-text">
+                      {product.url360 ? '3D WebGL' : product.images360 && product.images360.length > 0 ? '360° Photos' : '360° View'}
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

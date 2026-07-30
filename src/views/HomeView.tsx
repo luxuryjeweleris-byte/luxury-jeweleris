@@ -11,6 +11,31 @@ import './views.css';
 export const HomeView: React.FC = () => {
   const router = useRouter();
 
+  const heroVideos = [
+    'https://res.cloudinary.com/gelkrliw/video/upload/v1785440765/products/v0coba9zahrupfdek7h8.mp4',
+    'https://cldnr.rarecarat.com/video/upload/v1722272873/home-next-gen/360-ring-desktop.mp4',
+  ];
+
+  const [activeVideoIndex, setActiveVideoIndex] = React.useState<number>(0);
+  const video1Ref = React.useRef<HTMLVideoElement | null>(null);
+  const video2Ref = React.useRef<HTMLVideoElement | null>(null);
+
+  const handleVideo1Ended = () => {
+    setActiveVideoIndex(1);
+    if (video2Ref.current) {
+      video2Ref.current.currentTime = 0;
+      video2Ref.current.play().catch(() => {});
+    }
+  };
+
+  const handleVideo2Ended = () => {
+    setActiveVideoIndex(0);
+    if (video1Ref.current) {
+      video1Ref.current.currentTime = 0;
+      video1Ref.current.play().catch(() => {});
+    }
+  };
+
   const popularStyles = [
     { name: 'Solitaire Settings', count: '14,230 styles', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=300&auto=format&fit=crop' },
     { name: 'Halo Settings', count: '8,450 styles', img: 'https://images.unsplash.com/photo-1543294001-f7cbfe92237e?q=80&w=300&auto=format&fit=crop' },
@@ -47,27 +72,57 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
           <div className="hero-viewer">
-            <video 
-              playsInline 
-              autoPlay 
-              loop 
-              muted 
-              poster="https://cldnr.rarecarat.com/image/upload/v1722270634/home-next-gen/animated-ring-image-desktop-compressed.webp" 
-              className="animated-ring-360"
+            <div
+              className="hero-video-stack"
               style={{
+                position: 'relative',
                 width: '100%',
                 maxWidth: '460px',
-                height: 'auto',
-                objectFit: 'contain',
+                aspectRatio: '1 / 1',
                 margin: '0 auto',
-                display: 'block'
+                overflow: 'hidden',
+                borderRadius: '16px',
               }}
             >
-              <source 
-                src="https://cldnr.rarecarat.com/video/upload/v1722272873/home-next-gen/360-ring-desktop.mp4" 
-                type="video/mp4" 
+              {/* Video 1 */}
+              <video
+                ref={video1Ref}
+                src={heroVideos[0]}
+                playsInline
+                autoPlay
+                muted
+                onEnded={handleVideo1Ended}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  opacity: activeVideoIndex === 0 ? 1 : 0,
+                  transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
+                }}
               />
-            </video>
+
+              {/* Video 2 */}
+              <video
+                ref={video2Ref}
+                src={heroVideos[1]}
+                playsInline
+                muted
+                onEnded={handleVideo2Ended}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  opacity: activeVideoIndex === 1 ? 1 : 0,
+                  transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>
