@@ -28,8 +28,8 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) router.push('/');
+    supabase.auth.getSession().then((res: any) => {
+      if (res?.data?.session) router.push('/');
     });
   }, [router]);
 

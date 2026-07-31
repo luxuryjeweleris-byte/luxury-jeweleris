@@ -4,6 +4,8 @@ import Button from '../components/Button';
 import Badge from '../components/Badge';
 import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Video } from 'lucide-react';
 import ProductCard, { type Product, getAvailableMetals } from '../components/ProductCard';
+import { supabase, dbProductToProduct } from '../lib/supabase';
+import { INITIAL_PRODUCTS } from './ListingView';
 import './views.css';
 
 interface DetailViewProps {
@@ -25,8 +27,71 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
     }
   }, [availableMetals, metal]);
 
-  const [selectedSize, setSelectedSize] = useState('6');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [sizeError, setSizeError] = useState(false);
   const [activeTab, setActiveTab] = useState<'image' | '360' | 'video'>('image');
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchRelated = async () => {
+      try {
+        let query = supabase.from('products').select('*').eq('is_active', true);
+        if (product.category) {
+          query = query.eq('category', product.category);
+        }
+        const { data, error } = await query.neq('id', product.id).limit(3);
+
+        if (!error && data && data.length > 0) {
+          setRelatedProducts(data.map(dbProductToProduct));
+        } else {
+          const matched = INITIAL_PRODUCTS.filter(
+            (p) => p.id !== product.id && (p.category?.toLowerCase() === product.category?.toLowerCase() || p.shape === product.shape)
+          ).slice(0, 3);
+          const finalFallback = matched.length >= 3 ? matched : [
+            ...matched,
+            ...INITIAL_PRODUCTS.filter((p) => p.id !== product.id && !matched.some(m => m.id === p.id))
+          ].slice(0, 3);
+          setRelatedProducts(finalFallback);
+        }
+      } catch {
+        const matched = INITIAL_PRODUCTS.filter(
+          (p) => p.id !== product.id && (p.category?.toLowerCase() === product.category?.toLowerCase() || p.shape === product.shape)
+        ).slice(0, 3);
+        const finalFallback = matched.length >= 3 ? matched : [
+          ...matched,
+          ...INITIAL_PRODUCTS.filter((p) => p.id !== product.id && !matched.some(m => m.id === p.id))
+        ].slice(0, 3);
+        setRelatedProducts(finalFallback);
+      }
+    };
+    fetchRelated();
+  }, [product.id, product.category, product.shape]);
+
+  const [viewerSize, setViewerSize] = useState<'sm' | 'md' | 'lg' | 'xl'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('luxury_viewer_card_size');
+      if (saved && ['sm', 'md', 'lg', 'xl'].includes(saved)) {
+        return saved as any;
+      }
+    }
+    return 'md';
+  });
+
+  const cardHeightMap = {
+    sm: 360,
+    md: 460,
+    lg: 550,
+    xl: 650,
+  };
+
+  const currentCardHeight = cardHeightMap[viewerSize] || 460;
+
+  const handleViewerSizeChange = (size: 'sm' | 'md' | 'lg' | 'xl') => {
+    setViewerSize(size);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('luxury_viewer_card_size', size);
+    }
+  };
 
   const sizes = ['5', '6', '7', '8', '9'];
 
@@ -114,6 +179,11 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
   };
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      setSizeError(true);
+      return;
+    }
+    setSizeError(false);
     onAddToCart(product, { metal, size: selectedSize });
   };
 
@@ -161,12 +231,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   onMouseMove={handleMouseMoveImage}
                   style={{ 
                     width: '100%', 
-                    height: '420px', 
+                    height: `${currentCardHeight}px`, 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center', 
                     cursor: 'crosshair',
-                    position: 'relative'
+                    position: 'relative',
+                    transition: 'height 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
                   <img 
@@ -194,14 +265,36 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   )}
                 </div>
               ) : activeTab === 'video' ? (
-                <div style={{ width: '100%', height: '420px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', borderRadius: '12px', overflow: 'hidden' }}>
+                <div 
+                  style={{ 
+                    width: '100%', 
+                    height: `${currentCardHeight}px`, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    background: 'transparent', 
+                    borderRadius: '12px', 
+                    overflow: 'hidden', 
+                    position: 'relative',
+                    transition: 'height 0.3s cubic-bezier(0.16, 1, 0.3, 1)' 
+                  }}
+                >
                   <video
                     src={product.videoUrl}
-                    controls
                     autoPlay
                     loop
                     muted
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    playsInline
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '100%', 
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      background: 'transparent',
+                      display: 'block',
+                      pointerEvents: 'none'
+                    }}
                   />
                 </div>
               ) : (
@@ -209,21 +302,23 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   config360={product.config360}
                   images360={product.images360}
                   url360={product.url360}
-                  autoplay={false} 
+                  autoplay={true} 
                   interactive={true} 
                   metalColor={metal === 'white' ? 'platinum' : metal} 
                   caratSize={product.carat}
-                  width={420} 
-                  height={420} 
+                  width={currentCardHeight} 
+                  height={currentCardHeight} 
                   showControls={true}
-                  showJsonTester={true}
+                  showJsonTester={false}
+                  cardSizePreset={viewerSize}
+                  onCardSizeChange={handleViewerSizeChange}
                 />
               )}
             </div>
 
             {/* Side Magnifier Popout Panel (Placed in detail-gallery so it isn't clipped) */}
             {isHoveringImage && activeTab === 'image' && (
-              <div className="detail-zoom-popout">
+              <div className="detail-zoom-popout" style={{ height: `${Math.min(currentCardHeight, 520)}px` }}>
                 <div className="detail-zoom-badge">
                   <span>3.0X ULTRA-HD LOUPE ZOOM</span>
                 </div>
@@ -243,9 +338,19 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
             <div className="detail-thumbs-container">
               <div className="detail-thumbs-label">
                 <span>Select View Angle</span>
-                <span style={{ fontSize: '10px', textTransform: 'none', color: '#94a3b8' }}>
-                  {activeMetalImages.length} Photos + Media
-                </span>
+                <div className="viewer-size-toolbar">
+                  <span className="size-label-text">Card Size:</span>
+                  {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
+                    <button
+                      key={sz}
+                      className={`viewer-size-pill ${viewerSize === sz ? 'active' : ''}`}
+                      onClick={() => handleViewerSizeChange(sz)}
+                      title={`Card size ${sz.toUpperCase()}: ${cardHeightMap[sz]}px`}
+                    >
+                      {sz.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="detail-thumbs">
@@ -347,14 +452,34 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
             )}
 
             {/* Config: Size */}
-            <div className="config-group">
-              <div className="config-label">Select Ring Size (US):</div>
+            <div className={`config-group ${sizeError ? 'size-error-group' : ''}`}>
+              <div className="config-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>
+                  Select Ring Size (US): {selectedSize ? (
+                    <span style={{ color: 'var(--color-teal)', fontWeight: 'bold', marginLeft: '4px' }}>
+                      Size {selectedSize}
+                    </span>
+                  ) : (
+                    <span style={{ color: sizeError ? '#ef4444' : 'var(--color-slate-muted)', fontWeight: 'bold', marginLeft: '4px' }}>
+                      *Required
+                    </span>
+                  )}
+                </span>
+                {sizeError && (
+                  <span className="size-error-badge">
+                    ⚠️ Please select a size
+                  </span>
+                )}
+              </div>
               <div className="config-options">
                 {sizes.map((size) => (
                   <button
                     key={size}
-                    className={`config-btn ${selectedSize === size ? 'active' : ''}`}
-                    onClick={() => setSelectedSize(size)}
+                    className={`config-btn ${selectedSize === size ? 'active' : ''} ${sizeError ? 'pulse-border' : ''}`}
+                    onClick={() => {
+                      setSelectedSize(size);
+                      setSizeError(false);
+                    }}
                   >
                     Size {size}
                   </button>
@@ -392,11 +517,66 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
             </div>
 
             {/* CTA Button */}
-            <Button variant="dark" onClick={handleAddToCart} style={{ width: '100%', height: '50px', fontSize: '15px' }}>
-              Add to cart
-            </Button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {sizeError && (
+                <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: 600, textAlign: 'center', background: '#fef2f2', padding: '6px 12px', borderRadius: '8px', border: '1px solid #fca5a5' }}>
+                  ⚠️ Please select a ring size above before adding to cart
+                </div>
+              )}
+              <Button 
+                variant="dark" 
+                onClick={handleAddToCart} 
+                style={{ 
+                  width: '100%', 
+                  height: '50px', 
+                  fontSize: '15px',
+                  border: sizeError ? '2px solid #ef4444' : undefined
+                }}
+              >
+                {selectedSize ? `Add Size ${selectedSize} to cart` : 'Select Size & Add to Cart'}
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Category Matching Suggestions Section */}
+        {relatedProducts.length > 0 && (
+          <div style={{ marginTop: '56px', paddingTop: '36px', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+              <div>
+                <span style={{ fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--color-teal)', fontWeight: 700 }}>
+                  Curated Suggestions
+                </span>
+                <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#0f172a', margin: '4px 0 0 0' }}>
+                  Matching {product.category ? `${product.category}s` : 'Jewelry'} You May Like
+                </h2>
+              </div>
+              {onBack && (
+                <button
+                  className="btn btn-ghost"
+                  onClick={onBack}
+                  style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px' }}
+                >
+                  Explore All {product.category || 'Jewelry'} &rarr;
+                </button>
+              )}
+            </div>
+
+            <div className="product-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+              {relatedProducts.map((relProd) => (
+                <ProductCard
+                  key={relProd.id}
+                  product={relProd}
+                  onSelect={(p) => {
+                    if (typeof window !== 'undefined') {
+                      window.location.href = `/shop/${p.id}`;
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

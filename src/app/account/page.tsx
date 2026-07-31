@@ -36,7 +36,8 @@ export default function AccountPage() {
 
   useEffect(() => {
     const isWelcome = window.location.search.includes('welcome=1');
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async (res: any) => {
+      const session = res?.data?.session;
       if (!session) {
         router.push('/login');
         return;
@@ -127,6 +128,79 @@ export default function AccountPage() {
               Profile saved
             </span>
           )}
+        </div>
+
+        {/* Profile Completion Callout */}
+        <div style={{
+          marginBottom: '24px',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          background: (!profile.ring_size || !profile.phone || !profile.address_line1)
+            ? 'linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%)'
+            : 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+          border: (!profile.ring_size || !profile.phone || !profile.address_line1)
+            ? '1px solid #ffedd5'
+            : '1px solid #bbf7d0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '15px', color: '#1e293b' }}>
+              {(!profile.ring_size || !profile.phone || !profile.address_line1) ? (
+                <>
+                  <Sparkles size={18} color="#ea580c" />
+                  <span>Complete Profile to Unlock 1-Click Fast Checkout</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle size={18} color="#16a34a" />
+                  <span>Profile 100% Complete &amp; Verified</span>
+                </>
+              )}
+            </div>
+            <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0 0' }}>
+              {(!profile.ring_size || !profile.phone || !profile.address_line1)
+                ? 'Save your preferred Ring Size, Phone, and Shipping Address to automatically apply them on future orders.'
+                : 'Your default shipping address and ring size are saved for instant express checkout.'}
+            </p>
+          </div>
+
+          {/* Status Badges */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '4px 10px',
+              borderRadius: '20px',
+              background: profile.ring_size ? '#dcfce7' : '#fee2e2',
+              color: profile.ring_size ? '#15803d' : '#991b1b'
+            }}>
+              {profile.ring_size ? `Size ${profile.ring_size} Saved` : '❌ Ring Size Missing'}
+            </span>
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '4px 10px',
+              borderRadius: '20px',
+              background: profile.phone ? '#dcfce7' : '#fee2e2',
+              color: profile.phone ? '#15803d' : '#991b1b'
+            }}>
+              {profile.phone ? 'Phone Saved' : '❌ Phone Missing'}
+            </span>
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '4px 10px',
+              borderRadius: '20px',
+              background: profile.address_line1 ? '#dcfce7' : '#fee2e2',
+              color: profile.address_line1 ? '#15803d' : '#991b1b'
+            }}>
+              {profile.address_line1 ? 'Address Saved' : '❌ Address Missing'}
+            </span>
+          </div>
         </div>
 
         <div className="account-card">

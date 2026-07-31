@@ -14,52 +14,7 @@ import { supabase } from '../../../../lib/supabase';
 import type { DbProfile, DbOrder } from '../../../../lib/supabase';
 import '../../../admin/admin.css';
 
-const navItems = [
-  { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { href: '/admin/dashboard/products', label: 'Products', icon: Package },
-  { href: '/admin/dashboard/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/admin/dashboard/customers', label: 'Customers', icon: Users },
-  { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
-];
-
-function AdminSidebar({ adminEmail }: { adminEmail: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/admin');
-  };
-
-  return (
-    <aside className="admin-sidebar">
-      <div className="admin-logo">
-        <h2>Luxury Jeweleris</h2>
-        <span>Admin Panel</span>
-      </div>
-      <nav className="admin-nav">
-        <div className="admin-nav-section">Menu</div>
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`admin-nav-link ${pathname === href ? 'active' : ''}`}
-          >
-            <Icon size={16} />
-            {label}
-          </Link>
-        ))}
-      </nav>
-      <div className="admin-sidebar-footer">
-        <div style={{ fontSize: '12px', color: '#6366f1', marginBottom: '10px', padding: '0 4px', wordBreak: 'break-all' }}>
-          {adminEmail}
-        </div>
-        <button className="admin-nav-link" onClick={handleSignOut}>
-          <LogOut size={16} /> Sign Out
-        </button>
-      </div>
-    </aside>
-  );
-}
+import { useAdminContext } from '../layout';
 
 // Avatar Gradient generator based on string
 const AVATAR_GRADIENTS = [
@@ -100,8 +55,7 @@ interface ExtendedCustomer extends DbProfile {
 }
 
 export default function CustomersAdmin() {
-  const router = useRouter();
-  const [adminEmail, setAdminEmail] = useState('');
+  const { adminEmail } = useAdminContext();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [customers, setCustomers] = useState<ExtendedCustomer[]>([]);
@@ -191,27 +145,14 @@ export default function CustomersAdmin() {
       setCustomers(extended);
     } catch (err) {
       console.error('Error fetching customers data:', err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { router.push('/admin'); return; }
-      const { data: adminData } = await supabase
-        .from('admin_users')
-        .select('email')
-        .eq('user_id', session.user.id)
-        .eq('is_active', true)
-        .maybeSingle();
-
-      if (!adminData) { router.push('/admin'); return; }
-      setAdminEmail(adminData.email);
-      await fetchCustomers();
-      setLoading(false);
-    };
-    init();
-  }, [router, fetchCustomers]);
+    fetchCustomers();
+  }, [fetchCustomers]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -336,42 +277,38 @@ export default function CustomersAdmin() {
 
   const setField = (key: keyof DbProfile, value: unknown) => setForm(f => ({ ...f, [key]: value }));
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1117' }}>
-        <Loader2 size={36} className="admin-spin" color="#6366f1" />
-      </div>
-    );
-  }
-
   return (
-    <div className="admin-shell">
-      <AdminSidebar adminEmail={adminEmail} />
-      
-      <div className="admin-main">
-        {/* Top Header Bar */}
-        <div className="admin-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="admin-topbar-title">Customer CRM & Clients</span>
-            <span className="badge badge-confirmed" style={{ fontSize: '11px' }}>
-              {customers.length} Profiles
-            </span>
-          </div>
-          <div className="admin-topbar-right">
-            <button className="admin-btn admin-btn-ghost" onClick={handleRefresh} disabled={refreshing} title="Refresh data">
-              <RefreshCw size={14} className={refreshing ? 'admin-spin' : ''} /> Refresh
-            </button>
-            <button className="admin-btn admin-btn-ghost" onClick={handleExportCSV} title="Export CSV file">
-              <Download size={14} /> Export CSV
-            </button>
-            <button className="admin-btn admin-btn-primary" onClick={openAdd}>
-              <Plus size={15} /> Add Customer
-            </button>
-            <div className="admin-avatar">{adminEmail[0]?.toUpperCase()}</div>
-          </div>
+    <>
+      {/* Top Header Bar */}
+      <div className="admin-topbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className="admin-topbar-title">Customer CRM & Clients</span>
+          <span className="badge badge-confirmed" style={{ fontSize: '11px' }}>
+            {customers.length} Profiles
+          </span>
         </div>
+        <div className="admin-topbar-right">
+          <button className="admin-btn admin-btn-ghost" onClick={handleRefresh} disabled={refreshing} title="Refresh data">
+            <RefreshCw size={14} className={refreshing ? 'admin-spin' : ''} /> Refresh
+          </button>
+          <button className="admin-btn admin-btn-ghost" onClick={handleExportCSV} title="Export CSV file">
+            <Download size={14} /> Export CSV
+          </button>
+          <button className="admin-btn admin-btn-primary" onClick={openAdd}>
+            <Plus size={15} /> Add Customer
+          </button>
+          <div className="admin-avatar">{adminEmail[0]?.toUpperCase() || 'A'}</div>
+        </div>
+      </div>
 
-        <div className="admin-content">
+      <div className="admin-content">
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '12px' }}>
+            <Loader2 size={32} className="admin-spin" color="#6366f1" />
+            <span style={{ fontSize: '13px', color: '#8892a4' }}>Loading Customer Records...</span>
+          </div>
+        ) : (
+          <>
           {/* Executive Stat Cards */}
           <div className="admin-stat-grid" style={{ marginBottom: '24px' }}>
             <div className="admin-stat-card">
@@ -667,8 +604,9 @@ export default function CustomersAdmin() {
               </table>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
+    </div>
 
       {/* Customer Detailed Side Drawer */}
       {viewCustomer && (
@@ -962,6 +900,6 @@ export default function CustomersAdmin() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

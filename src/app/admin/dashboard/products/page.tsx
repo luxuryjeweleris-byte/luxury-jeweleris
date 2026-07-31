@@ -11,37 +11,7 @@ import { supabase } from '../../../../lib/supabase';
 import type { DbProduct } from '../../../../lib/supabase';
 import '../../../admin/admin.css';
 
-const navItems = [
-  { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { href: '/admin/dashboard/products', label: 'Products', icon: Package },
-  { href: '/admin/dashboard/categories', label: 'Category Circles', icon: Grid },
-  { href: '/admin/dashboard/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/admin/dashboard/customers', label: 'Customers', icon: Users },
-  { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
-];
-
-function AdminSidebar({ adminEmail }: { adminEmail: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const handleSignOut = async () => { await supabase.auth.signOut(); router.push('/admin'); };
-  return (
-    <aside className="admin-sidebar">
-      <div className="admin-logo"><h2>Luxury Jeweleris</h2><span>Admin Panel</span></div>
-      <nav className="admin-nav">
-        <div className="admin-nav-section">Menu</div>
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link key={href} href={href} className={`admin-nav-link ${pathname === href ? 'active' : ''}`}>
-            <Icon size={16} />{label}
-          </Link>
-        ))}
-      </nav>
-      <div className="admin-sidebar-footer">
-        <div style={{ fontSize: '12px', color: '#6366f1', marginBottom: '10px', padding: '0 4px', wordBreak: 'break-all' }}>{adminEmail}</div>
-        <button className="admin-nav-link" onClick={handleSignOut}><LogOut size={16} />Sign Out</button>
-      </div>
-    </aside>
-  );
-}
+import { useAdminContext } from '../layout';
 
 const EMPTY_PRODUCT: Partial<DbProduct> = {
   name: '', price: 0, comp_price: 0, category: 'Ring', style: '', shape: 'Round',
@@ -52,8 +22,7 @@ const EMPTY_PRODUCT: Partial<DbProduct> = {
 };
 
 export default function ProductsAdmin() {
-  const router = useRouter();
-  const [adminEmail, setAdminEmail] = useState('');
+  const { adminEmail } = useAdminContext();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<DbProduct[]>([]);
   const [search, setSearch] = useState('');
@@ -72,25 +41,22 @@ export default function ProductsAdmin() {
   const [jsonInputText, setJsonInputText] = useState<string>('');
 
   const fetchProducts = useCallback(async () => {
-    const { data } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    setProducts((data as DbProduct[]) ?? []);
+    try {
+      const { data } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+      setProducts((data as DbProduct[]) ?? []);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { router.push('/admin'); return; }
-      const { data: adminData } = await supabase.from('admin_users').select('email').eq('user_id', session.user.id).eq('is_active', true).maybeSingle();
-      if (!adminData) { router.push('/admin'); return; }
-      setAdminEmail(adminData.email);
-      await fetchProducts();
-      setLoading(false);
-    };
-    init();
-  }, [router, fetchProducts]);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const openAdd = () => {
     setEditing(null);
@@ -379,61 +345,60 @@ export default function ProductsAdmin() {
 
   const setField = (key: keyof DbProduct, value: unknown) => setForm(f => ({ ...f, [key]: value }));
 
-  if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1117' }}>
-      <Loader2 size={32} className="admin-spin" color="#6366f1" />
-    </div>
-  );
-
   return (
-    <div className="admin-shell">
-      <AdminSidebar adminEmail={adminEmail} />
-      <div className="admin-main">
-        <div className="admin-topbar">
-          <span className="admin-topbar-title">Catalog & Inventory Management</span>
-          <div className="admin-topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {/* View Mode Switcher (Table vs Grid) */}
-            <div style={{ display: 'inline-flex', background: '#131828', border: '1px solid var(--admin-border)', padding: '3px', borderRadius: '8px', gap: '3px' }}>
-              <button
-                type="button"
-                onClick={() => setViewMode('table')}
-                style={{
-                  background: viewMode === 'table' ? '#6366f1' : 'transparent',
-                  color: viewMode === 'table' ? '#ffffff' : '#94a3b8',
-                  border: 'none', padding: '6px 12px', borderRadius: '6px',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
-                  fontSize: '12px', fontWeight: 600, transition: 'all 150ms ease'
-                }}
-                title="Switch to Table View"
-              >
-                <List size={14} />
-                <span>Table</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                style={{
-                  background: viewMode === 'grid' ? '#6366f1' : 'transparent',
-                  color: viewMode === 'grid' ? '#ffffff' : '#94a3b8',
-                  border: 'none', padding: '6px 12px', borderRadius: '6px',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
-                  fontSize: '12px', fontWeight: 600, transition: 'all 150ms ease'
-                }}
-                title="Switch to Grid View"
-              >
-                <Grid size={14} />
-                <span>Grid View</span>
-              </button>
-            </div>
-
-            <button className="admin-btn admin-btn-primary" onClick={openAdd}>
-              <Plus size={15} /> Add New Product
+    <>
+      <div className="admin-topbar">
+        <span className="admin-topbar-title">Catalog & Inventory Management</span>
+        <div className="admin-topbar-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* View Mode Switcher (Table vs Grid) */}
+          <div style={{ display: 'inline-flex', background: '#131828', border: '1px solid var(--admin-border)', padding: '3px', borderRadius: '8px', gap: '3px' }}>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              style={{
+                background: viewMode === 'table' ? '#6366f1' : 'transparent',
+                color: viewMode === 'table' ? '#ffffff' : '#94a3b8',
+                border: 'none', padding: '6px 12px', borderRadius: '6px',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
+                fontSize: '12px', fontWeight: 600, transition: 'all 150ms ease'
+              }}
+              title="Switch to Table View"
+            >
+              <List size={14} />
+              <span>Table</span>
             </button>
-            <div className="admin-avatar">{adminEmail[0]?.toUpperCase()}</div>
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              style={{
+                background: viewMode === 'grid' ? '#6366f1' : 'transparent',
+                color: viewMode === 'grid' ? '#ffffff' : '#94a3b8',
+                border: 'none', padding: '6px 12px', borderRadius: '6px',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
+                fontSize: '12px', fontWeight: 600, transition: 'all 150ms ease'
+              }}
+              title="Switch to Grid View"
+            >
+              <Grid size={14} />
+              <span>Grid View</span>
+            </button>
           </div>
-        </div>
 
-        <div className="admin-content">
+          <button className="admin-btn admin-btn-primary" onClick={openAdd}>
+            <Plus size={15} /> Add New Product
+          </button>
+          <div className="admin-avatar">{adminEmail[0]?.toUpperCase() || 'A'}</div>
+        </div>
+      </div>
+
+      <div className="admin-content">
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '12px' }}>
+            <Loader2 size={32} className="admin-spin" color="#6366f1" />
+            <span style={{ fontSize: '13px', color: '#8892a4' }}>Loading Catalog & Inventory...</span>
+          </div>
+        ) : (
+          <>
 
           {/* Sleek Minimal Metric Pills Row */}
           <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -994,8 +959,9 @@ export default function ProductsAdmin() {
             )}
 
           </div>
-        </div>
-      </div>
+        </>
+      )}
+    </div>
 
       {showModal && (
         <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
@@ -1590,16 +1556,16 @@ export default function ProductsAdmin() {
                   )}
                 </div>
 
-                {/* RareCarat / Supplier 360 Metadata JSON Input */}
+                {/* Interactive 360° Stream / Supplier Integration */}
                 <div>
                   <label className="admin-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>RareCarat / Supplier 360° Metadata JSON Payload</span>
-                    <span className="badge badge-confirmed" style={{ fontSize: '10px' }}>Zero Storage Recommended</span>
+                    <span>Interactive 360° View Stream / Supplier Media Data</span>
+                    <span className="badge badge-confirmed" style={{ fontSize: '10px' }}>Instant HD Stream</span>
                   </label>
                   <textarea
                     className="admin-input"
-                    style={{ marginBottom: 0, height: '120px', fontFamily: 'monospace', fontSize: '11.5px', lineHeight: '1.4' }}
-                    placeholder={`Paste the 360 JSON here, e.g.:\n{\n  "retailerId": 58,\n  "itemId": "JNB0891-14KY-LAB",\n  "shapes": { "default": { "frameCount": 256, "baseUrl": "https://..." } }\n}`}
+                    style={{ marginBottom: 0, height: '95px', fontFamily: 'inherit', fontSize: '13px', lineHeight: '1.5' }}
+                    placeholder="Paste 360° view link or supplier media payload here..."
                     value={jsonInputText}
                     onChange={e => {
                       const val = e.target.value;
@@ -1612,8 +1578,8 @@ export default function ProductsAdmin() {
                       }
                     }}
                   />
-                  <span style={{ fontSize: '11px', color: '#a5b4fc', marginTop: '4px', display: 'block' }}>
-                    💡 <strong>No Image Upload Needed!</strong> Paste the 360 JSON payload provided by the diamond supplier. The website will automatically render the interactive 360° viewer without saving any images on Cloudinary!
+                  <span style={{ fontSize: '11.5px', color: '#a5b4fc', marginTop: '6px', display: 'block', lineHeight: '1.4' }}>
+                    ✨ <strong>Automated 360° Stream:</strong> Paste the media link or 360° data provided by your supplier. The storefront will automatically generate the smooth interactive 360° view.
                   </span>
                 </div>
 
@@ -1764,6 +1730,6 @@ export default function ProductsAdmin() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

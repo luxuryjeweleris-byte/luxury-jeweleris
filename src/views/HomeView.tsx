@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Ring360Viewer from '../components/Ring360Viewer';
 import TrustStrip from '../components/TrustStrip';
 import CategoryCarousel from '../components/CategoryCarousel';
 import Button from '../components/Button';
@@ -159,28 +158,6 @@ export const HomeView: React.FC = () => {
         </div>
       </section>
 
-      {/* Promo Band */}
-      <section className="promo-band container">
-        <div className="promo-card-inner">
-          <div className="promo-info">
-            <div className="badge badge-featured" style={{ marginBottom: '12px', display: 'inline-flex' }}>
-              LIMITED TIME OFFER
-            </div>
-            <h3 className="h1-text" style={{ color: 'var(--color-ink)', marginBottom: '8px' }}>
-              Claim $100 off your ring setting
-            </h3>
-            <p className="body-text" style={{ maxWidth: '480px', marginBottom: '24px' }}>
-              Join our newsletter for exclusive offers, new arrival alerts, and get a $100 coupon valid for any gold or platinum ring setting.
-            </p>
-            <Button variant="gold" onClick={() => alert('Coupon code: LUXURYJEWEL100 applied at checkout!')}>
-              Claim $100 off
-            </Button>
-          </div>
-          <div className="promo-visual">
-            <Ring360Viewer autoplay={true} metalColor="platinum" caratSize={1.1} width={280} height={280} />
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

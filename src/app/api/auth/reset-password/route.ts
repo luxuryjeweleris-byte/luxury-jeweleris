@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const resetId = rows[0].id;
 
     const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
-    const user = users.find((u) => u.email === normalizedEmail);
+    const user = users.find((u: any) => u.email === normalizedEmail);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }

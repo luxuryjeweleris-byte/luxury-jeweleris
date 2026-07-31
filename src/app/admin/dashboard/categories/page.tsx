@@ -1,46 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
 import {
-  LayoutDashboard, Package, ShoppingCart, Users, Settings,
-  LogOut, Plus, Pencil, Trash2, Loader2, Search, X, Image, Upload, Grid
+  Plus, Pencil, Trash2, Loader2, X, Upload, Grid
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
+import { useAdminContext } from '../layout';
 import '../../../admin/admin.css';
-
-const navItems = [
-  { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
-  { href: '/admin/dashboard/products', label: 'Products', icon: Package },
-  { href: '/admin/dashboard/categories', label: 'Category Circles', icon: Grid },
-  { href: '/admin/dashboard/orders', label: 'Orders', icon: ShoppingCart },
-  { href: '/admin/dashboard/customers', label: 'Customers', icon: Users },
-  { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
-];
-
-function AdminSidebar({ adminEmail }: { adminEmail: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const handleSignOut = async () => { await supabase.auth.signOut(); router.push('/admin'); };
-  return (
-    <aside className="admin-sidebar">
-      <div className="admin-logo"><h2>Luxury Jeweleris</h2><span>Admin Panel</span></div>
-      <nav className="admin-nav">
-        <div className="admin-nav-section">Menu</div>
-        {navItems.map(({ href, label, icon: Icon }) => (
-          <Link key={href} href={href} className={`admin-nav-link ${pathname === href ? 'active' : ''}`}>
-            <Icon size={16} />{label}
-          </Link>
-        ))}
-      </nav>
-      <div className="admin-sidebar-footer">
-        <div style={{ fontSize: '12px', color: '#6366f1', marginBottom: '10px', padding: '0 4px', wordBreak: 'break-all' }}>{adminEmail}</div>
-        <button className="admin-nav-link" onClick={handleSignOut}><LogOut size={16} />Sign Out</button>
-      </div>
-    </aside>
-  );
-}
 
 export interface DbCategoryCircle {
   id: string;
@@ -73,8 +39,7 @@ const DEFAULT_CIRCLES: Omit<DbCategoryCircle, 'id'>[] = [
 ];
 
 export default function CategoryCirclesAdmin() {
-  const router = useRouter();
-  const [adminEmail, setAdminEmail] = useState('');
+  const { adminEmail } = useAdminContext();
   const [loading, setLoading] = useState(true);
   const [circles, setCircles] = useState<DbCategoryCircle[]>([]);
   const [editingItem, setEditingItem] = useState<DbCategoryCircle | null>(null);
@@ -94,11 +59,12 @@ export default function CategoryCirclesAdmin() {
       if (!error && data && data.length > 0) {
         setCircles(data as DbCategoryCircle[]);
       } else {
-        // Fallback to default 18 items so cards are immediately visible!
         setCircles(DEFAULT_CIRCLES.map((c, idx) => ({ ...c, id: `default-${idx + 1}` })));
       }
     } catch {
       setCircles(DEFAULT_CIRCLES.map((c, idx) => ({ ...c, id: `default-${idx + 1}` })));
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -120,17 +86,8 @@ export default function CategoryCirclesAdmin() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { router.push('/admin'); return; }
-      const { data: adminData } = await supabase.from('admin_users').select('email').eq('user_id', session.user.id).eq('is_active', true).maybeSingle();
-      if (!adminData) { router.push('/admin'); return; }
-      setAdminEmail(adminData.email);
-      await fetchCircles();
-      setLoading(false);
-    };
-    init();
-  }, [router, fetchCircles]);
+    fetchCircles();
+  }, [fetchCircles]);
 
   const openAdd = () => {
     setEditingItem(null);
@@ -211,72 +168,72 @@ export default function CategoryCirclesAdmin() {
     await fetchCircles();
   };
 
-  if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1117' }}>
-      <Loader2 size={32} className="admin-spin" color="#6366f1" />
-    </div>
-  );
-
   return (
-    <div className="admin-shell">
-      <AdminSidebar adminEmail={adminEmail} />
-      <div className="admin-main">
-        <div className="admin-topbar">
-          <span className="admin-topbar-title">Homepage Category Circles</span>
-          <div className="admin-topbar-right">
-            {circles.length === 0 && (
-              <button className="admin-btn admin-btn-ghost" onClick={seedDefaultCircles} disabled={seeding}>
-                {seeding ? <Loader2 size={14} className="admin-spin" /> : '⚡ Load Default 18 Circles'}
-              </button>
-            )}
-            <button className="admin-btn admin-btn-primary" onClick={openAdd}>
-              <Plus size={15} /> Add Category Circle
+    <>
+      <div className="admin-topbar">
+        <span className="admin-topbar-title">Homepage Category Circles</span>
+        <div className="admin-topbar-right">
+          {circles.length === 0 && (
+            <button className="admin-btn admin-btn-ghost" onClick={seedDefaultCircles} disabled={seeding}>
+              {seeding ? <Loader2 size={14} className="admin-spin" /> : '⚡ Load Default 18 Circles'}
             </button>
-            <div className="admin-avatar">{adminEmail[0]?.toUpperCase()}</div>
-          </div>
+          )}
+          <button className="admin-btn admin-btn-primary" onClick={openAdd}>
+            <Plus size={15} /> Add Category Circle
+          </button>
+          <div className="admin-avatar">{adminEmail[0]?.toUpperCase() || 'A'}</div>
         </div>
+      </div>
 
-        <div className="admin-content">
-          <div style={{ marginBottom: '16px', color: '#94a3b8', fontSize: '13px' }}>
-            Manage the circular category & style shortcut images displayed on your website homepage. You can upload custom images for each category or style.
+      <div className="admin-content">
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '12px' }}>
+            <Loader2 size={32} className="admin-spin" color="#6366f1" />
+            <span style={{ fontSize: '13px', color: '#8892a4' }}>Fetching Category Circles...</span>
           </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: '16px', color: '#94a3b8', fontSize: '13px' }}>
+              Manage the circular category & style shortcut images displayed on your website homepage. You can upload custom images for each category or style.
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
-            {circles.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', background: '#131828', padding: '40px', borderRadius: '12px', textAlign: 'center', color: '#94a3b8', border: '1px dashed #334155' }}>
-                <Grid size={36} color="#6366f1" style={{ marginBottom: '12px' }} />
-                <h4 style={{ color: '#f8fafc', fontSize: '16px' }}>No Category Circles in Database Yet</h4>
-                <p style={{ fontSize: '13px', marginTop: '4px', marginBottom: '16px' }}>Click below to populate the database with default 18 category circles or add a custom one.</p>
-                <button className="admin-btn admin-btn-primary" onClick={seedDefaultCircles} disabled={seeding}>
-                  {seeding ? <Loader2 size={14} className="admin-spin" /> : 'Populate Default 18 Circles'}
-                </button>
-              </div>
-            ) : (
-              circles.map((c) => (
-                <div key={c.id} style={{ background: '#131828', borderRadius: '12px', border: '1px solid var(--admin-border)', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
-                  
-                  {/* Circle Image Preview */}
-                  <div style={{ width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #6366f1', marginBottom: '12px', position: 'relative', background: '#000' }}>
-                    <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-
-                  <div style={{ fontWeight: 700, fontSize: '14px', color: '#f8fafc', marginBottom: '4px' }}>{c.name}</div>
-                  <div style={{ fontSize: '11px', color: '#6366f1', wordBreak: 'break-all', marginBottom: '12px' }}>{c.link}</div>
-
-                  <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: 'auto' }}>
-                    <button className="admin-btn admin-btn-ghost" style={{ flex: 1, justifyContent: 'center', padding: '6px' }} onClick={() => openEdit(c)}>
-                      <Pencil size={13} /> Edit
-                    </button>
-                    <button className="admin-btn admin-btn-danger" style={{ padding: '6px 10px' }} onClick={() => handleDelete(c.id)}>
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
+              {circles.length === 0 ? (
+                <div style={{ gridColumn: '1 / -1', background: '#131828', padding: '40px', borderRadius: '12px', textAlign: 'center', color: '#94a3b8', border: '1px dashed #334155' }}>
+                  <Grid size={36} color="#6366f1" style={{ marginBottom: '12px' }} />
+                  <h4 style={{ color: '#f8fafc', fontSize: '16px' }}>No Category Circles in Database Yet</h4>
+                  <p style={{ fontSize: '13px', marginTop: '4px', marginBottom: '16px' }}>Click below to populate the database with default 18 category circles or add a custom one.</p>
+                  <button className="admin-btn admin-btn-primary" onClick={seedDefaultCircles} disabled={seeding}>
+                    {seeding ? <Loader2 size={14} className="admin-spin" /> : 'Populate Default 18 Circles'}
+                  </button>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
+              ) : (
+                circles.map((c) => (
+                  <div key={c.id} style={{ background: '#131828', borderRadius: '12px', border: '1px solid var(--admin-border)', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                    
+                    {/* Circle Image Preview */}
+                    <div style={{ width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #6366f1', marginBottom: '12px', position: 'relative', background: '#000' }}>
+                      <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+
+                    <div style={{ fontWeight: 700, fontSize: '14px', color: '#f8fafc', marginBottom: '4px' }}>{c.name}</div>
+                    <div style={{ fontSize: '11px', color: '#6366f1', wordBreak: 'break-all', marginBottom: '12px' }}>{c.link}</div>
+
+                    <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: 'auto' }}>
+                      <button className="admin-btn admin-btn-ghost" style={{ flex: 1, justifyContent: 'center', padding: '6px' }} onClick={() => openEdit(c)}>
+                        <Pencil size={13} /> Edit
+                      </button>
+                      <button className="admin-btn admin-btn-danger" style={{ padding: '6px 10px' }} onClick={() => handleDelete(c.id)}>
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Edit / Add Modal */}
@@ -315,47 +272,47 @@ export default function CategoryCirclesAdmin() {
                 />
               </div>
 
-                {/* Drag & Drop Upload Zone */}
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  style={{
-                    border: isDragging ? '2px dashed #6366f1' : '2px dashed #334155',
-                    background: isDragging ? 'rgba(99, 102, 241, 0.1)' : '#131828',
-                    borderRadius: '12px',
-                    padding: '20px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 150ms ease',
-                    position: 'relative'
-                  }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
-                  />
-                  
-                  {form.img ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                      <img src={form.img} alt="preview" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #6366f1' }} />
-                      <span style={{ fontSize: '12px', color: '#a5b4fc' }}>Drag & drop or click to replace image</span>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                      {uploading ? <Loader2 size={24} className="admin-spin" color="#6366f1" /> : <Upload size={24} color="#6366f1" />}
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
-                        Drag & Drop image here
-                      </span>
-                      <span style={{ fontSize: '11px', color: '#64748b' }}>
-                        or click to browse from computer
-                      </span>
-                    </div>
-                  )}
-                </div>
+              {/* Drag & Drop Upload Zone */}
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                style={{
+                  border: isDragging ? '2px dashed #6366f1' : '2px dashed #334155',
+                  background: isDragging ? 'rgba(99, 102, 241, 0.1)' : '#131828',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease',
+                  position: 'relative'
+                }}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
+                />
+                
+                {form.img ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <img src={form.img} alt="preview" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #6366f1' }} />
+                    <span style={{ fontSize: '12px', color: '#a5b4fc' }}>Drag & drop or click to replace image</span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                    {uploading ? <Loader2 size={24} className="admin-spin" color="#6366f1" /> : <Upload size={24} color="#6366f1" />}
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
+                      Drag & Drop image here
+                    </span>
+                    <span style={{ fontSize: '11px', color: '#64748b' }}>
+                      or click to browse from computer
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '24px' }}>
@@ -367,6 +324,6 @@ export default function CategoryCirclesAdmin() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -56,7 +56,7 @@ export default function WishlistPage() {
   }, [router]);
 
   const handleProductSelect = (product: Product) => {
-    router.push(`/diamonds/${product.id}`);
+    router.push(`/shop/${product.id}`);
   };
 
   if (loading) {

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, ShoppingBag, Menu, X, Heart } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, Heart, User, ShieldCheck, LogOut, Sparkles, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { supabase } from '../lib/supabase';
 import type { DbProfile } from '../lib/supabase';
@@ -125,19 +125,24 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+  const [userProfile, setUserProfile] = useState<Partial<DbProfile> | null>(null);
+
   useEffect(() => {
     if (!user) {
       setProfileIncomplete(false);
+      setUserProfile(null);
       return;
     }
     const checkProfile = async () => {
       try {
         const { data } = await supabase
           .from('profiles')
-          .select('phone, address_line1')
+          .select('full_name, phone, address_line1, ring_size')
           .eq('id', user.id)
           .maybeSingle();
-        setProfileIncomplete(!data?.phone && !data?.address_line1);
+        setUserProfile(data);
+        const isIncomplete = !data?.phone || !data?.address_line1 || !data?.ring_size || !data?.full_name;
+        setProfileIncomplete(isIncomplete);
       } catch {
         setProfileIncomplete(false);
       }
@@ -228,65 +233,220 @@ export const Navbar: React.FC = () => {
             {user ? (
               <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={userDropdownRef}>
                 <button 
-                  className="navbar-top-btn" 
+                  className="navbar-top-btn account-avatar-pill" 
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    color: 'inherit', 
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)', 
+                    color: '#ffffff', 
                     font: 'inherit', 
                     cursor: 'pointer', 
-                    padding: 0,
-                    fontWeight: '600'
+                    padding: '3px 10px 3px 4px',
+                    borderRadius: '20px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    transition: 'all 150ms ease'
                   }}
                 >
-                  {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #0E8C8A, #065F5E)',
+                    color: '#ffffff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                  }}>
+                    {(userProfile?.full_name?.[0] || user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U').toUpperCase()}
+                    {profileIncomplete && (
+                      <span style={{
+                        position: 'absolute',
+                        top: -1,
+                        right: -1,
+                        width: 7,
+                        height: 7,
+                        borderRadius: '50%',
+                        background: '#ef4444',
+                        border: '1.5px solid #ffffff',
+                        boxShadow: '0 0 6px rgba(239, 68, 68, 0.8)'
+                      }} />
+                    )}
+                  </div>
+                  <span style={{ fontWeight: 600, fontSize: '12px', letterSpacing: '0.2px' }}>
+                    {userProfile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0]}
+                  </span>
                 </button>
                 
                 {userMenuOpen && (
-                  <div className="contact-top-dropdown animate-fade-in" style={{ right: 0, left: 'auto', minWidth: '180px' }}>
-                    <h4 className="contact-dropdown-title">My Account</h4>
-                    <p className="contact-dropdown-subtitle" style={{ fontSize: '11px', wordBreak: 'break-all' }}>{user.email}</p>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '12px' }}>
-                      <div style={{ position: 'relative' }}>
+                  <div className="contact-top-dropdown animate-fade-in" style={{ right: 0, left: 'auto', width: '280px', padding: '16px' }}>
+                    {/* Account Header */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' }}>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #0E8C8A, #054e4d)',
+                        color: '#ffffff',
+                        fontWeight: 800,
+                        fontSize: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(14, 140, 138, 0.3)',
+                        flexShrink: 0
+                      }}>
+                        {(userProfile?.full_name?.[0] || user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U').toUpperCase()}
+                      </div>
+                      <div style={{ overflow: 'hidden', flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {userProfile?.full_name || user.user_metadata?.full_name || 'Valued Client'}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {user.email}
+                        </div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', marginTop: '3px', fontSize: '10px', fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '1px 6px', borderRadius: '10px' }}>
+                          <Sparkles size={10} /> Luxury Member
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Profile Completion Nudge Banner */}
+                    {profileIncomplete ? (
+                      <div style={{
+                        marginTop: '12px',
+                        padding: '12px',
+                        background: 'linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%)',
+                        borderRadius: '10px',
+                        border: '1.5px solid #fca5a5'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', fontWeight: 700, color: '#dc2626' }}>
+                          <AlertCircle size={14} color="#dc2626" />
+                          <span>Action Required: Incomplete Profile</span>
+                        </div>
+                        <p style={{ fontSize: '11.5px', color: '#475569', margin: '6px 0 10px 0', lineHeight: 1.4 }}>
+                          Set your <strong>Ring Size</strong>, <strong>Phone</strong> &amp; <strong>Address</strong> for 1-click checkout and custom ring size suggestions.
+                        </p>
+
+                        {/* Progress Bar */}
+                        <div style={{ width: '100%', height: '5px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
+                          <div style={{ width: '35%', height: '100%', background: 'linear-gradient(90deg, #f59e0b, #ef4444)', borderRadius: '3px' }} />
+                        </div>
+
                         <Link 
                           href="/account" 
-                          className="contact-dropdown-chat-btn" 
-                          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0E8C8A' }}
                           onClick={() => setUserMenuOpen(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '5px',
+                            fontSize: '11.5px',
+                            fontWeight: 700,
+                            color: '#ffffff',
+                            background: 'linear-gradient(135deg, #0E8C8A, #096866)',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            textDecoration: 'none',
+                            boxShadow: '0 2px 8px rgba(14, 140, 138, 0.3)'
+                          }}
                         >
-                          My Profile
+                          Complete Profile Info <ChevronRight size={13} />
                         </Link>
-                        {profileIncomplete && (
-                          <span style={{
-                            position: 'absolute', top: -2, right: -2, width: 10, height: 10,
-                            borderRadius: '50%', background: '#dc2626', border: '2px solid white'
-                          }} />
-                        )}
                       </div>
+                    ) : (
+                      <div style={{
+                        marginTop: '10px',
+                        padding: '8px 10px',
+                        background: '#f0fdf4',
+                        borderRadius: '8px',
+                        border: '1px solid #bbf7d0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '11px',
+                        color: '#15803d',
+                        fontWeight: 600
+                      }}>
+                        <CheckCircle2 size={13} color="#16a34a" />
+                        <span>Profile 100% Complete &amp; Verified</span>
+                      </div>
+                    )}
+
+                    {/* Actions List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', marginTop: '12px' }}>
+                      <Link 
+                        href="/account" 
+                        style={{
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '9px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12.5px',
+                          fontWeight: 600,
+                          color: '#0f172a',
+                          background: '#f8fafc',
+                          border: '1px solid #e2e8f0'
+                        }}
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <User size={15} color="#0E8C8A" />
+                        <span>My Profile &amp; Preferences</span>
+                      </Link>
 
                       {isAdmin && (
                         <Link 
                           href="/admin/dashboard" 
-                          className="contact-dropdown-chat-btn" 
-                          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#6366f1' }}
+                          style={{
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '9px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12.5px',
+                            fontWeight: 600,
+                            color: '#ffffff',
+                            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.25)'
+                          }}
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          Admin Panel
+                          <ShieldCheck size={15} />
+                          <span>Admin Panel</span>
                         </Link>
                       )}
                       
                       <button 
-                        className="contact-dropdown-chat-btn" 
-                        style={{ background: '#f1f5f9', color: '#1e293b', border: '1px solid #e2e8f0' }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          fontSize: '12.5px',
+                          fontWeight: 600,
+                          color: '#64748b',
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          cursor: 'pointer',
+                          width: '100%',
+                          marginTop: '2px'
+                        }}
                         onClick={async () => {
                           await supabase.auth.signOut();
                           setUserMenuOpen(false);
                           router.refresh();
                         }}
                       >
-                        Sign Out
+                        <LogOut size={14} color="#94a3b8" />
+                        <span>Sign Out</span>
                       </button>
                     </div>
                   </div>

@@ -36,6 +36,8 @@ interface Ring360ViewerProps {
   height?: number;
   showControls?: boolean;
   showJsonTester?: boolean;
+  cardSizePreset?: 'sm' | 'md' | 'lg' | 'xl';
+  onCardSizeChange?: (size: 'sm' | 'md' | 'lg' | 'xl') => void;
 }
 
 export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
@@ -50,6 +52,8 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
   height = 450,
   showControls = true,
   showJsonTester = true,
+  cardSizePreset = 'md',
+  onCardSizeChange,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -84,13 +88,19 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
 
   // Selected Resolution
   const [selectedSize, setSelectedSize] = useState<number>(1000);
-  const [isPlaying, setIsPlaying] = useState<boolean>(autoplay);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [currentFrame, setCurrentFrame] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [loadedCount, setLoadedCount] = useState<number>(0);
   const [isPreloading, setIsPreloading] = useState<boolean>(false);
   const [showJsonModal, setShowJsonModal] = useState<boolean>(false);
   const [inputJsonText, setInputJsonText] = useState<string>('');
+
+  useEffect(() => {
+    if (autoplay) {
+      setIsPlaying(true);
+    }
+  }, [autoplay]);
 
   // Drag interaction refs
   const isDragging = useRef<boolean>(false);
@@ -190,8 +200,6 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
 
   // Inertia and Autoplay animation loop
   useEffect(() => {
-    if (totalFrames === 0) return;
-
     let animId: number;
 
     const animate = () => {
@@ -200,18 +208,20 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
         return;
       }
 
+      const frameCount = totalFrames > 0 ? totalFrames : 100;
+
       // Handle glide inertia after release
       if (Math.abs(velocity.current) > 0.05) {
         setCurrentFrame((prev) => {
           let next = prev + velocity.current;
-          if (next < 0) next += totalFrames;
-          if (next >= totalFrames) next -= totalFrames;
+          if (next < 0) next += frameCount;
+          if (next >= frameCount) next -= frameCount;
           return next;
         });
         velocity.current *= 0.92; // Friction dampening
       } else if (isPlaying) {
         // Autoplay rotation
-        setCurrentFrame((prev) => (prev + 0.35) % totalFrames);
+        setCurrentFrame((prev) => (prev + 0.38) % frameCount);
       }
 
       animId = requestAnimationFrame(animate);
@@ -224,7 +234,7 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
   // Mouse & Touch Drag Handlers
   const handleDragStart = useCallback(
     (clientX: number) => {
-      if (!interactive || totalFrames === 0) return;
+      if (!interactive) return;
       isDragging.current = true;
       startX.current = clientX;
       startFrame.current = currentFrame;
@@ -233,18 +243,19 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
       velocity.current = 0;
       setIsPlaying(false);
     },
-    [interactive, totalFrames, currentFrame]
+    [interactive, currentFrame]
   );
 
   const handleDragMove = useCallback(
     (clientX: number) => {
-      if (!isDragging.current || totalFrames === 0) return;
+      const frameCount = totalFrames > 0 ? totalFrames : 100;
+      if (!isDragging.current) return;
 
       const deltaX = clientX - startX.current;
       // Sensitivity: 2.5px drag = 1 frame rotation
       const frameDelta = deltaX / 2.5;
-      let nextFrame = (startFrame.current - frameDelta) % totalFrames;
-      if (nextFrame < 0) nextFrame += totalFrames;
+      let nextFrame = (startFrame.current - frameDelta) % frameCount;
+      if (nextFrame < 0) nextFrame += frameCount;
 
       setCurrentFrame(nextFrame);
 
@@ -263,7 +274,12 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
 
   const handleDragEnd = useCallback(() => {
     isDragging.current = false;
-  }, []);
+    if (autoplay) {
+      setTimeout(() => {
+        setIsPlaying(true);
+      }, 400);
+    }
+  }, [autoplay]);
 
   // Event bindings
   const onMouseDown = (e: React.MouseEvent) => handleDragStart(e.clientX);
@@ -475,6 +491,21 @@ export const Ring360Viewer: React.FC<Ring360ViewerProps> = ({
                     onClick={() => setSelectedSize(sz)}
                   >
                     {sz}P
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {onCardSizeChange && (
+              <div className="card-size-picker" title="Adjust Card View Size">
+                <span className="card-size-label">Card:</span>
+                {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
+                  <button
+                    key={sz}
+                    className={`card-size-badge ${cardSizePreset === sz ? 'active' : ''}`}
+                    onClick={() => onCardSizeChange(sz)}
+                  >
+                    {sz.toUpperCase()}
                   </button>
                 ))}
               </div>
