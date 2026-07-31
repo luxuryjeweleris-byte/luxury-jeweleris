@@ -20,19 +20,19 @@ export const HomeView: React.FC = () => {
   const video2Ref = React.useRef<HTMLVideoElement | null>(null);
 
   const handleVideo1Ended = () => {
-    setActiveVideoIndex(1);
     if (video2Ref.current) {
       video2Ref.current.currentTime = 0;
       video2Ref.current.play().catch(() => {});
     }
+    setActiveVideoIndex(1);
   };
 
   const handleVideo2Ended = () => {
-    setActiveVideoIndex(0);
     if (video1Ref.current) {
       video1Ref.current.currentTime = 0;
       video1Ref.current.play().catch(() => {});
     }
+    setActiveVideoIndex(0);
   };
 
   const popularStyles = [
@@ -81,6 +81,8 @@ export const HomeView: React.FC = () => {
                 margin: '0 auto',
                 overflow: 'hidden',
                 borderRadius: '16px',
+                background: '#faf8f5',
+                boxShadow: '0 12px 32px rgba(15, 23, 42, 0.06)'
               }}
             >
               {/* Video 1 */}
@@ -96,8 +98,9 @@ export const HomeView: React.FC = () => {
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
+                  objectFit: 'cover',
                   opacity: activeVideoIndex === 0 ? 1 : 0,
+                  zIndex: activeVideoIndex === 0 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
                 }}
@@ -115,8 +118,9 @@ export const HomeView: React.FC = () => {
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
+                  objectFit: 'cover',
                   opacity: activeVideoIndex === 1 ? 1 : 0,
+                  zIndex: activeVideoIndex === 1 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
                 }}
