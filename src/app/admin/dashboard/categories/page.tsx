@@ -18,25 +18,63 @@ export interface DbCategoryCircle {
 }
 
 const DEFAULT_CIRCLES: Omit<DbCategoryCircle, 'id'>[] = [
-  { name: 'Engagement rings', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 1, is_active: true },
-  { name: 'Earrings', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=200&auto=format&fit=crop', link: '/earrings', sort_order: 2, is_active: true },
-  { name: 'Wedding bands', img: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands', sort_order: 3, is_active: true },
-  { name: 'Necklaces', img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=200&auto=format&fit=crop', link: '/necklaces', sort_order: 4, is_active: true },
-  { name: 'Bracelets', img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=200&auto=format&fit=crop', link: '/bracelets', sort_order: 5, is_active: true },
-  { name: 'Three stone', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 6, is_active: true },
-  { name: 'Solitaire', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 7, is_active: true },
-  { name: 'Hoops', img: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?q=80&w=200&auto=format&fit=crop', link: '/earrings', sort_order: 8, is_active: true },
-  { name: 'Gifts', img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=200&auto=format&fit=crop', link: '/gifts', sort_order: 9, is_active: true },
-  { name: 'Tennis bracelets', img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=200&auto=format&fit=crop', link: '/bracelets', sort_order: 10, is_active: true },
-  { name: 'Eternity bands', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands', sort_order: 11, is_active: true },
-  { name: 'Pearls', img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?q=80&w=200&auto=format&fit=crop', link: '/necklaces', sort_order: 12, is_active: true },
-  { name: 'Men\'s bands', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands', sort_order: 13, is_active: true },
-  { name: 'Pendants', img: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=200&auto=format&fit=crop', link: '/necklaces', sort_order: 14, is_active: true },
-  { name: 'Pavé', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 15, is_active: true },
-  { name: 'Hidden Halo', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 16, is_active: true },
-  { name: 'Stackable rings', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands', sort_order: 17, is_active: true },
-  { name: 'Halo rings', img: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings', sort_order: 18, is_active: true },
+  { name: 'Engagement rings', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 1, is_active: true },
+  { name: 'Earrings', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=90&w=600&auto=format&fit=crop', link: '/earrings', sort_order: 2, is_active: true },
+  { name: 'Wedding bands', img: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?q=90&w=600&auto=format&fit=crop', link: '/wedding-bands', sort_order: 3, is_active: true },
+  { name: 'Necklaces', img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=90&w=600&auto=format&fit=crop', link: '/necklaces', sort_order: 4, is_active: true },
+  { name: 'Bracelets', img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=90&w=600&auto=format&fit=crop', link: '/bracelets', sort_order: 5, is_active: true },
+  { name: 'Three stone', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 6, is_active: true },
+  { name: 'Solitaire', img: 'https://images.unsplash.com/photo-1543294001-f7cbfe92237e?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 7, is_active: true },
+  { name: 'Hoops', img: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?q=90&w=600&auto=format&fit=crop', link: '/earrings', sort_order: 8, is_active: true },
+  { name: 'Gifts', img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=90&w=600&auto=format&fit=crop', link: '/gifts', sort_order: 9, is_active: true },
+  { name: 'Tennis bracelets', img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=90&w=600&auto=format&fit=crop', link: '/bracelets', sort_order: 10, is_active: true },
+  { name: 'Eternity bands', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=90&w=600&auto=format&fit=crop', link: '/wedding-bands', sort_order: 11, is_active: true },
+  { name: 'Pearls', img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?q=90&w=600&auto=format&fit=crop', link: '/necklaces', sort_order: 12, is_active: true },
+  { name: 'Men\'s bands', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=90&w=600&auto=format&fit=crop', link: '/wedding-bands', sort_order: 13, is_active: true },
+  { name: 'Pendants', img: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=90&w=600&auto=format&fit=crop', link: '/necklaces', sort_order: 14, is_active: true },
+  { name: 'Pavé', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 15, is_active: true },
+  { name: 'Hidden Halo', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 16, is_active: true },
+  { name: 'Stackable rings', img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=90&w=600&auto=format&fit=crop', link: '/wedding-bands', sort_order: 17, is_active: true },
+  { name: 'Halo rings', img: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=90&w=600&auto=format&fit=crop', link: '/engagement-rings', sort_order: 18, is_active: true },
 ];
+
+const uploadWithProgress = (file: File, onProgress: (percent: number) => void): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        onProgress(percent);
+      }
+    });
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const res = JSON.parse(xhr.responseText);
+          if (res.url) {
+            resolve(res.url);
+          } else {
+            reject(new Error('No URL returned from server'));
+          }
+        } catch {
+          reject(new Error('Invalid response from server'));
+        }
+      } else {
+        reject(new Error(`Upload failed with status ${xhr.status}`));
+      }
+    });
+
+    xhr.addEventListener('error', () => reject(new Error('Network error during upload')));
+    xhr.addEventListener('abort', () => reject(new Error('Upload aborted')));
+
+    xhr.open('POST', '/api/upload');
+    xhr.send(formData);
+  });
+};
 
 export default function CategoryCirclesAdmin() {
   const { adminEmail } = useAdminContext();
@@ -51,13 +89,11 @@ export default function CategoryCirclesAdmin() {
 
   const fetchCircles = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('category_circles')
-        .select('*')
-        .order('sort_order', { ascending: true });
+      const res = await fetch('/api/admin/categories');
+      const result = await res.json();
       
-      if (!error && data && data.length > 0) {
-        setCircles(data as DbCategoryCircle[]);
+      if (res.ok && result.data && result.data.length > 0) {
+        setCircles(result.data as DbCategoryCircle[]);
       } else {
         setCircles(DEFAULT_CIRCLES.map((c, idx) => ({ ...c, id: `default-${idx + 1}` })));
       }
@@ -71,15 +107,17 @@ export default function CategoryCirclesAdmin() {
   const seedDefaultCircles = async () => {
     setSeeding(true);
     try {
-      const { error } = await supabase.from('category_circles').insert(DEFAULT_CIRCLES);
-      if (error) {
-        console.error('Seeding error:', error);
-        alert('Please run the SQL script in your Supabase SQL Editor first!');
-      } else {
-        await fetchCircles();
+      for (const item of DEFAULT_CIRCLES) {
+        await fetch('/api/admin/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item),
+        });
       }
+      await fetchCircles();
     } catch (e) {
       console.error(e);
+      alert('Error seeding default circles.');
     } finally {
       setSeeding(false);
     }
@@ -103,26 +141,28 @@ export default function CategoryCirclesAdmin() {
 
   const [isDragging, setIsDragging] = useState(false);
 
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const processFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
     }
     setUploading(true);
+    setUploadProgress(0);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      if (!res.ok) { alert('Failed to upload image.'); return; }
-      const data = await res.json();
-      if (data.url) {
-        setForm(prev => ({ ...prev, img: data.url }));
+      const url = await uploadWithProgress(file, (percent) => {
+        setUploadProgress(percent);
+      });
+      if (url) {
+        setForm(prev => ({ ...prev, img: url }));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error uploading image.');
+      alert(`Error uploading image: ${err.message || err}`);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -147,16 +187,46 @@ export default function CategoryCirclesAdmin() {
 
     setSaving(true);
     try {
-      if (editingItem) {
-        await supabase.from('category_circles').update(form).eq('id', editingItem.id);
+      const isDefaultId = editingItem && String(editingItem.id).startsWith('default-');
+
+      if (editingItem && !isDefaultId) {
+        const res = await fetch('/api/admin/categories', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingItem.id,
+            name: form.name,
+            img: form.img,
+            link: form.link || '/',
+            sort_order: form.sort_order || 1,
+            is_active: form.is_active ?? true,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update category circle');
       } else {
-        await supabase.from('category_circles').insert([form]);
+        const res = await fetch('/api/admin/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name,
+            img: form.img,
+            link: form.link || '/',
+            sort_order: form.sort_order || (circles.length + 1),
+            is_active: form.is_active ?? true,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to create category circle');
       }
+
       setShowModal(false);
       await fetchCircles();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error saving item.');
+      alert(err.message || 'Error saving item.');
     } finally {
       setSaving(false);
     }
@@ -164,7 +234,11 @@ export default function CategoryCirclesAdmin() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this category circle?')) return;
-    await supabase.from('category_circles').delete().eq('id', id);
+    if (!id.startsWith('default-')) {
+      const res = await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) console.error('Delete error:', data.error);
+    }
     await fetchCircles();
   };
 
@@ -296,14 +370,37 @@ export default function CategoryCirclesAdmin() {
                   style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
                 />
                 
-                {form.img ? (
+                {uploading ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+                    <Loader2 size={26} className="admin-spin" color="#6366f1" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#6366f1' }}>
+                        Uploading to Cloudinary...
+                      </span>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#f8fafc', background: '#1e1b4b', padding: '2px 8px', borderRadius: '12px', border: '1px solid #6366f1' }}>
+                        {uploadProgress}%
+                      </span>
+                    </div>
+                    <div style={{ width: '85%', height: '7px', background: '#1e293b', borderRadius: '4px', overflow: 'hidden', marginTop: '4px' }}>
+                      <div 
+                        style={{ 
+                          width: `${uploadProgress}%`, 
+                          height: '100%', 
+                          background: 'linear-gradient(90deg, #6366f1, #a855f7)', 
+                          borderRadius: '4px', 
+                          transition: 'width 150ms ease-out' 
+                        }} 
+                      />
+                    </div>
+                  </div>
+                ) : form.img ? (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                     <img src={form.img} alt="preview" style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #6366f1' }} />
                     <span style={{ fontSize: '12px', color: '#a5b4fc' }}>Drag & drop or click to replace image</span>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                    {uploading ? <Loader2 size={24} className="admin-spin" color="#6366f1" /> : <Upload size={24} color="#6366f1" />}
+                    <Upload size={24} color="#6366f1" />
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
                       Drag & Drop image here
                     </span>
