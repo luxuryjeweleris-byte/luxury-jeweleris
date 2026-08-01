@@ -270,9 +270,13 @@ export default function ProductsAdmin() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"? This will hide it from the store.`)) return;
+    if (!confirm(`Are you sure you want to permanently delete "${name}"? This action cannot be undone and will delete it completely from the database.`)) return;
     setDeleteId(id);
-    await supabase.from('products').update({ is_active: false }).eq('id', id);
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting product from database:', error);
+      alert(`Failed to delete product from database: ${error.message}`);
+    }
     setDeleteId(null);
     await fetchProducts();
   };

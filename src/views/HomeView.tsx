@@ -235,37 +235,14 @@ export const HomeView: React.FC = () => {
           </div>
 
           {/* Interactive Category Filter Tabs Bar */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            gap: '8px',
-            flexWrap: 'nowrap',
-            overflowX: 'auto',
-            marginBottom: '32px',
-            paddingBottom: '8px',
-            scrollbarWidth: 'none',
-            WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
-          } as React.CSSProperties}>
+          <div className="category-filter-tabs-rail">
             {['All Featured', 'Rings', 'Wedding Bands', 'Diamonds', 'Earrings', 'Necklaces', 'Bracelets', 'Gifts'].map(cat => {
               const isActive = activeCategoryTab === cat;
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategoryTab(cat)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: '30px',
-                    fontSize: '13px',
-                    fontWeight: isActive ? 700 : 500,
-                    background: isActive ? 'var(--color-teal)' : 'var(--color-card)',
-                    color: isActive ? '#ffffff' : 'var(--color-slate)',
-                    border: isActive ? '1px solid var(--color-teal)' : '1px solid var(--color-border)',
-                    cursor: 'pointer',
-                    transition: 'all 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-                    boxShadow: isActive ? '0 4px 14px rgba(14, 140, 138, 0.25)' : '0 2px 6px rgba(0,0,0,0.02)',
-                    flexShrink: 0,
-                    whiteSpace: 'nowrap',
-                  }}
+                  className={`category-filter-tab${isActive ? ' active' : ''}`}
                 >
                   {cat}
                 </button>
