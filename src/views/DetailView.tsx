@@ -226,16 +226,18 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                     transition: 'height 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
-                  <img 
-                    src={currentDisplayedImage} 
-                    alt={product.name} 
-                    style={{ 
-                      maxWidth: '100%', 
-                      maxHeight: '100%', 
-                      objectFit: 'contain',
-                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }} 
-                  />
+                  {currentDisplayedImage ? (
+                    <img 
+                      src={currentDisplayedImage} 
+                      alt={product.name} 
+                      style={{ 
+                        maxWidth: '100%', 
+                        maxHeight: '100%', 
+                        objectFit: 'contain',
+                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                      }} 
+                    />
+                  ) : null}
 
                   {/* Translucent Hover Magnifier Lens Overlay Box */}
                   {isHoveringImage && (
@@ -352,11 +354,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                       }}
                       title={`View Angle ${idx + 1}`}
                     >
-                      <img 
-                        src={imgSrc} 
-                        alt={`Angle ${idx + 1}`} 
-                        className="detail-thumb-img" 
-                      />
+                      {imgSrc ? (
+                        <img 
+                          src={imgSrc} 
+                          alt={`Angle ${idx + 1}`} 
+                          className="detail-thumb-img" 
+                        />
+                      ) : null}
                       {isActive && <div className="thumb-active-indicator" />}
                     </button>
                   );

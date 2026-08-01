@@ -66,12 +66,14 @@ export const CategoryCarousel: React.FC = () => {
                 onClick={() => handleCardClick(cat.link)}
               >
                 <div className="category-circle-wrapper">
-                  <img 
-                    src={cat.img} 
-                    alt={cat.name} 
-                    className="category-circle-img" 
-                    loading="lazy"
-                  />
+                  {cat.img ? (
+                    <img 
+                      src={cat.img} 
+                      alt={cat.name} 
+                      className="category-circle-img" 
+                      loading="lazy"
+                    />
+                  ) : null}
                 </div>
                 <span className="category-label">{cat.name}</span>
               </div>

@@ -253,18 +253,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         </button>
 
         {/* Product Image */}
-        <img
-          src={
-            selectedMetal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
+        {(() => {
+          const imgSrc = selectedMetal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
             selectedMetal === 'rose' && product.imageRoseGold ? product.imageRoseGold :
             selectedMetal === 'platinum' && product.imagePlatinum ? product.imagePlatinum :
             selectedMetal === 'silver' && product.imageSilver ? product.imageSilver :
-            product.image
-          }
-          alt={product.name}
-          className="prod-card-img"
-          loading="lazy"
-        />
+            product.image;
+          return imgSrc ? (
+            <img
+              src={imgSrc}
+              alt={product.name}
+              className="prod-card-img"
+              loading="lazy"
+            />
+          ) : (
+            <div className="prod-card-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', color: '#94a3b8', fontSize: '11px' }}>
+              No Photo
+            </div>
+          );
+        })()}
 
         {/* Feature badge bottom-left */}
         {getFeatureBadge()}

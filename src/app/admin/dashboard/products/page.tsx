@@ -797,18 +797,21 @@ export default function ProductsAdmin() {
                     >
                       {/* Image Area */}
                       <div style={{ position: 'relative', width: '100%', height: '180px', background: '#0b0f19', overflow: 'hidden', flexShrink: 0 }}>
-                        {hasPhoto ? (
-                          <img
-                            src={p.image || p.image_yellow_gold || p.image_rose_gold || p.image_platinum || p.image_silver || ''}
-                            alt={p.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                          />
-                        ) : (
-                          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#334155', gap: '8px' }}>
-                            <Image size={36} />
-                            <span style={{ fontSize: '11px', color: '#475569' }}>No image</span>
-                          </div>
-                        )}
+                        {(() => {
+                          const displayImg = p.image || p.image_yellow_gold || p.image_rose_gold || p.image_platinum || p.image_silver;
+                          return displayImg ? (
+                            <img
+                              src={displayImg}
+                              alt={p.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                            />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#334155', gap: '8px' }}>
+                              <Image size={36} />
+                              <span style={{ fontSize: '11px', color: '#475569' }}>No image</span>
+                            </div>
+                          );
+                        })()}
 
                         {/* Status badge top-left */}
                         <div style={{ position: 'absolute', top: '8px', left: '8px', display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
