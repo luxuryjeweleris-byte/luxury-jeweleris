@@ -14,8 +14,8 @@ import '../../../admin/admin.css';
 import { useAdminContext } from '../layout';
 
 const EMPTY_PRODUCT: Partial<DbProduct> = {
-  name: '', price: 0, comp_price: 0, category: 'Ring', style: '', shape: 'Round',
-  carat: 1.0, color: 'F', cut: 'Excellent', metal: 'White Gold',
+  name: '', price: 0, comp_price: 0, category: 'Ring', style: '', shape: '',
+  carat: undefined, color: '', cut: '', metal: 'White Gold',
   image: '', description: '', is_verified: false, is_new: false,
   is_featured: false, is_active: true, stock_qty: 10, tags: [],
   images_360: [], url_360: '', video_url: '',
@@ -1122,7 +1122,7 @@ export default function ProductsAdmin() {
             {/* Section 3: Diamond & Gemstone Specifications */}
             <div className="admin-form-section">
               <div className="admin-form-section-title">
-                <Star size={16} color="#a5b4fc" /> Diamond & Gemstone Specifications
+                <Star size={16} color="#a5b4fc" /> Diamond & Gemstone Specifications (Optional)
               </div>
               <div className="admin-form-grid-3">
                 <div>
@@ -1132,11 +1132,11 @@ export default function ProductsAdmin() {
                     style={{ marginBottom: 0 }}
                     type="number"
                     step="0.01"
-                    placeholder="1.00"
+                    placeholder="e.g. 1.00 (Leave empty if N/A)"
                     value={form.carat !== undefined && form.carat !== null && !isNaN(Number(form.carat)) ? form.carat : ''}
                     onChange={e => {
                       const val = parseFloat(e.target.value);
-                      setField('carat', isNaN(val) ? '' : val);
+                      setField('carat', isNaN(val) ? null : val);
                     }}
                   />
                 </div>
@@ -1144,9 +1144,10 @@ export default function ProductsAdmin() {
                   <label className="admin-label">Gemstone Shape</label>
                   <select
                     className="admin-select"
-                    value={form.shape ?? 'Round'}
-                    onChange={e => setField('shape', e.target.value)}
+                    value={form.shape ?? ''}
+                    onChange={e => setField('shape', e.target.value === '' ? null : e.target.value)}
                   >
+                    <option value="">None / Not Applicable (N/A)</option>
                     {['Round', 'Oval', 'Cushion', 'Emerald', 'Princess', 'Radiant', 'Pear', 'Marquise', 'Asscher', 'Heart'].map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
@@ -1156,9 +1157,10 @@ export default function ProductsAdmin() {
                   <label className="admin-label">Color Grade</label>
                   <select
                     className="admin-select"
-                    value={form.color ?? 'F'}
-                    onChange={e => setField('color', e.target.value)}
+                    value={form.color ?? ''}
+                    onChange={e => setField('color', e.target.value === '' ? null : e.target.value)}
                   >
+                    <option value="">None / Not Applicable (N/A)</option>
                     {['D', 'E', 'F', 'G', 'H', 'I', 'J'].map(c => (
                       <option key={c} value={c}>Grade {c} {c === 'D' || c === 'E' || c === 'F' ? '(Colorless)' : ''}</option>
                     ))}
@@ -1168,9 +1170,10 @@ export default function ProductsAdmin() {
                   <label className="admin-label">Cut Grade</label>
                   <select
                     className="admin-select"
-                    value={form.cut ?? 'Excellent'}
-                    onChange={e => setField('cut', e.target.value)}
+                    value={form.cut ?? ''}
+                    onChange={e => setField('cut', e.target.value === '' ? null : e.target.value)}
                   >
+                    <option value="">None / Not Applicable (N/A)</option>
                     {['Ideal', 'Excellent', 'Very Good', 'Good'].map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
@@ -1180,10 +1183,10 @@ export default function ProductsAdmin() {
                   <label className="admin-label">Precious Metal</label>
                   <select
                     className="admin-select"
-                    value={form.metal ?? 'White Gold'}
+                    value={form.metal ?? ''}
                     onChange={e => {
                       const val = e.target.value;
-                      setField('metal', val);
+                      setField('metal', val === '' ? null : val);
                       if (val === 'Yellow Gold') setActiveMetalTab('yellow');
                       else if (val === 'Rose Gold') setActiveMetalTab('rose');
                       else if (val === 'Platinum') setActiveMetalTab('platinum');
@@ -1191,6 +1194,7 @@ export default function ProductsAdmin() {
                       else setActiveMetalTab('default');
                     }}
                   >
+                    <option value="">None / Not Applicable (N/A)</option>
                     {['White Gold', 'Yellow Gold', 'Rose Gold', 'Platinum', 'Silver'].map(m => (
                       <option key={m} value={m}>{m}</option>
                     ))}
