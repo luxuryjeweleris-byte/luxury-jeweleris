@@ -34,12 +34,10 @@ export default function DiamondsProductDetailPage({ params }: PageProps) {
         if (!error && data) {
           setProduct(dbProductToProduct(data));
         } else {
-          const mock = INITIAL_PRODUCTS.find((p) => p.id === resolvedParams.id);
-          setProduct(mock ?? null);
+          setProduct(null);
         }
       } catch {
-        const mock = INITIAL_PRODUCTS.find((p) => p.id === resolvedParams.id);
-        setProduct(mock ?? null);
+        setProduct(null);
       }
       setLoading(false);
     };

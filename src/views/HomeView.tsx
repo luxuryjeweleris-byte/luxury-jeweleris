@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TrustStrip from '../components/TrustStrip';
 import CategoryCarousel from '../components/CategoryCarousel';
+import ProductCard, { Product } from '../components/ProductCard';
 import Button from '../components/Button';
+import { supabase, dbProductToProduct } from '../lib/supabase';
 import './views.css';
 
 export const HomeView: React.FC = () => {
@@ -15,9 +17,42 @@ export const HomeView: React.FC = () => {
     'https://cldnr.rarecarat.com/video/upload/v1722272873/home-next-gen/360-ring-desktop.mp4',
   ];
 
-  const [activeVideoIndex, setActiveVideoIndex] = React.useState<number>(0);
+  const [activeVideoIndex, setActiveVideoIndex] = useState<number>(0);
   const video1Ref = React.useRef<HTMLVideoElement | null>(null);
   const video2Ref = React.useRef<HTMLVideoElement | null>(null);
+
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [activeCategoryTab, setActiveCategoryTab] = useState<string>('All Featured');
+
+  useEffect(() => {
+    const fetchHomeProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          const mapped = data.map((dbProd: any) => dbProductToProduct(dbProd));
+          setAllProducts(mapped);
+
+          // Filter featured products
+          const featured = mapped.filter((p: any) => p.isFeatured || data.find((d: any) => d.id === p.id && d.is_featured));
+          setFeaturedProducts(featured.length > 0 ? featured : mapped.slice(0, 12));
+        }
+      } catch (err) {
+        console.error('Error fetching home featured products:', err);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    fetchHomeProducts();
+  }, []);
 
   const handleVideo1Ended = () => {
     if (video2Ref.current) {
@@ -45,6 +80,54 @@ export const HomeView: React.FC = () => {
   const handleStyleSelect = (styleName: string) => {
     router.push(`/engagement-rings`);
   };
+
+  const handleProductSelect = (product: Product) => {
+    router.push(`/shop/${product.id}`);
+  };
+
+  const matchesCategory = (product: Product, categoryTab: string): boolean => {
+    if (categoryTab === 'All Featured') return true;
+    const cat = (product.category || '').toLowerCase();
+    const name = (product.name || '').toLowerCase();
+    const target = categoryTab.toLowerCase();
+
+    if (target === 'rings') {
+      return cat.includes('ring') || name.includes('ring') || cat.includes('engagement');
+    }
+    if (target === 'wedding bands') {
+      return cat.includes('wedding') || cat.includes('band') || name.includes('band');
+    }
+    if (target === 'diamonds') {
+      return cat.includes('diamond') || name.includes('diamond') || cat.includes('loose');
+    }
+    if (target === 'earrings') {
+      return cat.includes('earring') || name.includes('earring') || cat.includes('stud') || cat.includes('hoop');
+    }
+    if (target === 'necklaces') {
+      return cat.includes('necklace') || name.includes('necklace') || cat.includes('pendant') || name.includes('choker');
+    }
+    if (target === 'bracelets') {
+      return cat.includes('bracelet') || name.includes('bracelet') || cat.includes('bangle');
+    }
+    if (target === 'gifts') {
+      return cat.includes('gift') || name.includes('gift');
+    }
+    return cat.includes(target) || name.includes(target);
+  };
+
+  const filteredFeaturedProducts = React.useMemo(() => {
+    return featuredProducts.filter(p => matchesCategory(p, activeCategoryTab));
+  }, [featuredProducts, activeCategoryTab]);
+
+  const CATEGORIES_LIST = [
+    { key: 'Rings', title: 'Engagement & Fine Rings', path: '/engagement-rings', desc: 'Handcrafted solitaire, halo, and vintage ring designs.' },
+    { key: 'Wedding Bands', title: 'Wedding & Eternity Bands', path: '/wedding-bands', desc: 'Timeless platinum, gold, and diamond anniversary bands.' },
+    { key: 'Diamonds', title: 'Certified Loose Diamonds', path: '/diamonds', desc: 'Ethically sourced lab & natural certified diamonds.' },
+    { key: 'Earrings', title: 'Diamond Earrings & Studs', path: '/earrings', desc: 'Sparkling diamond studs, huggies, and hoop earrings.' },
+    { key: 'Necklaces', title: 'Necklaces & Pendants', path: '/necklaces', desc: 'Solitaire diamond pendants, chains, and chokers.' },
+    { key: 'Bracelets', title: 'Tennis & Fine Bracelets', path: '/bracelets', desc: 'Elegant diamond tennis bracelets and gold bangles.' },
+    { key: 'Gifts', title: 'Luxury Jewelry Gifts', path: '/gifts', desc: 'Curated gifts for anniversaries, birthdays & celebrations.' },
+  ];
 
   return (
     <div className="home-view">
@@ -135,6 +218,122 @@ export const HomeView: React.FC = () => {
 
       {/* Categories Carousel */}
       <CategoryCarousel />
+
+      {/* FEATURED PRODUCTS SHOWCASE SECTION */}
+      <section className="featured-section" style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border-soft)' }}>
+        <div className="container-wide">
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <div className="badge badge-ai" style={{ marginBottom: '12px', display: 'inline-flex' }}>
+              ✦ HANDPICKED CURATION
+            </div>
+            <h2 className="h2-text" style={{ fontSize: '32px', fontWeight: 800, color: 'var(--color-ink)' }}>
+              Featured Storefront Collection
+            </h2>
+            <p style={{ color: 'var(--color-slate)', fontSize: '15px', maxWidth: '680px', margin: '8px auto 0' }}>
+              Handpicked luxury engagement rings, fine jewelry, certified diamonds & exclusive gifts featured on our homepage.
+            </p>
+          </div>
+
+          {/* Interactive Category Filter Tabs Bar */}
+          <div className="featured-category-tabs" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '10px',
+            flexWrap: 'wrap',
+            marginBottom: '40px'
+          }}>
+            {['All Featured', 'Rings', 'Wedding Bands', 'Diamonds', 'Earrings', 'Necklaces', 'Bracelets', 'Gifts'].map(cat => {
+              const isActive = activeCategoryTab === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategoryTab(cat)}
+                  style={{
+                    padding: '10px 22px',
+                    borderRadius: '30px',
+                    fontSize: '13.5px',
+                    fontWeight: isActive ? 700 : 500,
+                    background: isActive ? 'var(--color-teal)' : 'var(--color-card)',
+                    color: isActive ? '#ffffff' : 'var(--color-slate)',
+                    border: isActive ? '1px solid var(--color-teal)' : '1px solid var(--color-border)',
+                    cursor: 'pointer',
+                    transition: 'all 180ms cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: isActive ? '0 4px 14px rgba(14, 140, 138, 0.25)' : '0 2px 6px rgba(0,0,0,0.02)'
+                  }}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Product Grid - 5 Items Per Row on Desktop */}
+          {loadingProducts ? (
+            <div className="featured-products-grid">
+              {Array.from({ length: 5 }).map((_, idx) => (
+                <div key={idx} className="skeleton-card">
+                  <div className="skeleton-image skeleton-pulse" />
+                  <div className="skeleton-body">
+                    <div className="skeleton-line skeleton-line-title skeleton-pulse" />
+                    <div className="skeleton-line skeleton-line-price skeleton-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredFeaturedProducts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: 'var(--color-card)', borderRadius: '16px', border: '1px dashed var(--color-border)', maxWidth: '600px', margin: '0 auto' }}>
+              <h3 style={{ fontSize: '18px', color: 'var(--color-ink)', fontWeight: 700 }}>No featured items in "{activeCategoryTab}" yet</h3>
+              <p style={{ fontSize: '13.5px', color: 'var(--color-slate)', marginTop: '6px', marginBottom: '20px' }}>
+                Toggle "Featured: Show on homepage" in your admin product dashboard to feature products here.
+              </p>
+              <Button variant="primary" onClick={() => router.push('/shop')}>
+                Explore Entire Catalog
+              </Button>
+            </div>
+          ) : (
+            <div className="featured-products-grid">
+              {filteredFeaturedProducts.map(product => (
+                <ProductCard key={product.id} product={product} onSelect={handleProductSelect} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* DEDICATED INDIVIDUAL CATEGORY SECTIONS */}
+      {CATEGORIES_LIST.map((category) => {
+        const catProducts = allProducts.filter(p => matchesCategory(p, category.key)).slice(0, 5);
+        if (catProducts.length === 0) return null;
+
+        return (
+          <section key={category.key} style={{ padding: '56px 0', borderBottom: '1px solid var(--color-border-soft)', background: 'var(--color-card)' }}>
+            <div className="container-wide">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <span className="label-text" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '11px', color: 'var(--color-teal)' }}>
+                    COLLECTION HIGHLIGHT
+                  </span>
+                  <h2 style={{ fontSize: '26px', fontWeight: 800, color: 'var(--color-ink)', marginTop: '4px' }}>
+                    {category.title}
+                  </h2>
+                  <p style={{ fontSize: '14px', color: 'var(--color-slate)', marginTop: '2px' }}>
+                    {category.desc}
+                  </p>
+                </div>
+                <Button variant="outline" onClick={() => router.push(category.path)} style={{ fontSize: '13px', padding: '0 18px', height: '40px' }}>
+                  View All {category.key} →
+                </Button>
+              </div>
+
+              <div className="featured-products-grid">
+                {catProducts.map(product => (
+                  <ProductCard key={product.id} product={product} onSelect={handleProductSelect} />
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      })}
 
       {/* Horizontal style carousel */}
       <section className="styles-section">

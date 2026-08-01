@@ -41,27 +41,13 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
         }
         const { data, error } = await query.neq('id', product.id).limit(3);
 
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           setRelatedProducts(data.map(dbProductToProduct));
         } else {
-          const matched = INITIAL_PRODUCTS.filter(
-            (p) => p.id !== product.id && (p.category?.toLowerCase() === product.category?.toLowerCase() || p.shape === product.shape)
-          ).slice(0, 3);
-          const finalFallback = matched.length >= 3 ? matched : [
-            ...matched,
-            ...INITIAL_PRODUCTS.filter((p) => p.id !== product.id && !matched.some(m => m.id === p.id))
-          ].slice(0, 3);
-          setRelatedProducts(finalFallback);
+          setRelatedProducts([]);
         }
       } catch {
-        const matched = INITIAL_PRODUCTS.filter(
-          (p) => p.id !== product.id && (p.category?.toLowerCase() === product.category?.toLowerCase() || p.shape === product.shape)
-        ).slice(0, 3);
-        const finalFallback = matched.length >= 3 ? matched : [
-          ...matched,
-          ...INITIAL_PRODUCTS.filter((p) => p.id !== product.id && !matched.some(m => m.id === p.id))
-        ].slice(0, 3);
-        setRelatedProducts(finalFallback);
+        setRelatedProducts([]);
       }
     };
     fetchRelated();

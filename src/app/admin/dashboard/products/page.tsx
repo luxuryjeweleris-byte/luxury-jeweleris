@@ -206,26 +206,58 @@ export default function ProductsAdmin() {
         finalConfig360 = null;
       }
 
-      const payload = {
+      const payload: Record<string, any> = {
         ...form,
         config_360: finalConfig360,
       };
 
-      if (editing) {
-        const { error } = await supabase.from('products').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', editing.id);
-        if (error) {
-          console.error('Database update error:', error);
-          alert(`Failed to save to database: ${error.message}\n(Make sure to run the Supabase SQL migration script!)`);
-          return;
+      // Strip undefined or NaN values from payload
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined) delete payload[key];
+        if (typeof payload[key] === 'number' && isNaN(payload[key])) delete payload[key];
+      });
+
+      const attemptSave = async (dataPayload: Record<string, any>) => {
+        if (editing) {
+          return await supabase.from('products').update({ ...dataPayload, updated_at: new Date().toISOString() }).eq('id', editing.id);
+        } else {
+          return await supabase.from('products').insert({ ...dataPayload });
         }
-      } else {
-        const { error } = await supabase.from('products').insert({ ...payload });
-        if (error) {
-          console.error('Database insert error:', error);
-          alert(`Failed to save to database: ${error.message}\n(Make sure to run the Supabase SQL migration script!)`);
-          return;
+      };
+
+      let currentPayload = { ...payload };
+      let { error } = await attemptSave(currentPayload);
+
+      // Loop to dynamically strip any missing columns reported by Supabase schema cache
+      let retries = 0;
+      while (error && error.message && error.message.toLowerCase().includes('column') && retries < 12) {
+        retries++;
+        const match = error.message.match(/Could not find the '([^']+)' column/i);
+        if (match && match[1]) {
+          const missingCol = match[1];
+          console.warn(`Supabase schema missing column '${missingCol}', stripping and retrying save (${retries})...`);
+          delete currentPayload[missingCol];
+          const retryRes = await attemptSave(currentPayload);
+          error = retryRes.error;
+        } else {
+          const optionalCols = [
+            'images_360', 'url_360', 'video_url', 'config_360',
+            'image_yellow_gold', 'image_rose_gold', 'image_platinum', 'image_silver',
+            'images_white_gold', 'images_yellow_gold', 'images_rose_gold', 'images_platinum', 'images_silver'
+          ];
+          optionalCols.forEach(col => delete currentPayload[col]);
+          const retryRes = await attemptSave(currentPayload);
+          error = retryRes.error;
+          break;
         }
       }
+
+      if (error) {
+        console.error('Database save error:', error);
+        alert(`Failed to save to database: ${error.message}\n\nPlease run the Supabase SQL migration script provided in supabase_schema.sql to add missing columns.`);
+        return;
+      }
+
       setSaving(false);
       setShowModal(false);
       await fetchProducts();
@@ -1049,8 +1081,11 @@ export default function ProductsAdmin() {
                     style={{ marginBottom: 0, fontWeight: 700, color: '#10b981' }}
                     type="number"
                     placeholder="0.00"
-                    value={form.price ?? ''}
-                    onChange={e => setField('price', parseFloat(e.target.value))}
+                    value={form.price !== undefined && form.price !== null && !isNaN(Number(form.price)) ? form.price : ''}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setField('price', isNaN(val) ? '' : val);
+                    }}
                   />
                 </div>
                 <div>
@@ -1060,8 +1095,11 @@ export default function ProductsAdmin() {
                     style={{ marginBottom: 0 }}
                     type="number"
                     placeholder="0.00"
-                    value={form.comp_price ?? ''}
-                    onChange={e => setField('comp_price', parseFloat(e.target.value))}
+                    value={form.comp_price !== undefined && form.comp_price !== null && !isNaN(Number(form.comp_price)) ? form.comp_price : ''}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setField('comp_price', isNaN(val) ? '' : val);
+                    }}
                   />
                 </div>
                 <div>
@@ -1071,8 +1109,11 @@ export default function ProductsAdmin() {
                     style={{ marginBottom: 0 }}
                     type="number"
                     placeholder="10"
-                    value={form.stock_qty ?? ''}
-                    onChange={e => setField('stock_qty', parseInt(e.target.value))}
+                    value={form.stock_qty !== undefined && form.stock_qty !== null && !isNaN(Number(form.stock_qty)) ? form.stock_qty : ''}
+                    onChange={e => {
+                      const val = parseInt(e.target.value, 10);
+                      setField('stock_qty', isNaN(val) ? '' : val);
+                    }}
                   />
                 </div>
               </div>
@@ -1092,8 +1133,11 @@ export default function ProductsAdmin() {
                     type="number"
                     step="0.01"
                     placeholder="1.00"
-                    value={form.carat ?? ''}
-                    onChange={e => setField('carat', parseFloat(e.target.value))}
+                    value={form.carat !== undefined && form.carat !== null && !isNaN(Number(form.carat)) ? form.carat : ''}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setField('carat', isNaN(val) ? '' : val);
+                    }}
                   />
                 </div>
                 <div>

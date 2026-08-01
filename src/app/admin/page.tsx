@@ -8,28 +8,35 @@ import '../admin/admin.css';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // If already logged in as admin, redirect to dashboard
+  // If already logged in, redirect to dashboard instantly without ever showing login form
   useEffect(() => {
+    let mounted = true;
     const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', session.user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (data) router.push('/admin/dashboard');
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          router.replace('/admin/dashboard');
+          // Return without setting checkingAuth to false, keeping dark loader during redirect
+          return;
+        }
+      } catch (err) {
+        console.error('Admin session check error:', err);
+      }
+      if (mounted) {
+        setCheckingAuth(false);
+      }
     };
     checkAdmin();
+    return () => {
+      mounted = false;
+    };
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -57,7 +64,7 @@ export default function AdminLoginPage() {
         .select('id, role')
         .eq('user_id', authData.user.id)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       setLoading(false);
 
@@ -68,12 +75,23 @@ export default function AdminLoginPage() {
       }
 
       // Success — go to dashboard
-      router.push('/admin/dashboard');
+      router.replace('/admin/dashboard');
     } catch (err: unknown) {
       setLoading(false);
       setError(err instanceof Error ? err.message : 'Connection error. Please check your internet.');
     }
   };
+
+  if (checkingAuth) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#090d16', gap: '16px' }}>
+        <div style={{ padding: '16px', borderRadius: '50%', background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)' }}>
+          <Loader2 size={36} className="admin-spin" color="#6366f1" />
+        </div>
+        <span style={{ fontSize: '13px', color: '#8892a4' }}>Verifying Admin Session...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-login-page">
@@ -138,19 +156,6 @@ export default function AdminLoginPage() {
         </form>
 
         <a href="/" className="admin-login-back">← Back to main site</a>
-
-        <div style={{ marginTop: '24px', padding: '14px', background: 'rgba(99,102,241,0.08)', borderRadius: '8px', border: '1px solid rgba(99,102,241,0.15)' }}>
-          <p style={{ fontSize: '11px', color: '#8892a4', lineHeight: 1.6 }}>
-            <strong style={{ color: '#a5b4fc' }}>First time setup?</strong><br />
-            Sign up at <a href="/login" style={{ color: '#a5b4fc' }}>/login</a>, then run this SQL in Supabase to grant admin access:
-          </p>
-          <pre style={{ fontSize: '10px', color: '#6ee7b7', marginTop: '8px', lineHeight: 1.5, wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}>
-{`INSERT INTO admin_users (user_id, email, role)
-SELECT id, email, 'super_admin'
-FROM auth.users
-WHERE email = 'YOUR_EMAIL';`}
-          </pre>
-        </div>
       </div>
     </div>
   );

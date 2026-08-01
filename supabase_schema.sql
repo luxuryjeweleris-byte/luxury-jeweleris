@@ -42,6 +42,16 @@ CREATE TABLE IF NOT EXISTS products (
   category TEXT NOT NULL,
   category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
   image TEXT,
+  image_yellow_gold TEXT,
+  image_rose_gold TEXT,
+  image_platinum TEXT,
+  image_silver TEXT,
+  images_white_gold TEXT[],
+  images_yellow_gold TEXT[],
+  images_rose_gold TEXT[],
+  images_platinum TEXT[],
+  images_silver TEXT[],
+  stock_qty INT DEFAULT 10,
   ai_score NUMERIC(4, 2) DEFAULT 8.5,
   is_verified BOOLEAN DEFAULT FALSE,
   is_new BOOLEAN DEFAULT FALSE,
@@ -53,9 +63,26 @@ CREATE TABLE IF NOT EXISTS products (
   config_360 JSONB,
   recipient TEXT,
   occasion TEXT,
+  tags TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_360 TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS url_360 TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS config_360 JSONB;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_yellow_gold TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_rose_gold TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_platinum TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_silver TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_white_gold TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_yellow_gold TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_rose_gold TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_platinum TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS images_silver TEXT[];
+ALTER TABLE products ADD COLUMN IF NOT EXISTS stock_qty INT DEFAULT 10;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS tags TEXT[];
 
 -- ============================================================
 -- 3. PRODUCT IMAGES
@@ -225,6 +252,19 @@ CREATE TABLE IF NOT EXISTS password_resets (
 CREATE INDEX IF NOT EXISTS idx_password_resets_email_code ON password_resets (email, code);
 
 -- ============================================================
+-- 14. CATEGORY CIRCLES
+-- ============================================================
+CREATE TABLE IF NOT EXISTS category_circles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  img TEXT NOT NULL,
+  link TEXT DEFAULT '/',
+  sort_order INT DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
 -- 13. SITE SETTINGS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS site_settings (
@@ -356,6 +396,13 @@ DROP POLICY IF EXISTS "Site settings are public" ON site_settings;
 DROP POLICY IF EXISTS "Admin can manage settings" ON site_settings;
 CREATE POLICY "Site settings are public" ON site_settings FOR SELECT USING (TRUE);
 CREATE POLICY "Admin can manage settings" ON site_settings FOR ALL
+  USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND is_active = TRUE));
+
+ALTER TABLE category_circles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Category circles are publicly readable" ON category_circles;
+DROP POLICY IF EXISTS "Admin can manage category circles" ON category_circles;
+CREATE POLICY "Category circles are publicly readable" ON category_circles FOR SELECT USING (is_active = TRUE);
+CREATE POLICY "Admin can manage category circles" ON category_circles FOR ALL
   USING (EXISTS (SELECT 1 FROM admin_users WHERE user_id = auth.uid() AND is_active = TRUE));
 
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;

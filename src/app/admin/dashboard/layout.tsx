@@ -41,7 +41,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          if (mounted) router.push('/admin');
+          if (mounted) router.replace('/admin');
           return;
         }
 
@@ -53,17 +53,20 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           .maybeSingle();
 
         if (!adminData) {
-          if (mounted) router.push('/admin');
+          if (mounted) {
+            await supabase.auth.signOut();
+            router.replace('/admin');
+          }
           return;
         }
 
         if (mounted) {
-          setAdminEmail(adminData.email);
+          setAdminEmail(adminData.email || session.user.email || 'Admin');
           setAuthChecking(false);
         }
       } catch (err) {
         console.error('Admin layout auth verification error:', err);
-        if (mounted) router.push('/admin');
+        if (mounted) router.replace('/admin');
       }
     };
 
