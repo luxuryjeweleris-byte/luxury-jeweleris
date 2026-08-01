@@ -410,6 +410,15 @@ DROP POLICY IF EXISTS "Admin users can see admin table" ON admin_users;
 CREATE POLICY "Admin users can see admin table" ON admin_users FOR SELECT
   USING (user_id = auth.uid());
 
+-- Site Settings RLS
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Site settings are publicly readable" ON site_settings;
+DROP POLICY IF EXISTS "Anyone can insert site settings" ON site_settings;
+DROP POLICY IF EXISTS "Anyone can update site settings" ON site_settings;
+CREATE POLICY "Site settings are publicly readable" ON site_settings FOR SELECT USING (TRUE);
+CREATE POLICY "Anyone can insert site settings" ON site_settings FOR INSERT WITH CHECK (TRUE);
+CREATE POLICY "Anyone can update site settings" ON site_settings FOR UPDATE USING (TRUE);
+
 -- ============================================================
 -- INDEXES
 -- ============================================================
@@ -442,7 +451,7 @@ ON CONFLICT (slug) DO NOTHING;
 -- SEED: SITE SETTINGS
 -- ============================================================
 INSERT INTO site_settings (key, value, description) VALUES
-  ('sale_banner_text', '4th of July Sale — Up to 40% Off', 'Top banner sale text'),
+  ('top_announcement_bar', 'Exclusive Luxury Sale — Save up to 40% Off Select Jewelry — Limited Time Offer', 'Top banner sale text'),
   ('site_name', 'Luxury Jeweleris', 'Site name'),
   ('support_email', 'support@luxuryjeweleris.com', 'Customer support email'),
   ('free_shipping_threshold', '500', 'Free shipping over this amount ($)'),

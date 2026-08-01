@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingBag, Menu, X, Heart, User, ShieldCheck, LogOut, Sparkles, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase } from '../lib/supabase';
 import type { DbProfile } from '../lib/supabase';
 import './components.css';
@@ -71,6 +72,12 @@ export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { cart } = useCart();
+  const { getSetting } = useSiteSettings();
+
+  const storePhone = getSetting('store_phone', '+1 213-642-7217');
+  const contactEmail = getSetting('contact_email', 'luxuryjeweleris@gmail.com');
+  const topPromo = getSetting('top_announcement_bar', 'Exclusive Luxury Sale — Save up to 40% Off Select Jewelry — Limited Time Offer');
+
   const cartCount = cart.length;
   const contactDropdownRef = useRef<HTMLDivElement>(null);
   
@@ -174,8 +181,8 @@ export const Navbar: React.FC = () => {
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">
-          <span className="navbar-top-phone">+1 213-642-7217</span>
-          <span className="navbar-top-promo">4th of July Sale - Save up to 40%* - Ends Soon</span>
+          <span className="navbar-top-phone">{storePhone}</span>
+          <span className="navbar-top-promo">{topPromo}</span>
           <div className="navbar-top-links">
             <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={contactDropdownRef}>
               <button 
@@ -214,11 +221,11 @@ export const Navbar: React.FC = () => {
                   <div className="contact-dropdown-info">
                     <div className="contact-info-item">
                       <span className="contact-info-label">Call Us</span>
-                      <a href="tel:+12136427217" className="contact-info-value">+1 213-642-7217</a>
+                      <a href={`tel:${storePhone}`} className="contact-info-value">{storePhone}</a>
                     </div>
                     <div className="contact-info-item">
                       <span className="contact-info-label">Email Us</span>
-                      <a href="mailto:luxuryjeweleris@gmail.com" className="contact-info-value">luxuryjeweleris@gmail.com</a>
+                      <a href={`mailto:${contactEmail}`} className="contact-info-value">{contactEmail}</a>
                     </div>
                   </div>
                   
@@ -1259,7 +1266,7 @@ export const Navbar: React.FC = () => {
             {/* Contact */}
             <div style={{ borderTop: '1px solid var(--color-border-soft)', padding: '12px 16px 16px', textAlign: 'center' }}>
               <p style={{ fontSize: '12px', color: 'var(--color-slate-muted)', marginBottom: '6px' }}>Need help? Call us</p>
-              <a href="tel:+12136427217" style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}>+1 213-642-7217</a>
+              <a href={`tel:${storePhone}`} style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}>{storePhone}</a>
             </div>
           </div>
         </div>

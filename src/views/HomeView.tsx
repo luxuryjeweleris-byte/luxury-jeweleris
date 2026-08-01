@@ -6,11 +6,17 @@ import TrustStrip from '../components/TrustStrip';
 import CategoryCarousel from '../components/CategoryCarousel';
 import ProductCard, { Product } from '../components/ProductCard';
 import Button from '../components/Button';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase, dbProductToProduct } from '../lib/supabase';
 import './views.css';
 
 export const HomeView: React.FC = () => {
   const router = useRouter();
+  const { getSetting } = useSiteSettings();
+
+  const heroBadge = getSetting('hero_badge_text', '✦ Trusted by Thousands Worldwide');
+  const heroTitle = getSetting('hero_title', 'Timeless jewelry, crafted for you.');
+  const heroSubtitle = getSetting('hero_subtitle', 'Discover our curated collection of fine jewelry — from engagement rings to everyday elegance. Handcrafted with precision and passion.');
 
   const heroVideos = [
     'https://res.cloudinary.com/gelkrliw/video/upload/v1785440765/products/v0coba9zahrupfdek7h8.mp4',
@@ -136,13 +142,13 @@ export const HomeView: React.FC = () => {
         <div className="container hero-grid">
           <div className="hero-content">
             <div className="badge badge-ai" style={{ marginBottom: '16px', display: 'inline-flex' }}>
-              ✦ Trusted by Thousands Worldwide
+              {heroBadge}
             </div>
             <h1 className="display-text hero-title">
-              Timeless jewelry, crafted for you.
+              {heroTitle}
             </h1>
             <p className="hero-subtitle">
-              Discover our curated collection of fine jewelry — from engagement rings to everyday elegance. Handcrafted with precision and passion.
+              {heroSubtitle}
             </p>
             <div className="hero-ctas">
               <Button variant="primary" onClick={() => router.push('/shop')}>
