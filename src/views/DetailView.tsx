@@ -548,7 +548,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               )}
             </div>
 
-            <div className="product-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+            <div className="featured-products-grid">
               {relatedProducts.map((relProd) => (
                 <ProductCard
                   key={relProd.id}

@@ -220,28 +220,32 @@ export const HomeView: React.FC = () => {
       <CategoryCarousel />
 
       {/* FEATURED PRODUCTS SHOWCASE SECTION */}
-      <section className="featured-section" style={{ padding: '64px 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border-soft)' }}>
+      <section className="featured-section" style={{ padding: 'clamp(32px, 5vw, 64px) 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border-soft)' }}>
         <div className="container-wide">
-          <div className="section-header" style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '24px' }}>
             <div className="badge badge-ai" style={{ marginBottom: '12px', display: 'inline-flex' }}>
               ✦ HANDPICKED CURATION
             </div>
-            <h2 className="h2-text" style={{ fontSize: '32px', fontWeight: 800, color: 'var(--color-ink)' }}>
+            <h2 className="h2-text" style={{ fontSize: 'clamp(20px, 4vw, 32px)', fontWeight: 800, color: 'var(--color-ink)' }}>
               Featured Storefront Collection
             </h2>
             <p style={{ color: 'var(--color-slate)', fontSize: '15px', maxWidth: '680px', margin: '8px auto 0' }}>
-              Handpicked luxury engagement rings, fine jewelry, certified diamonds & exclusive gifts featured on our homepage.
+              Handpicked luxury engagement rings, fine jewelry, certified diamonds &amp; exclusive gifts featured on our homepage.
             </p>
           </div>
 
           {/* Interactive Category Filter Tabs Bar */}
-          <div className="featured-category-tabs" style={{
+          <div style={{
             display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            flexWrap: 'wrap',
-            marginBottom: '40px'
-          }}>
+            justifyContent: 'flex-start',
+            gap: '8px',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            marginBottom: '32px',
+            paddingBottom: '8px',
+            scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+          } as React.CSSProperties}>
             {['All Featured', 'Rings', 'Wedding Bands', 'Diamonds', 'Earrings', 'Necklaces', 'Bracelets', 'Gifts'].map(cat => {
               const isActive = activeCategoryTab === cat;
               return (
@@ -249,16 +253,18 @@ export const HomeView: React.FC = () => {
                   key={cat}
                   onClick={() => setActiveCategoryTab(cat)}
                   style={{
-                    padding: '10px 22px',
+                    padding: '8px 18px',
                     borderRadius: '30px',
-                    fontSize: '13.5px',
+                    fontSize: '13px',
                     fontWeight: isActive ? 700 : 500,
                     background: isActive ? 'var(--color-teal)' : 'var(--color-card)',
                     color: isActive ? '#ffffff' : 'var(--color-slate)',
                     border: isActive ? '1px solid var(--color-teal)' : '1px solid var(--color-border)',
                     cursor: 'pointer',
                     transition: 'all 180ms cubic-bezier(0.16, 1, 0.3, 1)',
-                    boxShadow: isActive ? '0 4px 14px rgba(14, 140, 138, 0.25)' : '0 2px 6px rgba(0,0,0,0.02)'
+                    boxShadow: isActive ? '0 4px 14px rgba(14, 140, 138, 0.25)' : '0 2px 6px rgba(0,0,0,0.02)',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {cat}
@@ -306,21 +312,21 @@ export const HomeView: React.FC = () => {
         if (catProducts.length === 0) return null;
 
         return (
-          <section key={category.key} style={{ padding: '56px 0', borderBottom: '1px solid var(--color-border-soft)', background: 'var(--color-card)' }}>
+          <section key={category.key} style={{ padding: 'clamp(28px, 5vw, 56px) 0', borderBottom: '1px solid var(--color-border-soft)', background: 'var(--color-card)' }}>
             <div className="container-wide">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
                 <div>
                   <span className="label-text" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '11px', color: 'var(--color-teal)' }}>
                     COLLECTION HIGHLIGHT
                   </span>
-                  <h2 style={{ fontSize: '26px', fontWeight: 800, color: 'var(--color-ink)', marginTop: '4px' }}>
+                  <h2 style={{ fontSize: 'clamp(18px, 3.5vw, 26px)', fontWeight: 800, color: 'var(--color-ink)', marginTop: '4px' }}>
                     {category.title}
                   </h2>
                   <p style={{ fontSize: '14px', color: 'var(--color-slate)', marginTop: '2px' }}>
                     {category.desc}
                   </p>
                 </div>
-                <Button variant="outline" onClick={() => router.push(category.path)} style={{ fontSize: '13px', padding: '0 18px', height: '40px' }}>
+                <Button variant="outline" onClick={() => router.push(category.path)} style={{ fontSize: '13px', padding: '0 18px', height: '40px', flexShrink: 0, width: 'fit-content' }}>
                   View All {category.key} →
                 </Button>
               </div>
