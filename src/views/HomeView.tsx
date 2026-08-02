@@ -8,6 +8,7 @@ import ProductCard, { Product } from '../components/ProductCard';
 import Button from '../components/Button';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase, dbProductToProduct } from '../lib/supabase';
+import { isCategoryMatch } from '../lib/categoryUtils';
 import './views.css';
 
 export const HomeView: React.FC = () => {
@@ -93,32 +94,7 @@ export const HomeView: React.FC = () => {
 
   const matchesCategory = (product: Product, categoryTab: string): boolean => {
     if (categoryTab === 'All Featured') return true;
-    const cat = (product.category || '').toLowerCase();
-    const name = (product.name || '').toLowerCase();
-    const target = categoryTab.toLowerCase();
-
-    if (target === 'rings') {
-      return cat.includes('ring') || name.includes('ring') || cat.includes('engagement');
-    }
-    if (target === 'wedding bands') {
-      return cat.includes('wedding') || cat.includes('band') || name.includes('band');
-    }
-    if (target === 'diamonds') {
-      return cat.includes('diamond') || name.includes('diamond') || cat.includes('loose');
-    }
-    if (target === 'earrings') {
-      return cat.includes('earring') || name.includes('earring') || cat.includes('stud') || cat.includes('hoop');
-    }
-    if (target === 'necklaces') {
-      return cat.includes('necklace') || name.includes('necklace') || cat.includes('pendant') || name.includes('choker');
-    }
-    if (target === 'bracelets') {
-      return cat.includes('bracelet') || name.includes('bracelet') || cat.includes('bangle');
-    }
-    if (target === 'gifts') {
-      return cat.includes('gift') || name.includes('gift');
-    }
-    return cat.includes(target) || name.includes(target);
+    return isCategoryMatch(product.category, categoryTab);
   };
 
   const filteredFeaturedProducts = React.useMemo(() => {

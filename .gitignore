@@ -33,3 +33,7 @@ build
 *.njsproj
 *.sln
 *.sw?
+
+# OneDrive reparse placeholders
+public/public/
+

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import type { DbProduct } from '../../../../lib/supabase';
+import { CANONICAL_CATEGORIES, isCategoryMatch, getCategoryDisplayLabel, productMatchesSearchQuery } from '../../../../lib/categoryUtils';
 import '../../../admin/admin.css';
 
 import { useAdminContext } from '../layout';
@@ -291,13 +292,7 @@ export default function ProductsAdmin() {
 
   const CATEGORY_TABS = [
     'All',
-    'Ring',
-    'Wedding Band',
-    'Diamond',
-    'Earring',
-    'Necklace',
-    'Bracelet',
-    'Gift'
+    ...CANONICAL_CATEGORIES
   ];
 
   const stats = React.useMemo(() => {
@@ -312,7 +307,7 @@ export default function ProductsAdmin() {
     const counts: Record<string, number> = { All: products.length };
     CATEGORY_TABS.forEach(tab => {
       if (tab !== 'All') {
-        counts[tab] = products.filter(p => p.category?.toLowerCase().includes(tab.toLowerCase())).length;
+        counts[tab] = products.filter(p => isCategoryMatch(p.category, tab)).length;
       }
     });
     return counts;
@@ -322,9 +317,7 @@ export default function ProductsAdmin() {
     return products.filter(p => {
       // Category Tab filter
       if (selectedCategoryTab !== 'All') {
-        const cat = (p.category || '').toLowerCase();
-        const target = selectedCategoryTab.toLowerCase();
-        if (!cat.includes(target)) return false;
+        if (!isCategoryMatch(p.category, selectedCategoryTab)) return false;
       }
 
       // Status filter
@@ -340,12 +333,7 @@ export default function ProductsAdmin() {
 
       // Search query
       if (search.trim()) {
-        const q = search.toLowerCase();
-        const nameMatch = p.name.toLowerCase().includes(q);
-        const catMatch = (p.category || '').toLowerCase().includes(q);
-        const metalMatch = (p.metal || '').toLowerCase().includes(q);
-        const styleMatch = (p.style || '').toLowerCase().includes(q);
-        if (!nameMatch && !catMatch && !metalMatch && !styleMatch) return false;
+        if (!productMatchesSearchQuery(p, search)) return false;
       }
 
       return true;
@@ -493,7 +481,7 @@ export default function ProductsAdmin() {
                     transition: 'all 150ms ease'
                   }}
                 >
-                  {tab === 'All' ? 'All Jewelry' : `${tab}s`}
+                  {tab === 'All' ? 'All Jewelry' : getCategoryDisplayLabel(tab)}
                   <span style={{
                     fontSize: '10.5px',
                     background: isActive ? 'rgba(255,255,255,0.2)' : '#1e293b',
@@ -591,7 +579,7 @@ export default function ProductsAdmin() {
             <div style={{ padding: '12px 20px', fontSize: '12.5px', color: '#94a3b8', borderBottom: '1px solid var(--admin-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 Showing <strong>{filtered.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> - <strong>{Math.min(currentPage * itemsPerPage, filtered.length)}</strong> of <strong>{filtered.length}</strong> products
-                {selectedCategoryTab !== 'All' && <span style={{ color: '#6366f1', marginLeft: '6px' }}>in {selectedCategoryTab}s</span>}
+                {selectedCategoryTab !== 'All' && <span style={{ color: '#6366f1', marginLeft: '6px' }}>in {getCategoryDisplayLabel(selectedCategoryTab)}</span>}
               </div>
               {filtered.length < products.length && (
                 <button
@@ -1047,7 +1035,7 @@ export default function ProductsAdmin() {
                     value={form.category ?? 'Ring'}
                     onChange={e => setField('category', e.target.value)}
                   >
-                    {['Ring', 'Earrings', 'Necklace', 'Bracelet', 'Wedding Band', 'Loose Diamond'].map(c => (
+                    {CANONICAL_CATEGORIES.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>

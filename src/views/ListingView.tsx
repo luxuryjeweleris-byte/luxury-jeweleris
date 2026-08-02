@@ -5,6 +5,7 @@ import ProductCard, { type Product } from '../components/ProductCard';
 import Button from '../components/Button';
 import { Filter, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { supabase, dbProductToProduct } from '../lib/supabase';
+import { isCategoryMatch, productMatchesSearchQuery } from '../lib/categoryUtils';
 import './views.css';
 
 // Mock inventory data removed - products fetch dynamically from database
@@ -107,33 +108,17 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     let result = [...productsList];
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(query) ||
-        p.category?.toLowerCase().includes(query) ||
-        p.style?.toLowerCase().includes(query) ||
-        p.shape?.toLowerCase().includes(query)
-      );
+      result = result.filter(p => productMatchesSearchQuery(p, searchQuery));
     }
 
     // Category-level filtering (for dedicated pages)
     if (selectedCategory) {
       const catLower = selectedCategory.toLowerCase();
-      if (catLower === 'engagement') {
-        result = result.filter(p => p.category?.toLowerCase() === 'ring');
-      } else if (catLower === 'wedding') {
-        result = result.filter(p => p.category?.toLowerCase() === 'wedding band');
-      } else if (catLower === 'loose gemstone') {
-        result = result.filter(p => p.category?.toLowerCase() === 'loose gemstone');
-      } else if (catLower === 'earrings') {
-        result = result.filter(p => p.category?.toLowerCase() === 'earrings');
-      } else if (catLower === 'necklaces') {
-        result = result.filter(p => p.category?.toLowerCase() === 'necklace');
-      } else if (catLower === 'bracelets') {
-        result = result.filter(p => p.category?.toLowerCase() === 'bracelet');
-      } else if (catLower === 'gifts') {
+      if (catLower === 'gifts') {
         // Show a curated mix: verified products across all categories
         result = result.filter(p => p.isVerified);
+      } else {
+        result = result.filter(p => isCategoryMatch(p.category, selectedCategory));
       }
     }
 
