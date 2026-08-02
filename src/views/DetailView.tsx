@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Ring360Viewer from '../components/Ring360Viewer';
+import dynamic from 'next/dynamic';
+
+const Ring360Viewer = dynamic(() => import('../components/Ring360Viewer'), { ssr: false });
 import Button from '../components/Button';
 import Badge from '../components/Badge';
 import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Video } from 'lucide-react';
