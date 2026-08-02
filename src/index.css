@@ -1,7 +1,5 @@
 /* RareCarat Design System - Global Styles */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
   /* Brand Palette */
   --color-teal: #0E8C8A;
@@ -324,7 +322,9 @@ button, input, select, textarea {
   }
 }
 
-.footer-col h4 {
+.footer-col h3,
+.footer-col h4,
+.footer-col-title {
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;

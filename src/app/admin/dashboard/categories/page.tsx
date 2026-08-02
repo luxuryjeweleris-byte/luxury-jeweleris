@@ -287,7 +287,11 @@ export default function CategoryCirclesAdmin() {
                     
                     {/* Circle Image Preview */}
                     <div style={{ width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #6366f1', marginBottom: '12px', position: 'relative', background: '#000' }}>
-                      <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      {c.img ? (
+                        <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#64748b' }}>No image</div>
+                      )}
                     </div>
 
                     <div style={{ fontWeight: 700, fontSize: '14px', color: '#f8fafc', marginBottom: '4px' }}>{c.name}</div>

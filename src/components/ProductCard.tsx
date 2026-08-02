@@ -238,7 +238,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
       {/* Top Image Container */}
       <div className="prod-card-img-container">
         {/* Red Sale Tag */}
-        <span className="card-sale-tag">4th of July Sale</span>
+        {product.compPrice > product.price && (
+          <span className="card-sale-tag">
+            {product.savePct ? `${product.savePct}% OFF` : `SAVE $${(product.compPrice - product.price).toLocaleString()}`}
+          </span>
+        )}
         
         {/* Favorite hollow/filled heart */}
         <button 

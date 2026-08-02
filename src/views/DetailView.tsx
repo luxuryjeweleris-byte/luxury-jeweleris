@@ -116,21 +116,50 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
   const [isHoveringImage, setIsHoveringImage] = useState(false);
   const [lensPos, setLensPos] = useState({ x: 0, y: 0, xPercent: 50, yPercent: 50 });
+  const containerRectRef = React.useRef<DOMRect | null>(null);
+  const rafIdRef = React.useRef<number | null>(null);
 
   const LENS_SIZE = 140; // width & height of translucent lens box in px
 
+  const handleMouseEnterImage = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsHoveringImage(true);
+    containerRectRef.current = e.currentTarget.getBoundingClientRect();
+  };
+
+  const handleMouseLeaveImage = () => {
+    setIsHoveringImage(false);
+    containerRectRef.current = null;
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+  };
+
   const handleMouseMoveImage = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    if (!containerRectRef.current) {
+      containerRectRef.current = e.currentTarget.getBoundingClientRect();
+    }
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
-    const lensX = Math.max(0, Math.min(rect.width - LENS_SIZE, mouseX - LENS_SIZE / 2));
-    const lensY = Math.max(0, Math.min(rect.height - LENS_SIZE, mouseY - LENS_SIZE / 2));
+    if (rafIdRef.current) return;
 
-    const xPercent = Math.max(0, Math.min(100, (mouseX / rect.width) * 100));
-    const yPercent = Math.max(0, Math.min(100, (mouseY / rect.height) * 100));
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null;
+      const rect = containerRectRef.current;
+      if (!rect) return;
 
-    setLensPos({ x: lensX, y: lensY, xPercent, yPercent });
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+
+      const lensX = Math.max(0, Math.min(rect.width - LENS_SIZE, mouseX - LENS_SIZE / 2));
+      const lensY = Math.max(0, Math.min(rect.height - LENS_SIZE, mouseY - LENS_SIZE / 2));
+
+      const xPercent = Math.max(0, Math.min(100, (mouseX / rect.width) * 100));
+      const yPercent = Math.max(0, Math.min(100, (mouseY / rect.height) * 100));
+
+      setLensPos({ x: lensX, y: lensY, xPercent, yPercent });
+    });
   };
 
   // Reset selected image index when metal changes
@@ -212,8 +241,8 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               {/* Main Image or 360 Viewer */}
               {activeTab === 'image' ? (
                 <div 
-                  onMouseEnter={() => setIsHoveringImage(true)}
-                  onMouseLeave={() => setIsHoveringImage(false)}
+                  onMouseEnter={handleMouseEnterImage}
+                  onMouseLeave={handleMouseLeaveImage}
                   onMouseMove={handleMouseMoveImage}
                   style={{ 
                     width: '100%', 

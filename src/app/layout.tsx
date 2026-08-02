@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import { CartProvider } from '../context/CartContext';
+import { SiteSettingsProvider } from '../context/SiteSettingsContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Toast from '../components/Toast';
@@ -9,11 +10,13 @@ import '../index.css';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
 });
 
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-display-outfit',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -31,15 +34,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body suppressHydrationWarning>
-        <CartProvider>
-          <div className="app-container">
-            <Navbar />
-            <Toast />
-            <main className="main-content">{children}</main>
-            <Footer />
-          </div>
-        </CartProvider>
+        <SiteSettingsProvider>
+          <CartProvider>
+            <div className="app-container">
+              <Navbar />
+              <Toast />
+              <main className="main-content">{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
+        </SiteSettingsProvider>
       </body>
     </html>
   );

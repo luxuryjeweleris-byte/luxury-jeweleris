@@ -166,7 +166,13 @@ export default function AdminDashboard() {
                         <tr key={p.id}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <img src={p.image ?? ''} alt={p.name} className="admin-product-thumb" />
+                              {p.image ? (
+                                <img src={p.image} alt={p.name} className="admin-product-thumb" />
+                              ) : (
+                                <div className="admin-product-thumb" style={{ background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#94a3b8', borderRadius: '4px' }}>
+                                  No Img
+                                </div>
+                              )}
                               <span style={{ fontSize: '12px', fontWeight: 600 }}>{p.name.slice(0, 30)}{p.name.length > 30 ? '…' : ''}</span>
                             </div>
                           </td>

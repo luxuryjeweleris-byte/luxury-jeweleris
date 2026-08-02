@@ -80,7 +80,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
           <div className="footer-col">
-            <h4>Shop</h4>
+            <h3 className="footer-col-title">Shop</h3>
             <ul>
               <li><Link href="/engagement-rings">Engagement Rings</Link></li>
               <li><Link href="/wedding-bands">Wedding Bands</Link></li>
@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Company</h4>
+            <h3 className="footer-col-title">Company</h3>
             <ul>
               <li><Link href="/about">About Us</Link></li>
               <li><Link href="/contact">Contact Us</Link></li>
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Customer Care</h4>
+            <h3 className="footer-col-title">Customer Care</h3>
             <ul>
               <li><a href="#" onClick={(e) => e.preventDefault()}>100% Free Insured Shipping</a></li>
               <li><a href="#" onClick={(e) => e.preventDefault()}>30-Day Money-Back Returns</a></li>

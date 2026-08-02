@@ -181,6 +181,7 @@ export const HomeView: React.FC = () => {
                 playsInline
                 autoPlay
                 muted
+                crossOrigin="anonymous"
                 onEnded={handleVideo1Ended}
                 style={{
                   position: 'absolute',
@@ -201,6 +202,7 @@ export const HomeView: React.FC = () => {
                 src={heroVideos[1]}
                 playsInline
                 muted
+                crossOrigin="anonymous"
                 onEnded={handleVideo2Ended}
                 style={{
                   position: 'absolute',
