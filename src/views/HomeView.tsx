@@ -146,8 +146,7 @@ export const HomeView: React.FC = () => {
                 margin: '0 auto',
                 overflow: 'hidden',
                 borderRadius: '16px',
-                background: '#faf8f5',
-                boxShadow: '0 12px 32px rgba(15, 23, 42, 0.06)'
+                background: '#ffffff',
               }}
             >
               {/* Video 1 */}
@@ -169,6 +168,8 @@ export const HomeView: React.FC = () => {
                   zIndex: activeVideoIndex === 0 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.04) brightness(1.02)'
                 }}
               />
 
@@ -190,6 +191,8 @@ export const HomeView: React.FC = () => {
                   zIndex: activeVideoIndex === 1 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.08) brightness(1.04)'
                 }}
               />
             </div>
