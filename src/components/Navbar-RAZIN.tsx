@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingBag, Menu, X, Heart, User, ShieldCheck, LogOut, Sparkles, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase } from '../lib/supabase';
 import type { DbProfile } from '../lib/supabase';
 import './components.css';
@@ -71,6 +72,12 @@ export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { cart } = useCart();
+  const { getSetting } = useSiteSettings();
+
+  const storePhone = getSetting('store_phone', '+1 213-642-7217');
+  const contactEmail = getSetting('contact_email', 'luxuryjeweleris@gmail.com');
+  const topPromo = getSetting('top_announcement_bar', 'Exclusive Luxury Sale — Save up to 40% Off Select Jewelry — Limited Time Offer');
+
   const cartCount = cart.length;
   const contactDropdownRef = useRef<HTMLDivElement>(null);
   
@@ -174,8 +181,8 @@ export const Navbar: React.FC = () => {
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">
-          <span className="navbar-top-phone">+1 213-642-7217</span>
-          <span className="navbar-top-promo">4th of July Sale - Save up to 40%* - Ends Soon</span>
+          <span className="navbar-top-phone">{storePhone}</span>
+          <span className="navbar-top-promo">{topPromo}</span>
           <div className="navbar-top-links">
             <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={contactDropdownRef}>
               <button 
@@ -214,11 +221,11 @@ export const Navbar: React.FC = () => {
                   <div className="contact-dropdown-info">
                     <div className="contact-info-item">
                       <span className="contact-info-label">Call Us</span>
-                      <a href="tel:+12136427217" className="contact-info-value">+1 213-642-7217</a>
+                      <a href={`tel:${storePhone}`} className="contact-info-value">{storePhone}</a>
                     </div>
                     <div className="contact-info-item">
                       <span className="contact-info-label">Email Us</span>
-                      <a href="mailto:luxuryjeweleris@gmail.com" className="contact-info-value">luxuryjeweleris@gmail.com</a>
+                      <a href={`mailto:${contactEmail}`} className="contact-info-value">{contactEmail}</a>
                     </div>
                   </div>
                   
@@ -1127,35 +1134,140 @@ export const Navbar: React.FC = () => {
       {/* Mobile Menu Panel */}
       {mobileMenuOpen && (
         <div className="mobile-menu-panel slide-down-enter">
+          {/* Mobile Search Bar */}
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border-soft)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid var(--color-border)' }}>
+              <Search size={16} style={{ color: 'var(--color-slate-muted)', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Search rings, diamonds, gifts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+                    setMobileMenuOpen(false);
+                    setSearchQuery('');
+                  }
+                }}
+                style={{ background: 'none', border: 'none', outline: 'none', fontSize: '14px', color: '#1e293b', width: '100%', fontWeight: '500' }}
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: 0 }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="mobile-menu-content">
-            <Link href="/engagement-rings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Engagement Rings
-            </Link>
-            <Link href="/wedding-bands" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Wedding Bands
-            </Link>
-            <Link href="/diamonds" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Diamonds
-            </Link>
-            <Link href="/earrings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Earrings
-            </Link>
-            <Link href="/necklaces" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Necklaces
-            </Link>
-            <Link href="/bracelets" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Bracelets
-            </Link>
-            <Link href="/gifts" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Gifts
-            </Link>
-            <Link 
-              href="/cart" 
-              className={`mobile-menu-item ${pathname === '/cart' ? 'active' : ''}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping Cart ({cartCount})
-            </Link>
+            {/* Navigation Links */}
+            <div style={{ padding: '8px 0' }}>
+              <div style={{ padding: '4px 16px 8px', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--color-slate-muted)' }}>Shop</div>
+              <Link href="/engagement-rings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>💍</span> Engagement Rings
+              </Link>
+              <Link href="/wedding-bands" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>🪙</span> Wedding Bands
+              </Link>
+              <Link href="/diamonds" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>💎</span> Diamonds
+              </Link>
+              <Link href="/earrings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>✨</span> Earrings
+              </Link>
+              <Link href="/necklaces" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>📿</span> Necklaces
+              </Link>
+              <Link href="/bracelets" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>🧿</span> Bracelets
+              </Link>
+              <Link href="/gifts" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>🎁</span> Gifts
+              </Link>
+              <Link href="/shop" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
+                <span style={{ fontSize: '16px', marginRight: '10px' }}>🛍️</span> All Jewelry
+              </Link>
+            </div>
+
+            {/* Account + Cart Section */}
+            <div style={{ borderTop: '1px solid var(--color-border-soft)', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link
+                href="/cart"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--color-border)', textDecoration: 'none', color: 'var(--color-ink)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 600, fontSize: '14px' }}>
+                  <ShoppingBag size={18} style={{ color: 'var(--color-teal)' }} />
+                  Shopping Cart
+                </div>
+                {cartCount > 0 && (
+                  <span style={{ background: 'var(--color-teal)', color: 'white', fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>{cartCount} items</span>
+                )}
+              </Link>
+              <Link
+                href="/wishlist"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--color-border)', textDecoration: 'none', color: 'var(--color-ink)', fontWeight: 600, fontSize: '14px' }}
+              >
+                <Heart size={18} style={{ color: '#C23636' }} />
+                Saved Items
+              </Link>
+            </div>
+
+            {/* Auth section */}
+            <div style={{ borderTop: '1px solid var(--color-border-soft)', padding: '12px 16px' }}>
+              {user ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--color-slate-muted)', fontWeight: 600, marginBottom: '2px' }}>Signed in as {user.email?.split('@')[0]}</div>
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 14px', borderRadius: '10px', background: 'var(--color-teal-tint)', border: '1px solid var(--color-teal)', textDecoration: 'none', color: 'var(--color-teal-deep)', fontWeight: 700, fontSize: '14px' }}
+                  >
+                    <User size={17} /> My Account
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 14px', borderRadius: '10px', background: 'linear-gradient(135deg, #6366f1, #4f46e5)', textDecoration: 'none', color: 'white', fontWeight: 700, fontSize: '14px' }}
+                    >
+                      <ShieldCheck size={17} /> Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={async () => { await supabase.auth.signOut(); setMobileMenuOpen(false); router.refresh(); }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 14px', borderRadius: '10px', background: 'white', border: '1px solid var(--color-border)', color: 'var(--color-slate)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', width: '100%' }}
+                  >
+                    <LogOut size={16} color="#94a3b8" /> Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', borderRadius: '10px', background: 'var(--color-teal)', textDecoration: 'none', color: 'white', fontWeight: 700, fontSize: '14px' }}
+                  >
+                    Sign Up
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', borderRadius: '10px', background: 'white', border: '1px solid var(--color-border)', textDecoration: 'none', color: 'var(--color-ink)', fontWeight: 700, fontSize: '14px' }}
+                  >
+                    Sign In
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Contact */}
+            <div style={{ borderTop: '1px solid var(--color-border-soft)', padding: '12px 16px 16px', textAlign: 'center' }}>
+              <p style={{ fontSize: '12px', color: 'var(--color-slate-muted)', marginBottom: '6px' }}>Need help? Call us</p>
+              <a href={`tel:${storePhone}`} style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}>{storePhone}</a>
+            </div>
           </div>
         </div>
       )}
@@ -1174,30 +1286,38 @@ export const Navbar: React.FC = () => {
           display: none;
         }
         .mobile-menu-panel {
-          position: absolute;
-          top: 70px;
+          position: fixed;
+          top: 0;
           left: 0;
           right: 0;
+          bottom: 0;
           background-color: var(--color-card);
-          border-bottom: 1px solid var(--color-border);
           box-shadow: var(--shadow-e2);
-          z-index: 98;
-          padding: var(--space-4) 0;
+          z-index: 97;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-top: 70px;
         }
         .mobile-menu-content {
           display: flex;
           flex-direction: column;
-          padding: 0 var(--space-4);
         }
         .mobile-menu-item {
-          padding: var(--space-3) 0;
-          font-size: 16px;
+          padding: 14px 16px;
+          font-size: 15px;
           font-weight: 600;
           border-bottom: 1px solid var(--color-border-soft);
           color: var(--color-ink);
+          display: flex;
+          align-items: center;
+          text-decoration: none;
         }
         .mobile-menu-item:last-child {
           border-bottom: none;
+        }
+        .mobile-menu-item:hover {
+          background: var(--color-surface);
+          color: var(--color-teal);
         }
         .mobile-menu-item.active {
           color: var(--color-teal);

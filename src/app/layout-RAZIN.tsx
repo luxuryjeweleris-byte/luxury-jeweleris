@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import { CartProvider } from '../context/CartContext';
+import { SiteSettingsProvider } from '../context/SiteSettingsContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Toast from '../components/Toast';
@@ -32,14 +33,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <CartProvider>
-          <div className="app-container">
-            <Navbar />
-            <Toast />
-            <main className="main-content">{children}</main>
-            <Footer />
-          </div>
-        </CartProvider>
+        <SiteSettingsProvider>
+          <CartProvider>
+            <div className="app-container">
+              <Navbar />
+              <Toast />
+              <main className="main-content">{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
+        </SiteSettingsProvider>
       </body>
     </html>
   );

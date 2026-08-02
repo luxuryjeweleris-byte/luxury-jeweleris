@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 const FacebookIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -12,6 +13,11 @@ const FacebookIcon = () => (
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
+  const { getSetting } = useSiteSettings();
+
+  const facebookUrl = getSetting('facebook_url', 'https://www.facebook.com/profile.php?id=61588328596938&mibextid=wwXIfr');
+  const freeShipping = getSetting('free_shipping_text', '100% Free Insured Shipping');
+  const returnPolicy = getSetting('return_policy_text', '30-Day Money-Back Returns');
 
   if (pathname.startsWith('/admin')) {
     return null;
@@ -63,7 +69,7 @@ export const Footer: React.FC = () => {
             </p>
             <div style={{ display: 'flex', gap: '16px', marginTop: '16px', alignItems: 'center' }}>
               <a 
-                href="https://www.facebook.com/profile.php?id=61588328596938&mibextid=wwXIfr" 
+                href={facebookUrl} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="footer-social-link"
@@ -102,8 +108,8 @@ export const Footer: React.FC = () => {
           <div className="footer-col">
             <h4>Customer Care</h4>
             <ul>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>100% Free Insured Shipping</a></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>30-Day Money-Back Returns</a></li>
+              <li><a href="#" onClick={(e) => e.preventDefault()}>{freeShipping}</a></li>
+              <li><a href="#" onClick={(e) => e.preventDefault()}>{returnPolicy}</a></li>
               <li><a href="#" onClick={(e) => e.preventDefault()}>Price Match Guarantee</a></li>
               <li><a href="#" onClick={(e) => e.preventDefault()}>Lifetime Warranty</a></li>
             </ul>

@@ -164,7 +164,13 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
               <div className="cart-items-list">
                 {cart.map((item) => (
                   <div key={item.id} className="cart-item">
-                    <img src={item.product.image} alt={item.product.name} className="cart-item-img" />
+                    {item.product.image ? (
+                      <img src={item.product.image} alt={item.product.name} className="cart-item-img" />
+                    ) : (
+                      <div className="cart-item-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f1f5f9', color: '#94a3b8', fontSize: '10px' }}>
+                        No img
+                      </div>
+                    )}
                     <div className="cart-item-details">
                       <div>
                         <h3 className="cart-item-name">{item.product.name}</h3>
