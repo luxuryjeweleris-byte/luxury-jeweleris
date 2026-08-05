@@ -21,7 +21,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, SettingItemDef> = {
     description: 'Customer support contact email address'
   },
   top_announcement_bar: {
-    value: 'Exclusive Luxury Sale — Save up to 40% Off Select Jewelry — Limited Time Offer',
+    value: '',
     label: 'Top Announcement Bar Text',
     description: 'Promo banner headline shown at top of all pages'
   },

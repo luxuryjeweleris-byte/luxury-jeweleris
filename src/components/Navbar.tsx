@@ -102,7 +102,8 @@ const ShapeIcons: Record<string, React.FC> = {
 
 export const Navbar: React.FC = () => {
   const { getSetting } = useSiteSettings();
-  const topPromo = getSetting('top_announcement_bar', 'Exclusive Luxury Sale — Save up to 40% Off Select Jewelry — Limited Time Offer');
+  const topPromo = getSetting('top_announcement_bar', '');
+  const storePhone = getSetting('store_phone', '+1 213-642-7217');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const pathname = usePathname();
@@ -202,6 +203,8 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+  const hasPromo = Boolean(topPromo && topPromo.trim().length > 0);
+
   if (pathname.startsWith('/admin')) {
     return null;
   }
@@ -211,8 +214,8 @@ export const Navbar: React.FC = () => {
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">
-          <span className="navbar-top-phone">+1 213-642-7217</span>
-          <span className="navbar-top-promo">{topPromo}</span>
+          <span className="navbar-top-phone">{storePhone}</span>
+          {hasPromo && <span className="navbar-top-promo">{topPromo}</span>}
           <div className="navbar-top-links">
             <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={contactDropdownRef}>
               <button 
@@ -1121,7 +1124,7 @@ export const Navbar: React.FC = () => {
             </div>
           ) : (
             <button 
-              className="navbar-action-btn desktop-only" 
+              className="navbar-action-btn" 
               title="Search" 
               onClick={() => setSearchOpen(true)}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
@@ -1132,7 +1135,7 @@ export const Navbar: React.FC = () => {
 
           <Link 
             href="/wishlist" 
-            className="navbar-action-btn desktop-only" 
+            className="navbar-action-btn" 
             title="Favorites" 
             style={{ color: pathname === '/wishlist' ? 'var(--color-teal)' : '', padding: '4px', display: 'flex', alignItems: 'center' }}
           >
@@ -1157,6 +1160,31 @@ export const Navbar: React.FC = () => {
             {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
+      </div>
+
+      {/* Mobile Horizontal Category Sub-Navigation Bar */}
+      <div className="mobile-category-nav">
+        <Link href="/engagement-rings" className={`mobile-nav-chip ${pathname === '/engagement-rings' ? 'active' : ''}`}>
+          💍 Engagement Rings
+        </Link>
+        <Link href="/wedding-bands" className={`mobile-nav-chip ${pathname === '/wedding-bands' ? 'active' : ''}`}>
+          💒 Wedding Bands
+        </Link>
+        <Link href="/diamonds" className={`mobile-nav-chip ${pathname === '/diamonds' ? 'active' : ''}`}>
+          💎 Diamonds
+        </Link>
+        <Link href="/earrings" className={`mobile-nav-chip ${pathname === '/earrings' ? 'active' : ''}`}>
+          ✨ Earrings
+        </Link>
+        <Link href="/necklaces" className={`mobile-nav-chip ${pathname === '/necklaces' ? 'active' : ''}`}>
+          📿 Necklaces
+        </Link>
+        <Link href="/bracelets" className={`mobile-nav-chip ${pathname === '/bracelets' ? 'active' : ''}`}>
+          💫 Bracelets
+        </Link>
+        <Link href="/gifts" className={`mobile-nav-chip ${pathname === '/gifts' ? 'active' : ''}`}>
+          🎁 Gifts
+        </Link>
       </div>
 
       {/* Mobile Menu Panel */}
@@ -1191,6 +1219,50 @@ export const Navbar: React.FC = () => {
             >
               Shopping Cart ({cartCount})
             </Link>
+
+            {/* Mobile Contact & Auth Section */}
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--color-border-soft)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <a 
+                href={`tel:${storePhone}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}
+              >
+                📞 Support: {storePhone}
+              </a>
+              <button 
+                onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', fontSize: '13.5px', fontWeight: 600, color: 'var(--color-ink)', cursor: 'pointer', padding: 0, textAlign: 'left' }}
+              >
+                💬 Contact Customer Support
+              </button>
+              {user ? (
+                <Link 
+                  href="/account" 
+                  className="mobile-menu-item" 
+                  style={{ border: 'none', padding: '4px 0', fontSize: '13.5px', color: 'var(--color-teal)' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  👤 My Account ({userProfile?.full_name || user.email?.split('@')[0]})
+                </Link>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+                  <Link 
+                    href="/login" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}
+                  >
+                    Sign In
+                  </Link>
+                  <span style={{ color: '#cbd5e1' }}>|</span>
+                  <Link 
+                    href="/signup" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--color-ink)', textDecoration: 'none' }}
+                  >
+                    Create Account (Sign Up)
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -1208,9 +1280,47 @@ export const Navbar: React.FC = () => {
         .mobile-menu-toggle {
           display: none;
         }
+        .mobile-category-nav {
+          display: none;
+          overflow-x: auto;
+          white-space: nowrap;
+          padding: 8px 12px;
+          gap: 8px;
+          border-top: 1px solid var(--color-border-soft, #f0f2f5);
+          background: #ffffff;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+        .mobile-category-nav::-webkit-scrollbar {
+          display: none;
+        }
+        .mobile-nav-chip {
+          display: inline-flex;
+          align-items: center;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 600;
+          color: #475569;
+          background-color: #f8fafc;
+          border: 1px solid #e2e8f0;
+          text-decoration: none;
+          flex-shrink: 0;
+          transition: all 150ms ease;
+        }
+        .mobile-nav-chip:hover {
+          background-color: #f1f5f9;
+          color: #0f172a;
+        }
+        .mobile-nav-chip.active {
+          color: #ffffff;
+          background: linear-gradient(135deg, #0E8C8A 0%, #065F5E 100%);
+          border-color: #0E8C8A;
+          box-shadow: 0 2px 6px rgba(14, 140, 138, 0.25);
+        }
         .mobile-menu-panel {
           position: absolute;
-          top: 70px;
+          top: 100%;
           left: 0;
           right: 0;
           background-color: var(--color-card);
@@ -1239,11 +1349,17 @@ export const Navbar: React.FC = () => {
         }
 
         @media (max-width: 1024px) {
-          .desktop-only-links, .desktop-only {
+          .desktop-only-links {
+            display: none !important;
+          }
+          .desktop-only {
             display: none !important;
           }
           .mobile-menu-toggle {
             display: inline-flex !important;
+          }
+          .mobile-category-nav {
+            display: flex !important;
           }
         }
       `}</style>

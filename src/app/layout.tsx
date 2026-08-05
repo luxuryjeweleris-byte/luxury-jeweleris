@@ -4,6 +4,7 @@ import { CartProvider } from '../context/CartContext';
 import { SiteSettingsProvider } from '../context/SiteSettingsContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import StoreLocations from '../components/StoreLocations';
 import Toast from '../components/Toast';
 import '../index.css';
 
@@ -39,6 +40,7 @@ export default function RootLayout({
               <Navbar />
               <Toast />
               <main className="main-content">{children}</main>
+              <StoreLocations />
               <Footer />
             </div>
           </CartProvider>

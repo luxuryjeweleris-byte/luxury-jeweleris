@@ -77,17 +77,6 @@ export const HomeView: React.FC = () => {
     setActiveVideoIndex(0);
   };
 
-  const popularStyles = [
-    { name: 'Solitaire Settings', count: '14,230 styles', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=300&auto=format&fit=crop' },
-    { name: 'Halo Settings', count: '8,450 styles', img: 'https://images.unsplash.com/photo-1543294001-f7cbfe92237e?q=80&w=300&auto=format&fit=crop' },
-    { name: 'Hidden Halo', count: '4,120 styles', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=300&auto=format&fit=crop' },
-    { name: 'Three-Stone Rings', count: '3,890 styles', img: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=300&auto=format&fit=crop' },
-  ];
-
-  const handleStyleSelect = (styleName: string) => {
-    router.push(`/engagement-rings`);
-  };
-
   const handleProductSelect = (product: Product) => {
     router.push(`/shop/${product.id}`);
   };
@@ -304,34 +293,8 @@ export const HomeView: React.FC = () => {
           </section>
         );
       })}
-
-      {/* Horizontal style carousel */}
-      <section className="styles-section">
-        <div className="container">
-          <div className="section-header">
-            <span className="label-text">POPULAR STYLES</span>
-            <h2 className="h2-text">Trending Engagement Rings</h2>
-          </div>
-        </div>
-        
-        <div className="styles-rail">
-          {popularStyles.map((style) => (
-            <div 
-              key={style.name} 
-              className="style-chip"
-              onClick={() => handleStyleSelect(style.name)}
-            >
-              <img src={style.img} alt={style.name} className="style-chip-img" />
-              <div className="style-chip-content">
-                <span className="style-chip-title">{style.name}</span>
-                <span className="style-chip-count">{style.count}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
     </div>
   );
 };
+
 export default HomeView;

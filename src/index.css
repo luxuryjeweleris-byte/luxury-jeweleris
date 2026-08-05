@@ -379,3 +379,34 @@ button, input, select, textarea {
 .footer-social-link:hover {
   color: var(--color-teal);
 }
+
+/* Mobile Footer — Center everything */
+@media (max-width: 767px) {
+  .footer {
+    text-align: center;
+  }
+  .footer-grid {
+    gap: 36px;
+  }
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .footer-col h3,
+  .footer-col h4,
+  .footer-col-title {
+    text-align: center;
+  }
+  .footer-col ul {
+    align-items: center;
+    text-align: center;
+  }
+  .footer-col ul a {
+    text-align: center;
+  }
+  .footer-bottom {
+    align-items: center;
+    text-align: center;
+  }
+}
