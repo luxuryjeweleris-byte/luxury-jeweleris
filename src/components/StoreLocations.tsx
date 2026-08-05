@@ -46,7 +46,6 @@ const stores: StoreInfo[] = [
     mapUrl: 'https://www.google.com/maps/search/6600+Topanga+Canyon+Blvd,+Canoga+Park,+CA+91303',
     images: [
       '/stores/topanga_1.jpg',
-      '/stores/topanga_2.jpg',
       '/stores/topanga_3.jpg',
     ],
   },
@@ -242,6 +241,40 @@ export const StoreLocations: React.FC = () => {
                             }}
                           />
                         </div>
+                      </div>
+                    </div>
+                  ) : store.images.length === 2 ? (
+                    /* 2-Image Split Collage Grid */
+                    <div style={{ display: 'flex', width: '100%', height: '100%', gap: '2px' }}>
+                      <div 
+                        style={{ width: '50%', height: '100%', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+                        onClick={() => openLightbox(store.images, 0, store.name)}
+                      >
+                        <img
+                          src={store.images[0]}
+                          alt={`${store.name} photo 1`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 400ms ease',
+                          }}
+                        />
+                      </div>
+                      <div 
+                        style={{ width: '50%', height: '100%', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}
+                        onClick={() => openLightbox(store.images, 1, store.name)}
+                      >
+                        <img
+                          src={store.images[1]}
+                          alt={`${store.name} photo 2`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 400ms ease',
+                          }}
+                        />
                       </div>
                     </div>
                   ) : (
