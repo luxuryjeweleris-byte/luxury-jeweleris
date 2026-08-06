@@ -20,6 +20,49 @@ interface CartCheckoutViewProps {
   onNavigate: (view: string) => void;
 }
 
+const getCartItemImage = (item: CartItem): string => {
+  const { product, metal } = item;
+  if (!product) return 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop';
+
+  const m = (metal || '').toLowerCase();
+
+  // 1. Check for metal-specific image matching item configuration
+  let metalImg = '';
+  if (m === 'gold' || m.includes('yellow')) {
+    metalImg = product.imageYellowGold || (product.imagesYellowGold && product.imagesYellowGold[0]) || '';
+  } else if (m === 'rose' || m.includes('rose')) {
+    metalImg = product.imageRoseGold || (product.imagesRoseGold && product.imagesRoseGold[0]) || '';
+  } else if (m === 'platinum' || m.includes('platinum')) {
+    metalImg = product.imagePlatinum || (product.imagesPlatinum && product.imagesPlatinum[0]) || '';
+  } else if (m === 'silver' || m.includes('silver')) {
+    metalImg = product.imageSilver || (product.imagesSilver && product.imagesSilver[0]) || '';
+  } else if (m === 'white' || m.includes('white')) {
+    metalImg = (product.imagesWhiteGold && product.imagesWhiteGold[0]) || '';
+  }
+
+  if (metalImg && metalImg.trim() !== '') return metalImg;
+
+  // 2. Check main product image
+  if (product.image && product.image.trim() !== '') return product.image;
+
+  // 3. Fallback to any available metal variant image
+  const fallback =
+    (product.imagesWhiteGold && product.imagesWhiteGold[0]) ||
+    product.imageYellowGold ||
+    (product.imagesYellowGold && product.imagesYellowGold[0]) ||
+    product.imageRoseGold ||
+    (product.imagesRoseGold && product.imagesRoseGold[0]) ||
+    product.imagePlatinum ||
+    (product.imagesPlatinum && product.imagesPlatinum[0]) ||
+    product.imageSilver ||
+    (product.imagesSilver && product.imagesSilver[0]);
+
+  if (fallback && fallback.trim() !== '') return fallback;
+
+  // 4. Default high-res fallback jewelry image
+  return 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop';
+};
+
 export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
   cart,
   onRemoveItem,
@@ -164,12 +207,12 @@ export const CartCheckoutView: React.FC<CartCheckoutViewProps> = ({
               <div className="cart-items-list">
                 {cart.map((item) => (
                   <div key={item.id} className="cart-item">
-                    <img src={item.product.image} alt={item.product.name} className="cart-item-img" />
+                    <img src={getCartItemImage(item)} alt={item.product.name} className="cart-item-img" />
                     <div className="cart-item-details">
                       <div>
                         <h3 className="cart-item-name">{item.product.name}</h3>
                         <span className="cart-item-meta" style={{ textTransform: 'capitalize' }}>
-                          Metal: {item.metal} · Size: {item.size} · Premium Quality
+                          Metal: {item.metal}{item.size && item.size !== 'N/A' ? ` · Size: ${item.size}` : ''} · Premium Quality
                         </span>
                       </div>
                       <div className="cart-item-price-row">

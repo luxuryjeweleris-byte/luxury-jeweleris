@@ -5,6 +5,7 @@ import Badge from '../components/Badge';
 import { ArrowLeft, Sparkles, RotateCcw, ChevronLeft, ChevronRight, Video } from 'lucide-react';
 import ProductCard, { type Product, getAvailableMetals } from '../components/ProductCard';
 import { supabase, dbProductToProduct } from '../lib/supabase';
+import { requiresRingSize } from '../lib/categoryUtils';
 import { INITIAL_PRODUCTS } from './ListingView';
 import './views.css';
 
@@ -16,14 +17,23 @@ interface DetailViewProps {
 
 export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddToCart }) => {
   const availableMetals = useMemo(() => getAvailableMetals(product), [product]);
+  const isRing = useMemo(() => requiresRingSize(product), [product]);
 
-  const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose' | 'silver' | 'white'>(() => {
+  // Metal selection state: default to unselected if multiple metals exist
+  const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose' | 'silver' | 'white' | ''>(() => {
+    if (availableMetals.length > 1) {
+      return '';
+    }
     return (availableMetals[0]?.key as any) || 'gold';
   });
+  const [metalError, setMetalError] = useState(false);
 
   useEffect(() => {
-    if (availableMetals.length > 0 && !availableMetals.some(m => m.key === metal)) {
-      setMetal(availableMetals[0].key as any);
+    if (availableMetals.length <= 1) {
+      setMetal((availableMetals[0]?.key as any) || 'gold');
+      setMetalError(false);
+    } else if (metal && !availableMetals.some(m => m.key === metal)) {
+      setMetal('');
     }
   }, [availableMetals, metal]);
 
@@ -110,7 +120,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
     if (list.length === 0 && product.image) {
       list = [product.image];
     }
-    return list.slice(0, 5);
+    return list.filter(Boolean).slice(0, 5);
   }, [metal, product]);
 
   const [selectedImgIndex, setSelectedImgIndex] = useState(0);
@@ -139,11 +149,12 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
   }, [metal]);
 
   const currentDisplayedImage = activeMetalImages[selectedImgIndex] || activeMetalImages[0] || (
-    metal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
-    metal === 'rose' && product.imageRoseGold ? product.imageRoseGold :
-    metal === 'platinum' && product.imagePlatinum ? product.imagePlatinum :
-    metal === 'silver' && product.imageSilver ? product.imageSilver :
-    product.image
+    (metal === 'gold' && product.imageYellowGold) ||
+    (metal === 'rose' && product.imageRoseGold) ||
+    (metal === 'platinum' && product.imagePlatinum) ||
+    (metal === 'silver' && product.imageSilver) ||
+    product.image ||
+    undefined
   );
 
   const handleNextImg = () => {
@@ -165,12 +176,26 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    let hasError = false;
+
+    if (isRing && !selectedSize) {
       setSizeError(true);
-      return;
+      hasError = true;
+    } else {
+      setSizeError(false);
     }
-    setSizeError(false);
-    onAddToCart(product, { metal, size: selectedSize });
+
+    if (availableMetals.length > 1 && !metal) {
+      setMetalError(true);
+      hasError = true;
+    } else {
+      setMetalError(false);
+    }
+
+    if (hasError) return;
+
+    const finalMetal = metal || availableMetals[0]?.key || 'gold';
+    onAddToCart(product, { metal: finalMetal, size: isRing ? selectedSize : 'N/A' });
   };
 
   return (
@@ -292,7 +317,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   url360={product.url360}
                   autoplay={true} 
                   interactive={true} 
-                  metalColor={metal === 'white' ? 'platinum' : metal} 
+                  metalColor={((metal || availableMetals[0]?.key || 'gold') === 'white' ? 'platinum' : (metal || availableMetals[0]?.key || 'gold')) as any} 
                   caratSize={product.carat}
                   width={currentCardHeight} 
                   height={currentCardHeight} 
@@ -421,19 +446,35 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
 
             {/* Config: Metal Color (Render ONLY metals with uploaded photos in Admin) */}
             {availableMetals.length > 0 && (
-              <div className="config-group">
-                <div className="config-label">
-                  Select Metal: <span style={{ color: 'var(--color-ink)', fontWeight: 'bold', textTransform: 'capitalize' }}>
-                    {availableMetals.find(m => m.key === metal)?.label || 'Yellow Gold'}
+              <div className={`config-group ${metalError ? 'size-error-group' : ''}`}>
+                <div className="config-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>
+                    Select Metal: {metal ? (
+                      <span style={{ color: 'var(--color-ink)', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                        {availableMetals.find(m => m.key === metal)?.label || metal}
+                      </span>
+                    ) : (
+                      <span style={{ color: metalError ? '#ef4444' : 'var(--color-slate-muted)', fontWeight: 'bold', marginLeft: '4px' }}>
+                        *Required
+                      </span>
+                    )}
                   </span>
+                  {metalError && (
+                    <span className="size-error-badge">
+                      ⚠️ Please select a metal
+                    </span>
+                  )}
                 </div>
                 <div className="config-options" style={{ gap: '12px' }}>
                   {availableMetals.map((m) => (
                     <button 
                       key={m.key}
-                      className={`metal-circle ${metal === m.key ? 'active' : ''}`}
+                      className={`metal-circle ${metal === m.key ? 'active' : ''} ${metalError && !metal ? 'pulse-border' : ''}`}
                       style={{ backgroundColor: m.color }}
-                      onClick={() => setMetal(m.key as any)}
+                      onClick={() => {
+                        setMetal(m.key as any);
+                        setMetalError(false);
+                      }}
                       title={m.label}
                     />
                   ))}
@@ -441,41 +482,43 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               </div>
             )}
 
-            {/* Config: Size */}
-            <div className={`config-group ${sizeError ? 'size-error-group' : ''}`}>
-              <div className="config-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>
-                  Select Ring Size (US): {selectedSize ? (
-                    <span style={{ color: 'var(--color-teal)', fontWeight: 'bold', marginLeft: '4px' }}>
-                      Size {selectedSize}
-                    </span>
-                  ) : (
-                    <span style={{ color: sizeError ? '#ef4444' : 'var(--color-slate-muted)', fontWeight: 'bold', marginLeft: '4px' }}>
-                      *Required
+            {/* Config: Ring Size (Render ONLY for Ring or Wedding Band products) */}
+            {isRing && (
+              <div className={`config-group ${sizeError ? 'size-error-group' : ''}`}>
+                <div className="config-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>
+                    Select Ring Size (US): {selectedSize ? (
+                      <span style={{ color: 'var(--color-teal)', fontWeight: 'bold', marginLeft: '4px' }}>
+                        Size {selectedSize}
+                      </span>
+                    ) : (
+                      <span style={{ color: sizeError ? '#ef4444' : 'var(--color-slate-muted)', fontWeight: 'bold', marginLeft: '4px' }}>
+                        *Required
+                      </span>
+                    )}
+                  </span>
+                  {sizeError && (
+                    <span className="size-error-badge">
+                      ⚠️ Please select a size
                     </span>
                   )}
-                </span>
-                {sizeError && (
-                  <span className="size-error-badge">
-                    ⚠️ Please select a size
-                  </span>
-                )}
+                </div>
+                <div className="config-options">
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      className={`config-btn ${selectedSize === size ? 'active' : ''} ${sizeError ? 'pulse-border' : ''}`}
+                      onClick={() => {
+                        setSelectedSize(size);
+                        setSizeError(false);
+                      }}
+                    >
+                      Size {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="config-options">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    className={`config-btn ${selectedSize === size ? 'active' : ''} ${sizeError ? 'pulse-border' : ''}`}
-                    onClick={() => {
-                      setSelectedSize(size);
-                      setSizeError(false);
-                    }}
-                  >
-                    Size {size}
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
             {/* Specs Table */}
             <div className="config-group" style={{ marginTop: '16px' }}>
@@ -508,6 +551,11 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
 
             {/* CTA Button */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {metalError && (
+                <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: 600, textAlign: 'center', background: '#fef2f2', padding: '6px 12px', borderRadius: '8px', border: '1px solid #fca5a5' }}>
+                  ⚠️ Please select a metal option above before adding to cart
+                </div>
+              )}
               {sizeError && (
                 <div style={{ color: '#ef4444', fontSize: '12px', fontWeight: 600, textAlign: 'center', background: '#fef2f2', padding: '6px 12px', borderRadius: '8px', border: '1px solid #fca5a5' }}>
                   ⚠️ Please select a ring size above before adding to cart
@@ -520,10 +568,14 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   width: '100%', 
                   height: '50px', 
                   fontSize: '15px',
-                  border: sizeError ? '2px solid #ef4444' : undefined
+                  border: (sizeError || metalError) ? '2px solid #ef4444' : undefined
                 }}
               >
-                {selectedSize ? `Add Size ${selectedSize} to cart` : 'Select Size & Add to Cart'}
+                {isRing
+                  ? selectedSize
+                    ? `Add Size ${selectedSize} to cart`
+                    : 'Select Size & Add to Cart'
+                  : 'Add to Cart'}
               </Button>
             </div>
           </div>

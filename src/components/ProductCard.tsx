@@ -259,11 +259,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         {/* Product Image */}
         <img
           src={
-            selectedMetal === 'gold' && product.imageYellowGold ? product.imageYellowGold :
-            selectedMetal === 'rose' && product.imageRoseGold ? product.imageRoseGold :
-            selectedMetal === 'platinum' && product.imagePlatinum ? product.imagePlatinum :
-            selectedMetal === 'silver' && product.imageSilver ? product.imageSilver :
-            product.image
+            (selectedMetal === 'gold' && product.imageYellowGold) ||
+            (selectedMetal === 'rose' && product.imageRoseGold) ||
+            (selectedMetal === 'platinum' && product.imagePlatinum) ||
+            (selectedMetal === 'silver' && product.imageSilver) ||
+            product.image ||
+            undefined
           }
           alt={product.name}
           className="prod-card-img"

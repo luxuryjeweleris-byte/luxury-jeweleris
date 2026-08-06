@@ -107,3 +107,36 @@ export function productMatchesSearchQuery(
 
   return name.includes(q) || category.includes(q) || style.includes(q) || metal.includes(q) || shape.includes(q);
 }
+
+/**
+ * Determines whether a product requires a ring size selection (e.g. Rings, Wedding Bands).
+ * Non-ring products like Necklaces, Earrings, Bracelets, Pendants return false.
+ */
+export function requiresRingSize(product: { name: string; category?: string | null }): boolean {
+  if (!product) return false;
+  const norm = normalizeCategory(product.category);
+  if (norm === 'Ring' || norm === 'Wedding Band') {
+    return true;
+  }
+  const nameLower = (product.name || '').toLowerCase();
+  const catLower = (product.category || '').toLowerCase();
+
+  // If explicitly non-ring items
+  if (
+    catLower.includes('necklace') || 
+    catLower.includes('earring') || 
+    catLower.includes('bracelet') || 
+    catLower.includes('pendant') ||
+    catLower.includes('gift')
+  ) {
+    return false;
+  }
+
+  // Check if title mentions ring (but not earring or key ring)
+  if (nameLower.includes('ring') && !nameLower.includes('earring')) {
+    return true;
+  }
+
+  return false;
+}
+
