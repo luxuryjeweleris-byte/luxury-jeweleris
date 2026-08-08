@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MapPin, Phone, Clock, Navigation, ChevronLeft, ChevronRight, Maximize2, X, Sparkles, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, Clock, Navigation, ChevronLeft, ChevronRight, Maximize2, X, Sparkles, ArrowRight } from 'lucide-react';
 
 interface StoreInfo {
   id: string;
+  slug: string;
   name: string;
   locationTag: string;
   address: string;
@@ -20,6 +22,7 @@ interface StoreInfo {
 const stores: StoreInfo[] = [
   {
     id: 'arcadia',
+    slug: 'arcadia-ca',
     name: 'Luxury Jewelers Santa Anita Mall',
     locationTag: 'Santa Anita Mall · Arcadia, CA',
     address: '400 S Baldwin Ave, Suite 231',
@@ -36,6 +39,7 @@ const stores: StoreInfo[] = [
   },
   {
     id: 'canoga-park',
+    slug: 'canoga-park-ca',
     name: 'Luxury Jewelers Topanga Mall',
     locationTag: 'Topanga Mall · Canoga Park, CA',
     address: '6600 Topanga Canyon Blvd',
@@ -410,13 +414,10 @@ export const StoreLocations: React.FC = () => {
                   </div>
 
                   {/* Card Footer Action Buttons */}
-                  <div style={{ display: 'flex', gap: '12px', paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>
-                    <a
-                      href={store.mapUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>
+                    <Link
+                      href={`/locations/${store.slug}`}
                       style={{
-                        flex: 1,
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -434,39 +435,57 @@ export const StoreLocations: React.FC = () => {
                       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0E8C8A')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#10151A')}
                     >
-                      <Navigation size={16} />
-                      Get Directions
-                    </a>
+                      View Store Page & Appointments
+                      <ArrowRight size={15} />
+                    </Link>
 
-                    <a
-                      href={`tel:${store.phone}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        padding: '12px 18px',
-                        borderRadius: '12px',
-                        backgroundColor: '#F8FAFC',
-                        border: '1px solid #CBD5E1',
-                        color: '#1E293B',
-                        fontSize: '13.5px',
-                        fontWeight: 600,
-                        textDecoration: 'none',
-                        transition: 'all 180ms ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#EEF2F6';
-                        e.currentTarget.style.color = '#0F172A';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F8FAFC';
-                        e.currentTarget.style.color = '#1E293B';
-                      }}
-                    >
-                      <Phone size={16} />
-                      Call Store
-                    </a>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <a
+                        href={store.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          flex: 1,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          backgroundColor: '#F8FAFC',
+                          border: '1px solid #CBD5E1',
+                          color: '#1E293B',
+                          fontSize: '12.5px',
+                          fontWeight: 600,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <Navigation size={14} />
+                        Directions
+                      </a>
+
+                      <a
+                        href={`tel:${store.phone}`}
+                        style={{
+                          flex: 1,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          backgroundColor: '#F8FAFC',
+                          border: '1px solid #CBD5E1',
+                          color: '#1E293B',
+                          fontSize: '12.5px',
+                          fontWeight: 600,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <Phone size={14} />
+                        Call Store
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

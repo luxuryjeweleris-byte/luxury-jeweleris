@@ -217,6 +217,14 @@ export const Navbar: React.FC = () => {
           <span className="navbar-top-phone">{storePhone}</span>
           {hasPromo && <span className="navbar-top-promo">{topPromo}</span>}
           <div className="navbar-top-links">
+            <Link 
+              href="/locations" 
+              className="navbar-top-btn"
+              style={{ color: 'inherit', textDecoration: 'none', fontWeight: '600' }}
+            >
+              Our Boutiques
+            </Link>
+            <span className="navbar-top-sep">|</span>
             <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={contactDropdownRef}>
               <button 
                 className="navbar-top-btn" 

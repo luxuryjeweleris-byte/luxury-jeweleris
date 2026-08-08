@@ -127,12 +127,13 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
           <div className="footer-col">
-            <h3 className="footer-col-title">Company</h3>
+            <h3 className="footer-col-title">Company & Stores</h3>
             <ul>
               <li><Link href="/about">About Us</Link></li>
               <li><Link href="/contact">Contact Us</Link></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>Careers</a></li>
-              <li><a href="#" onClick={(e) => e.preventDefault()}>Press</a></li>
+              <li><Link href="/locations">Our Boutiques</Link></li>
+              <li><Link href="/locations/arcadia-ca" style={{ fontSize: '12px', color: '#94A3B8' }}>• Arcadia, CA</Link></li>
+              <li><Link href="/locations/canoga-park-ca" style={{ fontSize: '12px', color: '#94A3B8' }}>• Canoga Park, CA</Link></li>
             </ul>
           </div>
           <div className="footer-col">
