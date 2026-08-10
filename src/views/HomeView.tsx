@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Clock, ArrowRight, BookOpen } from 'lucide-react';
 import TrustStrip from '../components/TrustStrip';
 import CategoryCarousel from '../components/CategoryCarousel';
 import ProductCard, { Product } from '../components/ProductCard';
@@ -10,6 +12,24 @@ import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase, dbProductToProduct } from '../lib/supabase';
 import { isCategoryMatch } from '../lib/categoryUtils';
 import './views.css';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  tags: string[] | null;
+  body: string | null;
+  published_at: string | null;
+  author_name: string | null;
+}
+
+function estimateReadTime(body: string | null): string {
+  if (!body) return '1 min read';
+  const words = body.trim().split(/\s+/).length;
+  return `${Math.max(1, Math.round(words / 200))} min read`;
+}
 
 export const HomeView: React.FC = () => {
   const router = useRouter();
@@ -32,6 +52,7 @@ export const HomeView: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [activeCategoryTab, setActiveCategoryTab] = useState<string>('All Featured');
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
     const fetchHomeProducts = async () => {
@@ -59,6 +80,24 @@ export const HomeView: React.FC = () => {
     };
 
     fetchHomeProducts();
+  }, []);
+
+  // Fetch latest 3 blog posts
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      try {
+        const { data } = await supabase
+          .from('blog_posts')
+          .select('id, title, slug, excerpt, cover_image, tags, body, published_at, author_name')
+          .eq('is_published', true)
+          .order('published_at', { ascending: false })
+          .limit(3);
+        if (data) setBlogPosts(data as BlogPost[]);
+      } catch (err) {
+        console.error('Error fetching blog posts:', err);
+      }
+    };
+    fetchBlogPosts();
   }, []);
 
   const handleVideo1Ended = () => {
@@ -130,7 +169,7 @@ export const HomeView: React.FC = () => {
               style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: '460px',
+                maxWidth: '320px',
                 aspectRatio: '1 / 1',
                 margin: '0 auto',
                 overflow: 'hidden',
@@ -293,6 +332,79 @@ export const HomeView: React.FC = () => {
           </section>
         );
       })}
+
+      {/* ── JOURNAL SECTION ──────────────────────── */}
+      <section className="home-blog-section">
+        <div className="container-wide">
+          <div className="home-blog-header">
+            <div>
+              <span className="label-text" style={{ color: 'var(--color-teal)', letterSpacing: '1.2px', fontSize: '11px' }}>
+                JEWELRY JOURNAL
+              </span>
+              <h2 className="h2-text" style={{ fontSize: 'clamp(20px, 3.5vw, 28px)', fontWeight: 800, color: 'var(--color-ink)', marginTop: '4px' }}>
+                Latest from Our Blog
+              </h2>
+              <p style={{ fontSize: '14px', color: 'var(--color-slate)', marginTop: '4px' }}>
+                Expert guides, jewelry trends &amp; gemstone education.
+              </p>
+            </div>
+            <Link href="/blog" className="home-blog-view-all">
+              All Articles <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {blogPosts.length > 0 ? (
+            <div className="home-blog-grid">
+              {blogPosts.map((post, idx) => (
+                <Link key={post.id} href={`/blog/${post.slug}`} className={`home-blog-card ${idx === 0 ? 'home-blog-card-featured' : ''}`}>
+                  <div className="home-blog-card-img-wrap">
+                    {post.cover_image ? (
+                      <img src={post.cover_image} alt={post.title} className="home-blog-card-img" />
+                    ) : (
+                      <div className="home-blog-card-img-placeholder">
+                        <BookOpen size={32} />
+                      </div>
+                    )}
+                    {(post.tags ?? []).length > 0 && (
+                      <span className="home-blog-card-tag">{post.tags![0]}</span>
+                    )}
+                  </div>
+                  <div className="home-blog-card-body">
+                    <h3 className="home-blog-card-title">{post.title}</h3>
+                    {post.excerpt && (
+                      <p className="home-blog-card-excerpt">{post.excerpt}</p>
+                    )}
+                    <div className="home-blog-card-meta">
+                      <Clock size={12} />
+                      <span>{estimateReadTime(post.body)}</span>
+                      <span style={{ color: '#CBD5E1' }}>·</span>
+                      <span>{post.author_name || 'Luxury Jeweleris'}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            /* CTA Banner when no posts yet */
+            <div className="home-blog-cta-banner">
+              <div className="home-blog-cta-icon">
+                <BookOpen size={28} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-ink)', marginBottom: '4px' }}>
+                  Discover Our Jewelry Journal
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--color-slate)', marginBottom: '16px' }}>
+                  Gemstone guides, ring buying tips, metal comparisons &amp; more — written by certified gemologists.
+                </p>
+                <Button variant="primary" onClick={() => router.push('/blog')}>
+                  Visit the Journal
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

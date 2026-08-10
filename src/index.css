@@ -63,10 +63,16 @@
   padding: 0;
 }
 
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--color-surface);
   color: var(--color-ink);
   overflow-x: hidden;
+  min-width: 320px;
 }
 
 #root {

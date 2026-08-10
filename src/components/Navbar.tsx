@@ -1101,8 +1101,9 @@ export const Navbar: React.FC = () => {
               </div>
             </div>
           </div>
+ 
         </div>
-
+ 
         {/* Right: Cart & Actions */}
         <div className="navbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           {searchOpen ? (
@@ -1193,6 +1194,9 @@ export const Navbar: React.FC = () => {
         <Link href="/gifts" className={`mobile-nav-chip ${pathname === '/gifts' ? 'active' : ''}`}>
           🎁 Gifts
         </Link>
+        <Link href="/blog" className={`mobile-nav-chip ${pathname.startsWith('/blog') ? 'active' : ''}`}>
+          📖 Journal
+        </Link>
       </div>
 
       {/* Mobile Menu Panel */}
@@ -1219,6 +1223,9 @@ export const Navbar: React.FC = () => {
             </Link>
             <Link href="/gifts" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
               Gifts
+            </Link>
+            <Link href="/blog" className={`mobile-menu-item ${pathname.startsWith('/blog') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+              📖 Jewelry Journal
             </Link>
             <Link 
               href="/cart" 

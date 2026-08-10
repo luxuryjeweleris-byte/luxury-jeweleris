@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
-  LogOut, Loader2, Grid, ShieldCheck
+  LogOut, Loader2, Grid, ShieldCheck, BookOpen
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import '../../admin/admin.css';
@@ -16,6 +16,7 @@ const navItems = [
   { href: '/admin/dashboard/categories', label: 'Category Circles', icon: Grid },
   { href: '/admin/dashboard/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/admin/dashboard/customers', label: 'Customers', icon: Users },
+  { href: '/admin/dashboard/blog', label: 'Blog Posts', icon: BookOpen },
   { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 

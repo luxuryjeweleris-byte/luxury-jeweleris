@@ -131,6 +131,7 @@ export const Footer: React.FC = () => {
             <ul>
               <li><Link href="/about">About Us</Link></li>
               <li><Link href="/contact">Contact Us</Link></li>
+              <li><Link href="/blog">Jewelry Journal</Link></li>
               <li><Link href="/locations">Our Boutiques</Link></li>
               <li><Link href="/locations/arcadia-ca" style={{ fontSize: '12px', color: '#94A3B8' }}>• Arcadia, CA</Link></li>
               <li><Link href="/locations/canoga-park-ca" style={{ fontSize: '12px', color: '#94A3B8' }}>• Canoga Park, CA</Link></li>
