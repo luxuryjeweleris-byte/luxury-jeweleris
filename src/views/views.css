@@ -270,12 +270,30 @@
   flex-wrap: wrap;
   gap: var(--space-3);
   justify-content: center;
+  width: 100%;
+}
+
+/* Mobile: buttons stretch to equal width */
+@media (max-width: 1023px) {
+  .hero-ctas {
+    gap: 10px;
+  }
+  .hero-ctas > * {
+    flex: 1 1 0;
+    min-width: 140px;
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 @media (min-width: 1024px) {
   .hero-ctas {
     justify-content: flex-start;
     gap: var(--space-4);
+    width: auto;
+  }
+  .hero-ctas > * {
+    flex: none;
   }
 }
 

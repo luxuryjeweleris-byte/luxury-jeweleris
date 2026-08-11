@@ -378,20 +378,92 @@
   position: relative;
 }
 
+/* ============================================
+   MOBILE NAVBAR: Proper 3-column grid layout
+   Left: Hamburger | Center: Logo | Right: Icons
+   ============================================ */
+
+/* mobile-left-area: hidden on desktop */
+.mobile-left-area {
+  display: none;
+}
+
+/* Hide the old desktop-style toggle on mobile */
+.mobile-menu-toggle-desktop-hidden {
+  display: inline-flex;
+}
+
+@media (max-width: 1024px) {
+  /* Switch to grid for clean 3-column layout */
+  .navbar-container {
+    height: 60px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 14px;
+  }
+
+  /* Column 1 (left): hamburger */
+  .mobile-left-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    grid-column: 1;
+  }
+
+  /* Column 2 (center): logo */
+  .navbar-logo-container {
+    grid-column: 2;
+    justify-self: center;
+    /* Reset any absolute positioning from prev attempt */
+    position: static !important;
+    transform: none !important;
+    z-index: auto;
+  }
+
+  /* Shrink logo slightly on mobile */
+  .navbar-logo-container > div {
+    height: 38px !important;
+    gap: 7px !important;
+  }
+
+  /* Column 3 (right): search + heart + cart */
+  .navbar-actions {
+    grid-column: 3;
+    justify-content: flex-end;
+    gap: 6px !important;
+  }
+
+  /* Desktop nav links: pushed out of grid flow (hidden) */
+  .desktop-only-links {
+    display: none !important;
+  }
+
+  /* Hide old duplicate toggle button on mobile */
+  .mobile-menu-toggle-desktop-hidden {
+    display: none !important;
+  }
+
+  /* Shrink action icon size on mobile */
+  .navbar-actions .navbar-action-btn {
+    padding: 5px;
+  }
+}
+
 /* Mobile Sub-Navigation Category Rail */
 .mobile-category-nav {
   display: flex;
   overflow-x: auto;
   white-space: nowrap;
   padding: 10px 14px;
-  gap: 10px;
+  gap: 8px;
   border-top: 1px solid #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
-  background: #ffffff;
+  border-bottom: 1px solid #e8edf2;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .mobile-category-nav::-webkit-scrollbar {
@@ -401,29 +473,40 @@
 .mobile-nav-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 16px;
-  border-radius: 24px;
-  font-size: 12.5px;
+  gap: 5px;
+  padding: 7px 15px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
-  color: #334155;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  color: #374151;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e9ef;
   text-decoration: none;
   flex-shrink: 0;
-  transition: all 180ms ease;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.1px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 .mobile-nav-chip:hover, .mobile-nav-chip:active {
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: #f8fafc;
+  border-color: #0E8C8A;
+  color: #0E8C8A;
+  box-shadow: 0 2px 8px rgba(14, 140, 138, 0.12);
+  transform: translateY(-1px);
 }
 
 .mobile-nav-chip.active {
   color: #ffffff;
   background: linear-gradient(135deg, #0E8C8A 0%, #065F5E 100%);
-  border-color: #0E8C8A;
-  box-shadow: 0 3px 10px rgba(14, 140, 138, 0.3);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(14, 140, 138, 0.35);
+  transform: translateY(-1px);
+}
+
+.mobile-nav-chip .chip-emoji {
+  font-size: 13px;
+  line-height: 1;
 }
 
 @media (min-width: 1025px) {
@@ -843,31 +926,111 @@
   color: #d4af78 !important;
 }
 
+/* Pill style for top bar buttons */
+.navbar-top-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.top-btn-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.top-btn-label {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
 .navbar-top-sep {
   color: #6b4a2a;
   font-weight: 400;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
+  /* Mobile top bar: full-width justified button row */
+  .navbar-top-phone {
+    display: none !important;
+  }
+  .navbar-top-promo {
+    display: none !important;
+  }
+  .navbar-top-bar {
+    padding: 0;
+  }
+  /* Override .container padding so top bar stretches full width */
+  .navbar-top-bar .navbar-top-bar-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    justify-content: stretch;
+  }
+  /* Make the links div take full width and spread items equally */
+  .navbar-top-links {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 0;
+  }
+  /* Each pill button fills equal space */
+  .navbar-top-links > * {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 4px;
+    border-right: 1px solid rgba(212, 175, 120, 0.15);
+    transition: background 150ms ease;
+    cursor: pointer;
+  }
+  .navbar-top-links > *:last-child {
+    border-right: none;
+  }
+  .navbar-top-links > *:hover,
+  .navbar-top-links > *:active {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  /* Separator hidden on mobile */
+  .navbar-top-sep {
+    display: none !important;
+  }
+  /* Wrapper divs (for dropdowns) should also flex */
+  .navbar-top-link-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .navbar-top-btn-pill {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 4px;
+  }
+  .top-btn-icon {
+    font-size: 14px;
+  }
+  .top-btn-label {
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 900px) {
   .navbar-top-bar {
     padding: 7px 0;
   }
   .navbar-top-bar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 14px;
+    padding: 0 16px;
   }
   .navbar-top-phone {
-    display: inline-block !important;
     font-size: 11.5px;
     font-weight: 600;
     color: #d4af78;
   }
   .navbar-top-links {
-    display: flex !important;
-    align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-size: 11.5px;
   }
   .navbar-top-links a, .navbar-top-btn {

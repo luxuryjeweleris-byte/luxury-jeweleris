@@ -155,11 +155,11 @@ export const HomeView: React.FC = () => {
               {heroSubtitle}
             </p>
             <div className="hero-ctas">
-              <Button variant="primary" onClick={() => router.push('/shop')}>
-                Shop the Collection
+              <Button variant="primary" onClick={() => router.push('/shop')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                🛍️ Shop the Collection
               </Button>
-              <Button variant="ghost" onClick={() => router.push('/engagement-rings')}>
-                Engagement Rings
+              <Button variant="ghost" onClick={() => router.push('/engagement-rings')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                💍 View Engagement Rings
               </Button>
             </div>
           </div>

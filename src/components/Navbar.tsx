@@ -219,15 +219,16 @@ export const Navbar: React.FC = () => {
           <div className="navbar-top-links">
             <Link 
               href="/locations" 
-              className="navbar-top-btn"
+              className="navbar-top-btn navbar-top-btn-pill"
               style={{ color: 'inherit', textDecoration: 'none', fontWeight: '600' }}
             >
-              Our Boutiques
+              <span className="top-btn-icon">🏪</span>
+              <span className="top-btn-label">Our Boutiques</span>
             </Link>
             <span className="navbar-top-sep">|</span>
             <div className="navbar-top-link-wrapper" style={{ position: 'relative' }} ref={contactDropdownRef}>
               <button 
-                className="navbar-top-btn" 
+                className="navbar-top-btn navbar-top-btn-pill" 
                 onClick={() => setContactOpen(!contactOpen)}
                 style={{ 
                   background: 'none', 
@@ -239,7 +240,8 @@ export const Navbar: React.FC = () => {
                   fontWeight: '600'
                 }}
               >
-                Contact us
+                <span className="top-btn-icon">💬</span>
+                <span className="top-btn-label">Contact us</span>
               </button>
               
               {contactOpen && (
@@ -512,7 +514,18 @@ export const Navbar: React.FC = () => {
 
       {/* Main Navbar */}
       <div className="container navbar-container">
-        {/* Left: Brand Logo */}
+        {/* Mobile Left: Hamburger (only shown on mobile) */}
+        <div className="mobile-left-area">
+          <button
+            className="navbar-action-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', display: 'flex', alignItems: 'center', borderRadius: '8px' }}
+          >
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+
+        {/* Logo — centered on mobile, left on desktop */}
         <Link href="/" className="navbar-logo-container" style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', height: '44px', gap: '10px' }}>
             <img src="/logo.png" alt="Luxury Jeweleris" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
@@ -551,7 +564,7 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Center: Desktop Navigation Links (with custom rich mega menus) */}
-        <div className="desktop-only-links" style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+        <div className="desktop-only-links" style={{ alignItems: 'center', height: '100%' }}>
           
           {/* Engagement Rings tab */}
           <div className="navbar-link-item-wrapper" style={{ height: '100%' }}>
@@ -1160,9 +1173,9 @@ export const Navbar: React.FC = () => {
             {cartCount > 0 && <span className="navbar-cart-count">{cartCount}</span>}
           </Link>
           
-          {/* Mobile Menu Toggle */}
+          {/* Desktop-only Menu Toggle (hidden on mobile via CSS — mobile uses mobile-left-area) */}
           <button 
-            className="navbar-action-btn mobile-menu-toggle"
+            className="navbar-action-btn mobile-menu-toggle-desktop-hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
           >
@@ -1174,28 +1187,28 @@ export const Navbar: React.FC = () => {
       {/* Mobile Horizontal Category Sub-Navigation Bar */}
       <div className="mobile-category-nav">
         <Link href="/engagement-rings" className={`mobile-nav-chip ${pathname === '/engagement-rings' ? 'active' : ''}`}>
-          💍 Engagement Rings
+          <span className="chip-emoji">💍</span> Engagement Rings
         </Link>
         <Link href="/wedding-bands" className={`mobile-nav-chip ${pathname === '/wedding-bands' ? 'active' : ''}`}>
-          💒 Wedding Bands
+          <span className="chip-emoji">💒</span> Wedding Bands
         </Link>
         <Link href="/diamonds" className={`mobile-nav-chip ${pathname === '/diamonds' ? 'active' : ''}`}>
-          💎 Diamonds
+          <span className="chip-emoji">💎</span> Diamonds
         </Link>
         <Link href="/earrings" className={`mobile-nav-chip ${pathname === '/earrings' ? 'active' : ''}`}>
-          ✨ Earrings
+          <span className="chip-emoji">✨</span> Earrings
         </Link>
         <Link href="/necklaces" className={`mobile-nav-chip ${pathname === '/necklaces' ? 'active' : ''}`}>
-          📿 Necklaces
+          <span className="chip-emoji">📿</span> Necklaces
         </Link>
         <Link href="/bracelets" className={`mobile-nav-chip ${pathname === '/bracelets' ? 'active' : ''}`}>
-          💫 Bracelets
+          <span className="chip-emoji">💫</span> Bracelets
         </Link>
         <Link href="/gifts" className={`mobile-nav-chip ${pathname === '/gifts' ? 'active' : ''}`}>
-          🎁 Gifts
+          <span className="chip-emoji">🎁</span> Gifts
         </Link>
         <Link href="/blog" className={`mobile-nav-chip ${pathname.startsWith('/blog') ? 'active' : ''}`}>
-          📖 Journal
+          <span className="chip-emoji">📖</span> Journal
         </Link>
       </div>
 
@@ -1295,74 +1308,6 @@ export const Navbar: React.FC = () => {
         .mobile-menu-toggle {
           display: none;
         }
-        .mobile-category-nav {
-          display: none;
-          overflow-x: auto;
-          white-space: nowrap;
-          padding: 8px 12px;
-          gap: 8px;
-          border-top: 1px solid var(--color-border-soft, #f0f2f5);
-          background: #ffffff;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-        .mobile-category-nav::-webkit-scrollbar {
-          display: none;
-        }
-        .mobile-nav-chip {
-          display: inline-flex;
-          align-items: center;
-          padding: 6px 14px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #475569;
-          background-color: #f8fafc;
-          border: 1px solid #e2e8f0;
-          text-decoration: none;
-          flex-shrink: 0;
-          transition: all 150ms ease;
-        }
-        .mobile-nav-chip:hover {
-          background-color: #f1f5f9;
-          color: #0f172a;
-        }
-        .mobile-nav-chip.active {
-          color: #ffffff;
-          background: linear-gradient(135deg, #0E8C8A 0%, #065F5E 100%);
-          border-color: #0E8C8A;
-          box-shadow: 0 2px 6px rgba(14, 140, 138, 0.25);
-        }
-        .mobile-menu-panel {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background-color: var(--color-card);
-          border-bottom: 1px solid var(--color-border);
-          box-shadow: var(--shadow-e2);
-          z-index: 98;
-          padding: var(--space-4) 0;
-        }
-        .mobile-menu-content {
-          display: flex;
-          flex-direction: column;
-          padding: 0 var(--space-4);
-        }
-        .mobile-menu-item {
-          padding: var(--space-3) 0;
-          font-size: 16px;
-          font-weight: 600;
-          border-bottom: 1px solid var(--color-border-soft);
-          color: var(--color-ink);
-        }
-        .mobile-menu-item:last-child {
-          border-bottom: none;
-        }
-        .mobile-menu-item.active {
-          color: var(--color-teal);
-        }
-
         @media (max-width: 1024px) {
           .desktop-only-links {
             display: none !important;
@@ -1372,9 +1317,6 @@ export const Navbar: React.FC = () => {
           }
           .mobile-menu-toggle {
             display: inline-flex !important;
-          }
-          .mobile-category-nav {
-            display: flex !important;
           }
         }
       `}</style>
