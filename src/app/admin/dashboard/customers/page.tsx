@@ -14,7 +14,7 @@ import { supabase } from '../../../../lib/supabase';
 import type { DbProfile, DbOrder } from '../../../../lib/supabase';
 import '../../../admin/admin.css';
 
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 
 // Avatar Gradient generator based on string
 const AVATAR_GRADIENTS = [
@@ -380,7 +380,7 @@ export default function CustomersAdmin() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   {/* Search Input */}
-                  <div style={{ position: 'relative', width: '260px' }}>
+                  <div style={{ position: 'relative', width: '100%', maxWidth: '260px', flex: '1 1 200px' }}>
                     <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#8892a4' }} />
                     <input
                       type="text"
@@ -449,7 +449,7 @@ export default function CustomersAdmin() {
 
             {/* Customers Table */}
             <div style={{ overflowX: 'auto' }}>
-              <table className="admin-table">
+              <table className="admin-table admin-table-responsive">
                 <thead>
                   <tr>
                     <th>Customer Client</th>
@@ -480,7 +480,7 @@ export default function CustomersAdmin() {
                       return (
                         <tr key={c.id}>
                           {/* Name & Avatar */}
-                          <td>
+                          <td data-label="Customer">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                               <div className="customer-avatar-badge" style={{ background: avatarBg }}>
                                 {initials}
@@ -497,7 +497,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Tier Badge */}
-                          <td>
+                          <td data-label="Tier">
                             {c.tier === 'VIP' && (
                               <span className="badge badge-vip">
                                 👑 VIP Client
@@ -516,7 +516,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Contact Info */}
-                          <td>
+                          <td data-label="Contact">
                             <div style={{ fontSize: '13px', color: 'var(--admin-text)' }}>
                               {c.phone ? (
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -529,7 +529,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Location & Ring */}
-                          <td>
+                          <td data-label="Location">
                             <div style={{ fontSize: '12.5px', color: 'var(--admin-text)' }}>
                               {(c.city || c.country) ? (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -548,7 +548,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Orders & Total Spent */}
-                          <td>
+                          <td data-label="Orders & LTV">
                             <div>
                               <div style={{ fontWeight: 700, fontSize: '13.5px', color: c.totalSpent > 0 ? '#10b981' : '#e2e8f0' }}>
                                 ${c.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -560,7 +560,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Joined Date */}
-                          <td>
+                          <td data-label="Joined">
                             <div style={{ fontSize: '12.5px', color: 'var(--admin-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <Calendar size={12} color="#64748b" />
                               {new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -568,7 +568,7 @@ export default function CustomersAdmin() {
                           </td>
 
                           {/* Actions */}
-                          <td style={{ textAlign: 'right' }}>
+                          <td data-label="Actions" style={{ textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                               <button
                                 className="admin-btn admin-btn-ghost"

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Loader2, Save, CheckCircle2, AlertCircle, RefreshCw, Globe, Megaphone, ShieldCheck } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import type { DbSiteSetting } from '../../../../lib/supabase';
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 import { DEFAULT_SITE_SETTINGS, useSiteSettings } from '../../../../context/SiteSettingsContext';
 import '../../../admin/admin.css';
 

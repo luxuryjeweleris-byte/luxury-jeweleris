@@ -12,7 +12,7 @@ import type { DbProduct } from '../../../../lib/supabase';
 import { CANONICAL_CATEGORIES, isCategoryMatch, getCategoryDisplayLabel, productMatchesSearchQuery } from '../../../../lib/categoryUtils';
 import '../../../admin/admin.css';
 
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 
 const EMPTY_PRODUCT: Partial<DbProduct> = {
   name: '', price: 0, comp_price: 0, category: 'Ring', style: '', shape: '',
@@ -599,7 +599,7 @@ export default function ProductsAdmin() {
 
             {/* View Mode 1: Table View */}
             {viewMode === 'table' && (
-              <table className="admin-table">
+              <table className="admin-table admin-table-responsive">
                 <thead>
                   <tr>
                     <th>Product & Metals</th>
@@ -631,7 +631,7 @@ export default function ProductsAdmin() {
 
                     return (
                       <tr key={p.id}>
-                        <td>
+                        <td data-label="Product">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                             {p.image ? (
                               <img src={p.image} alt={p.name} className="admin-product-thumb" loading="lazy" />
@@ -655,13 +655,13 @@ export default function ProductsAdmin() {
                           </div>
                         </td>
 
-                        <td>
+                        <td data-label="Category">
                           <span className="badge badge-confirmed" style={{ fontSize: '11px' }}>
                             {p.category}
                           </span>
                         </td>
 
-                        <td>
+                        <td data-label="Price">
                           <div style={{ fontWeight: 700, fontSize: '14px', color: '#f8fafc' }}>
                             ${p.price?.toLocaleString()}
                           </div>
@@ -672,13 +672,13 @@ export default function ProductsAdmin() {
                           )}
                         </td>
 
-                        <td>
+                        <td data-label="Stock">
                           <span className={`badge ${p.stock_qty <= 0 ? 'badge-alert' : p.stock_qty <= 3 ? 'badge-pending' : 'badge-confirmed'}`} style={{ fontSize: '11px' }}>
                             {p.stock_qty <= 0 ? 'Out of Stock' : `${p.stock_qty} in stock`}
                           </span>
                         </td>
 
-                        <td>
+                        <td data-label="Visibility">
                           <button
                             type="button"
                             onClick={(e) => toggleActiveStatus(p, e)}
@@ -697,7 +697,7 @@ export default function ProductsAdmin() {
                           </button>
                         </td>
 
-                        <td>
+                        <td data-label="Featured">
                           <button
                             type="button"
                             onClick={(e) => toggleFeaturedStatus(p, e)}
@@ -717,7 +717,7 @@ export default function ProductsAdmin() {
                           </button>
                         </td>
 
-                        <td style={{ textAlign: 'right' }}>
+                        <td data-label="Actions" style={{ textAlign: 'right' }}>
                           <div style={{ display: 'inline-flex', gap: '6px' }}>
                             <button
                               className="admin-btn admin-btn-ghost"

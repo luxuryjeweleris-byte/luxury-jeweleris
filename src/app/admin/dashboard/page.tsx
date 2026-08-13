@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import type { DbOrder, DbProduct } from '../../../lib/supabase';
-import { useAdminContext } from './layout';
+import { useAdminContext } from './admin-context';
 import '../../admin/admin.css';
 
 // Stat Card Component
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
               <StatCard label="Customers" value={stats.customers.toString()} change="Registered users" icon={Users} up={true} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '20px' }}>
+            <div className="admin-dash-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '20px' }}>
               {/* Recent Orders */}
               <div className="admin-table-card">
                 <div className="admin-table-header">

@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Settings,
-  LogOut, Loader2, Grid, ShieldCheck, BookOpen
+  LogOut, Loader2, Grid, ShieldCheck, BookOpen, Menu
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
+import { AdminContext } from './admin-context';
 import '../../admin/admin.css';
 
 const navItems = [
@@ -20,21 +21,17 @@ const navItems = [
   { href: '/admin/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
-interface AdminContextType {
-  adminEmail: string;
-}
-
-const AdminContext = createContext<AdminContextType>({ adminEmail: '' });
-
-export function useAdminContext() {
-  return useContext(AdminContext);
-}
-
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [adminEmail, setAdminEmail] = useState('');
   const [authChecking, setAuthChecking] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close mobile drawer whenever the route changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     let mounted = true;
@@ -101,8 +98,19 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   return (
     <AdminContext.Provider value={{ adminEmail }}>
       <div className="admin-shell">
+        {/* Mobile Topbar with hamburger (only shown < 1024px) */}
+        <div className="admin-mobile-topbar">
+          <button className="admin-mobile-hamburger" onClick={() => setSidebarOpen(true)} aria-label="Open admin menu">
+            <Menu size={20} />
+          </button>
+          <span className="admin-topbar-title">Admin Panel</span>
+        </div>
+
+        {/* Backdrop to close drawer on mobile */}
+        <div className={`admin-backdrop ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
+
         {/* Persistent Admin Sidebar - Never unmounts on navigation! */}
-        <aside className="admin-sidebar">
+        <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="admin-logo">
             <h2>Luxury Jeweleris</h2>
             <span>Admin Panel</span>

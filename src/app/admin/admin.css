@@ -509,12 +509,202 @@ table.admin-table {
 }
 
 /* ── Responsive ────────────────────────────────────────────── */
+/* Mobile drawer sidebar (hidden on desktop) */
+.admin-mobile-topbar {
+  display: none;
+}
+.admin-mobile-hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.admin-mobile-hamburger:hover {
+  background: rgba(255,255,255,0.12);
+}
+.admin-backdrop {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 768px) {
-  .admin-sidebar { width: 200px; }
-  .admin-main { margin-left: 200px; }
+
+@media (max-width: 1023px) {
+  .admin-shell {
+    position: relative;
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 220ms ease;
+    box-shadow: 10px 0 40px rgba(0,0,0,0.4);
+  }
+  .admin-sidebar.open { transform: translateX(0); }
+  .admin-main {
+    margin-left: 0;
+    min-height: calc(100vh - 56px);
+    width: 100%;
+  }
+
+  .admin-mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 56px;
+    padding: 0 16px;
+    background: var(--admin-sidebar);
+    border-bottom: 1px solid var(--admin-border);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    flex-shrink: 0;
+    width: 100%;
+  }
+  .admin-mobile-topbar .admin-topbar-title {
+    font-size: 14px;
+    color: var(--admin-text);
+  }
+
+  /* Page topbar sticks BELOW the mobile topbar, not underneath it */
+  .admin-topbar {
+    position: sticky;
+    top: 56px;
+    z-index: 55;
+  }
+
+  .admin-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+  .admin-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .admin-sidebar { z-index: 100; }
+}
+
+/* Two-column dashboard/orders grids stack on smaller screens */
+.admin-dash-grid, .admin-orders-grid { transition: grid-template-columns 200ms ease; }
+@media (max-width: 900px) {
+  .admin-dash-grid, .admin-orders-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Data tables: safe horizontal scroll baseline */
+.admin-table-card { overflow-x: auto; }
+
+/* Tablet & down: topbar wraps, tables become stacked cards */
+@media (max-width: 900px) {
+  .admin-content { padding: 20px; }
+
+  .admin-topbar {
+    padding: 10px 16px;
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  /* Customers page wraps its title + badge + buttons cleanly */
+  .admin-topbar > div {
+    min-width: 0;
+  }
+  .admin-topbar > div:first-child {
+    flex-wrap: wrap;
+  }
+  .admin-topbar-title { font-size: 14px; }
+  .admin-topbar-right { flex-wrap: wrap; gap: 8px; }
+  .admin-table-search { min-width: 0; }
+  .admin-table-header { flex-wrap: wrap; gap: 12px; }
+  .admin-table-header .admin-table-search { flex: 1 1 100%; max-width: none; }
+
+  /* Responsive card transform for management tables */
+  table.admin-table-responsive { display: block; width: 100%; }
+  table.admin-table-responsive thead { display: none; }
+  table.admin-table-responsive tbody { display: block; }
+  table.admin-table-responsive tr {
+    display: block;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--admin-border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  table.admin-table-responsive tr:last-child { margin-bottom: 0; }
+  table.admin-table-responsive td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border: none;
+    text-align: right;
+  }
+  table.admin-table-responsive td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--admin-muted);
+    text-align: left;
+    flex-shrink: 0;
+    max-width: 45%;
+  }
+  /* Empty-state rows (colSpan) keep normal centered layout */
+  table.admin-table-responsive td[colspan] {
+    display: block;
+    text-align: center !important;
+    justify-content: center;
+    padding: 20px;
+  }
+  table.admin-table-responsive td[colspan]::before {
+    content: none;
+  }
+  table.admin-table-responsive td[data-label="Actions"] {
+    justify-content: flex-end;
+  }
+  table.admin-table-responsive td[data-label="Actions"]::before {
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-content { padding: 16px; }
+  .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-stat-card { padding: 16px; }
+  .admin-stat-value { font-size: 24px; }
+
+  .admin-modal { padding: 18px; border-radius: 12px; }
+  .admin-modal-actions { flex-direction: column-reverse; }
+  .admin-modal-actions .admin-btn { width: 100%; justify-content: center; }
+  .admin-form-section { padding: 16px; }
+}
+
+@media (max-width: 420px) {
+  .admin-stat-grid { grid-template-columns: 1fr; }
+}
+
+/* Login page mobile */
+@media (max-width: 480px) {
+  .admin-login-card { padding: 24px; border-radius: 12px; }
+  .admin-login-page { padding: 16px; }
 }
 
 /* ── Customer Management Utilities ─────────────────────────── */

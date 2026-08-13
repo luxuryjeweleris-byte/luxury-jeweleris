@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Loader2, Search, ChevronDown } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import type { DbOrder } from '../../../../lib/supabase';
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 import '../../../admin/admin.css';
 
 const STATUS_OPTIONS = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
@@ -111,13 +111,13 @@ export default function OrdersAdmin() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: selectedOrder ? '1.5fr 1fr' : '1fr', gap: '16px' }}>
+            <div className="admin-orders-grid" style={{ display: 'grid', gridTemplateColumns: selectedOrder ? '1.5fr 1fr' : '1fr', gap: '16px' }}>
               {/* Orders Table */}
               <div className="admin-table-card">
                 <div className="admin-table-header">
                   <h3>Orders ({filtered.length})</h3>
                 </div>
-                <table className="admin-table">
+                <table className="admin-table admin-table-responsive">
                   <thead>
                     <tr>
                       <th>Order #</th>
@@ -133,15 +133,15 @@ export default function OrdersAdmin() {
                       <tr><td colSpan={6} style={{ textAlign: 'center', color: '#8892a4', padding: '40px' }}>No orders found</td></tr>
                     ) : filtered.map(order => (
                       <tr key={order.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedOrder(order)}>
-                        <td><span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#a5b4fc' }}>{order.order_number}</span></td>
-                        <td>
+                        <td data-label="Order #"><span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#a5b4fc' }}>{order.order_number}</span></td>
+                        <td data-label="Customer">
                           <div style={{ fontSize: '13px', fontWeight: 600 }}>{order.customer_name || '—'}</div>
                           <div style={{ fontSize: '11px', color: '#8892a4' }}>{order.customer_email}</div>
                         </td>
-                        <td style={{ fontWeight: 700 }}>${(order.total ?? 0).toLocaleString()}</td>
-                        <td><span className={`badge ${STATUS_BADGE[order.status] ?? 'badge-pending'}`}>{order.status}</span></td>
-                        <td style={{ fontSize: '12px', color: '#8892a4' }}>{new Date(order.created_at).toLocaleDateString()}</td>
-                        <td>
+                        <td data-label="Total" style={{ fontWeight: 700 }}>${(order.total ?? 0).toLocaleString()}</td>
+                        <td data-label="Status"><span className={`badge ${STATUS_BADGE[order.status] ?? 'badge-pending'}`}>{order.status}</span></td>
+                        <td data-label="Date" style={{ fontSize: '12px', color: '#8892a4' }}>{new Date(order.created_at).toLocaleDateString()}</td>
+                        <td data-label="Action">
                           <select
                             className="admin-select"
                             style={{ fontSize: '11px', padding: '5px 8px' }}

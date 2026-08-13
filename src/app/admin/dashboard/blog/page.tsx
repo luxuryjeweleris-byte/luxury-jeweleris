@@ -7,7 +7,7 @@ import {
   User, Image as ImageIcon, FileText, Globe, Clock,
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 import '../../../admin/admin.css';
 
 interface BlogPost {
@@ -328,7 +328,7 @@ export default function AdminBlogPage() {
               </p>
             </div>
           ) : (
-            <table className="admin-table">
+            <table className="admin-table admin-table-responsive">
               <thead>
                 <tr>
                   <th style={{ width: '80px' }}>Cover</th>
@@ -344,7 +344,7 @@ export default function AdminBlogPage() {
                 {filtered.map(post => (
                   <tr key={post.id}>
                     {/* Cover */}
-                    <td>
+                    <td data-label="Cover">
                       <div style={{
                         width: '60px', height: '42px', borderRadius: '6px',
                         overflow: 'hidden', background: '#1a2035',
@@ -365,7 +365,7 @@ export default function AdminBlogPage() {
                     </td>
 
                     {/* Title & Slug */}
-                    <td style={{ maxWidth: '280px' }}>
+                    <td data-label="Title" style={{ maxWidth: '280px' }}>
                       <div style={{ fontWeight: 700, fontSize: '13px', color: '#e2e8f0', marginBottom: '3px', lineHeight: 1.3 }}>
                         {post.title}
                       </div>
@@ -380,7 +380,7 @@ export default function AdminBlogPage() {
                     </td>
 
                     {/* Tags */}
-                    <td>
+                    <td data-label="Tags">
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '160px' }}>
                         {(post.tags ?? []).slice(0, 3).map(tag => (
                           <span key={tag} style={{
@@ -400,19 +400,19 @@ export default function AdminBlogPage() {
                     </td>
 
                     {/* Author */}
-                    <td style={{ fontSize: '12px', color: '#8892a4' }}>
+                    <td data-label="Author" style={{ fontSize: '12px', color: '#8892a4' }}>
                       {post.author_name || 'Luxury Jeweleris'}
                     </td>
 
                     {/* Status */}
-                    <td>
+                    <td data-label="Status">
                       <span className={`badge ${post.is_published ? 'badge-delivered' : 'badge-inactive'}`}>
                         {post.is_published ? 'Published' : 'Draft'}
                       </span>
                     </td>
 
                     {/* Date */}
-                    <td style={{ fontSize: '11px', color: '#8892a4', whiteSpace: 'nowrap' }}>
+                    <td data-label="Date" style={{ fontSize: '11px', color: '#8892a4', whiteSpace: 'nowrap' }}>
                       {post.published_at
                         ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                         : post.created_at
@@ -421,7 +421,7 @@ export default function AdminBlogPage() {
                     </td>
 
                     {/* Actions */}
-                    <td>
+                    <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                         {/* Toggle Publish */}
                         <button

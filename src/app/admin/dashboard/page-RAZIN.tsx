@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import type { DbOrder, DbProduct } from '../../../lib/supabase';
-import { useAdminContext } from './layout';
+import { useAdminContext } from './admin-context';
 import '../../admin/admin.css';
 
 // Stat Card Component

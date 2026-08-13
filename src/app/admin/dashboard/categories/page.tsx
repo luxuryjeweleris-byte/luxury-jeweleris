@@ -5,7 +5,7 @@ import {
   Plus, Pencil, Trash2, Loader2, X, Upload, Grid
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
-import { useAdminContext } from '../layout';
+import { useAdminContext } from '../admin-context';
 import '../../../admin/admin.css';
 
 export interface DbCategoryCircle {
