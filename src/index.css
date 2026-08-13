@@ -71,7 +71,6 @@ html {
 body {
   background-color: var(--color-surface);
   color: var(--color-ink);
-  overflow-x: hidden;
   min-width: 320px;
 }
 

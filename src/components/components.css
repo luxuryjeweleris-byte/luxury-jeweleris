@@ -379,6 +379,53 @@
 }
 
 /* ============================================
+   MOBILE MENU PANEL (hamburger overlay)
+   ============================================ */
+.mobile-menu-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-e2);
+  z-index: 99;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-4) var(--space-6);
+}
+
+.mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 14px var(--space-3);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  transition: background 150ms ease, color 150ms ease, padding-left 150ms ease;
+}
+
+.mobile-menu-item:active {
+  background: var(--color-teal-tint);
+  color: var(--color-teal);
+  padding-left: 18px;
+}
+
+.mobile-menu-item.active {
+  color: var(--color-teal);
+}
+
+/* ============================================
    MOBILE NAVBAR: Proper 3-column grid layout
    Left: Hamburger | Center: Logo | Right: Icons
    ============================================ */
