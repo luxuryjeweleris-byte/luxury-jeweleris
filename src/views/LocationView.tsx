@@ -62,6 +62,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
       
       {/* 1. Hero Header */}
       <section
+        className="loc-hero"
         style={{
           background: 'linear-gradient(135deg, #10151A 0%, #1A232C 100%)',
           color: '#FFFFFF',
@@ -144,6 +145,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
 
             {/* Quick Contact & Action Bar */}
             <div 
+              className="loc-hero-actions"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -221,14 +223,15 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
       </section>
 
       {/* 2. Main Store Content Grid (Gallery + Details + Map) */}
-      <section className="container" style={{ maxWidth: '1140px', margin: '48px auto 0 auto', padding: '0 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 0.8fr)', gap: '40px' }}>
+      <section className="container loc-content" style={{ maxWidth: '1140px', margin: '48px auto 0 auto', padding: '0 24px' }}>
+        <div className="loc-main-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 0.8fr)', gap: '40px' }}>
           
           {/* Left Column: Gallery & In-Store Features */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             
             {/* Gallery Viewer */}
             <div 
+              className="loc-gallery-card"
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '18px',
@@ -238,6 +241,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
               }}
             >
               <div 
+                className="loc-gallery-main"
                 style={{
                   height: '380px',
                   borderRadius: '14px',
@@ -283,7 +287,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
 
               {/* Thumbnail Strip */}
               {location.images.length > 1 && (
-                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                <div className="loc-thumbs" style={{ display: 'flex', gap: '12px', marginTop: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
                   {location.images.map((img, idx) => (
                     <button
                       key={idx}
@@ -534,7 +538,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
         </div>
 
         {/* 3. Local FAQ Section (Accordion with Schema Support) */}
-        <div style={{ marginTop: '64px', backgroundColor: '#FFFFFF', borderRadius: '18px', border: '1px solid #E8E2D8', padding: '36px', boxShadow: '0 6px 24px rgba(16, 21, 26, 0.04)' }}>
+        <div className="loc-faq-section" style={{ marginTop: '64px', backgroundColor: '#FFFFFF', borderRadius: '18px', border: '1px solid #E8E2D8', padding: '36px', boxShadow: '0 6px 24px rgba(16, 21, 26, 0.04)' }}>
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 32px auto' }}>
             <h2 
               style={{
@@ -567,6 +571,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
                   }}
                 >
                   <button
+                    className="loc-faq-btn"
                     onClick={() => setExpandedFaq(isOpen ? null : idx)}
                     style={{
                       width: '100%',
@@ -588,7 +593,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
                   </button>
 
                   {isOpen && (
-                    <div style={{ padding: '0 22px 18px 22px', fontSize: '14px', color: '#475569', lineHeight: 1.6 }}>
+                    <div className="loc-faq-answer" style={{ padding: '0 22px 18px 22px', fontSize: '14px', color: '#475569', lineHeight: 1.6 }}>
                       {faq.answer}
                     </div>
                   )}
@@ -667,6 +672,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
           onClick={() => setAppointmentModalOpen(false)}
         >
           <div
+            className="loc-appointment-modal"
             style={{
               backgroundColor: '#FFFFFF',
               borderRadius: '20px',
@@ -750,7 +756,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="loc-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
                         Phone Number *
@@ -797,7 +803,7 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
                     </select>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="loc-form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
                         Preferred Date *
@@ -852,6 +858,68 @@ export const LocationView: React.FC<LocationViewProps> = ({ location }) => {
           </div>
         </div>
       )}
+
+      {/* Responsive styles for mobile */}
+      <style>{`
+        @media (max-width: 900px) {
+          .loc-main-grid {
+            grid-template-columns: 1fr !important;
+            gap: 28px !important;
+          }
+          .loc-content {
+            margin-top: 32px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .loc-hero {
+            padding: 40px 20px 48px 20px !important;
+          }
+          .loc-gallery-main {
+            height: 260px !important;
+          }
+          .loc-gallery-card {
+            padding: 10px !important;
+            border-radius: 14px !important;
+          }
+          .loc-thumbs button {
+            width: 68px !important;
+            height: 52px !important;
+            flex-shrink: 0;
+          }
+          .loc-content {
+            padding: 0 16px !important;
+          }
+          .loc-form-row {
+            grid-template-columns: 1fr !important;
+          }
+          /* Hero action buttons go full-width on phones */
+          .loc-hero-actions button,
+          .loc-hero-actions a {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 13px 20px !important;
+            font-size: 13.5px !important;
+          }
+          /* Appointment modal fits the phone screen */
+          .loc-appointment-modal {
+            padding: 24px !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+          }
+          /* FAQ accordion padding tightens */
+          .loc-faq-section {
+            padding: 24px 16px !important;
+            border-radius: 14px !important;
+          }
+          .loc-faq-btn {
+            padding: 14px 16px !important;
+            font-size: 14px !important;
+          }
+          .loc-faq-answer {
+            padding: 0 16px 14px 16px !important;
+          }
+        }
+      `}</style>
 
     </div>
   );
