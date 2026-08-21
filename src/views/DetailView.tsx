@@ -298,6 +298,7 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                     loop
                     muted
                     playsInline
+                    suppressHydrationWarning
                     style={{ 
                       maxWidth: '100%', 
                       maxHeight: '100%', 
