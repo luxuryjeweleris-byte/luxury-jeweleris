@@ -593,12 +593,12 @@ export const Navbar: React.FC = () => {
 
         {/* Logo — centered on mobile, left on desktop */}
         <Link href="/" className="navbar-logo-container" style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', height: '36px', gap: '9px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', height: '44px', gap: '10px' }}>
             <img src="/logo.png" alt="Luxury Jeweleris" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ 
                 fontFamily: "var(--font-display-outfit, 'Outfit', sans-serif)", 
-                fontSize: '16.5px', 
+                fontSize: '18px', 
                 fontWeight: 700, 
                 letterSpacing: '0.5px',
                 lineHeight: 1.1
@@ -615,9 +615,9 @@ export const Navbar: React.FC = () => {
               </div>
               <div style={{ 
                 fontFamily: "var(--font-sans, 'Inter', sans-serif)", 
-                fontSize: '7.5px', 
+                fontSize: '8px', 
                 fontWeight: 600, 
-                letterSpacing: '1.4px', 
+                letterSpacing: '1.6px', 
                 color: '#8792A0',
                 opacity: 0.95,
                 marginTop: '1px',
