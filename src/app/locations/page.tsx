@@ -5,7 +5,7 @@ import { MapPin, Phone, Clock, Sparkles, Navigation, ArrowRight, ShieldCheck } f
 import { STORE_LOCATIONS } from '../../lib/locationsData';
 
 export const metadata: Metadata = {
-  title: 'Our Jewelry Store Locations | Luxury Jeweleris Southern California',
+  title: 'Our Jewelry Boutiques & Stores in California | Luxury Jeweleris',
   description: 'Visit Luxury Jeweleris physical boutiques in Arcadia, CA (The Shops at Santa Anita) and Canoga Park, CA (Westfield Topanga). Certified diamonds, engagement rings & bespoke jewelry.',
   alternates: {
     canonical: 'https://luxuryjeweleris.com/locations',

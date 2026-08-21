@@ -1,41 +1,11 @@
-'use client';
+import type { Metadata } from 'next';
+import DiamondsClient from './DiamondsClient';
 
-import React, { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import ListingView from '../../views/ListingView';
-
-function ListingPageContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const shape = searchParams.get('shape') || undefined;
-  const style = searchParams.get('style') || undefined;
-  const search = searchParams.get('search') || undefined;
-
-  const initialFilters = React.useMemo(() => {
-    return { shape, style, search };
-  }, [shape, style, search]);
-
-  const handleProductSelect = (product: any) => {
-    router.push(`/shop/${product.id}`);
-  };
-
-  return (
-    <ListingView 
-      initialFilters={initialFilters} 
-      onProductSelect={handleProductSelect} 
-    />
-  );
-}
+export const metadata: Metadata = {
+  title: 'GIA Certified Natural & Lab Grown Diamonds | Luxury Jeweleris',
+  description: 'Search certified loose diamonds by cut, carat, clarity, and color with AI quality analysis and direct pricing.',
+};
 
 export default function DiamondsPage() {
-  return (
-    <Suspense fallback={
-      <div className="container" style={{ padding: '64px 0', textAlign: 'center' }}>
-        <div className="caption-text">Loading diamonds search...</div>
-      </div>
-    }>
-      <ListingPageContent />
-    </Suspense>
-  );
+  return <DiamondsClient />;
 }

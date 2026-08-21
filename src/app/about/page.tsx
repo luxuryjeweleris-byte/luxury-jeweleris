@@ -1,8 +1,12 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import './about.css';
+
+export const metadata: Metadata = {
+  title: 'About Luxury Jeweleris | Exceptional Fine Jewelry Craftsmanship',
+  description: 'Learn about Luxury Jeweleris — our story, ethical gemstone sourcing, and commitment to master craftsmanship.',
+};
 
 export default function AboutPage() {
   return (
