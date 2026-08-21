@@ -1564,20 +1564,6 @@ export const Navbar: React.FC = () => {
                 <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Trends</Link>
               </div>
             </div>
-
-            {/* BOTTOM PROMO CARD */}
-            <div className="rc-drawer-promo-banner">
-              <div className="rc-drawer-promo-text">
-                Join the Luxury Jeweleris Club. <span className="rc-drawer-promo-highlight">Save $100.</span>
-              </div>
-              <Link 
-                href="/diamonds" 
-                className="rc-drawer-promo-btn"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Shop diamonds
-              </Link>
-            </div>
           </div>
         </div>
       )}
