@@ -273,8 +273,21 @@
   width: 100%;
 }
 
-/* Mobile: buttons stretch to equal width */
-@media (max-width: 1023px) {
+/* Mobile: buttons stack vertically (View Engagement Rings below Shop the Collection) */
+@media (max-width: 768px) {
+  .hero-ctas {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .hero-ctas > * {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
   .hero-ctas {
     gap: 10px;
   }

@@ -106,6 +106,11 @@ export const Navbar: React.FC = () => {
   const storePhone = getSetting('store_phone', '+1 213-642-7217');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [expandedDrawerSection, setExpandedDrawerSection] = useState<string | null>(null);
+
+  const toggleDrawerSection = (section: string) => {
+    setExpandedDrawerSection(prev => (prev === section ? null : section));
+  };
   const pathname = usePathname();
   const router = useRouter();
   const { cart } = useCart();
@@ -1184,112 +1189,394 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Horizontal Category Sub-Navigation Bar */}
-      <div className="mobile-category-nav">
-        <Link href="/engagement-rings" className={`mobile-nav-chip ${pathname === '/engagement-rings' ? 'active' : ''}`}>
-          <span className="chip-emoji">💍</span> Engagement Rings
-        </Link>
-        <Link href="/wedding-bands" className={`mobile-nav-chip ${pathname === '/wedding-bands' ? 'active' : ''}`}>
-          <span className="chip-emoji">💒</span> Wedding Bands
-        </Link>
-        <Link href="/diamonds" className={`mobile-nav-chip ${pathname === '/diamonds' ? 'active' : ''}`}>
-          <span className="chip-emoji">💎</span> Diamonds
-        </Link>
-        <Link href="/earrings" className={`mobile-nav-chip ${pathname === '/earrings' ? 'active' : ''}`}>
-          <span className="chip-emoji">✨</span> Earrings
-        </Link>
-        <Link href="/necklaces" className={`mobile-nav-chip ${pathname === '/necklaces' ? 'active' : ''}`}>
-          <span className="chip-emoji">📿</span> Necklaces
-        </Link>
-        <Link href="/bracelets" className={`mobile-nav-chip ${pathname === '/bracelets' ? 'active' : ''}`}>
-          <span className="chip-emoji">💫</span> Bracelets
-        </Link>
-        <Link href="/gifts" className={`mobile-nav-chip ${pathname === '/gifts' ? 'active' : ''}`}>
-          <span className="chip-emoji">🎁</span> Gifts
-        </Link>
-        <Link href="/blog" className={`mobile-nav-chip ${pathname.startsWith('/blog') ? 'active' : ''}`}>
-          <span className="chip-emoji">📖</span> Journal
-        </Link>
-      </div>
-
-      {/* Mobile Menu Panel */}
+      {/* Rare Carat Mobile Full Navigation Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="mobile-menu-panel slide-down-enter">
-          <div className="mobile-menu-content">
-            <Link href="/engagement-rings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Engagement Rings
-            </Link>
-            <Link href="/wedding-bands" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Wedding Bands
-            </Link>
-            <Link href="/diamonds" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Diamonds
-            </Link>
-            <Link href="/earrings" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Earrings
-            </Link>
-            <Link href="/necklaces" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Necklaces
-            </Link>
-            <Link href="/bracelets" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Bracelets
-            </Link>
-            <Link href="/gifts" className="mobile-menu-item" onClick={() => setMobileMenuOpen(false)}>
-              Gifts
-            </Link>
-            <Link href="/blog" className={`mobile-menu-item ${pathname.startsWith('/blog') ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
-              📖 Jewelry Journal
-            </Link>
-            <Link 
-              href="/cart" 
-              className={`mobile-menu-item ${pathname === '/cart' ? 'active' : ''}`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shopping Cart ({cartCount})
-            </Link>
-
-            {/* Mobile Contact & Auth Section */}
-            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--color-border-soft)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <a 
-                href={`tel:${storePhone}`}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}
-              >
-                📞 Support: {storePhone}
-              </a>
+        <div className="rc-mobile-drawer-backdrop" onClick={() => setMobileMenuOpen(false)}>
+          <div className="rc-mobile-drawer" onClick={(e) => e.stopPropagation()}>
+            {/* Drawer Top Bar */}
+            <div className="rc-drawer-header">
+              <div className="rc-drawer-logo">
+                <span className="rc-drawer-brand">LUXURY JEWELERIS</span>
+                <span className="rc-drawer-tagline">America's #1 Rated Jeweler</span>
+              </div>
               <button 
-                onClick={() => { setContactOpen(true); setMobileMenuOpen(false); }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', fontSize: '13.5px', fontWeight: 600, color: 'var(--color-ink)', cursor: 'pointer', padding: 0, textAlign: 'left' }}
+                className="rc-drawer-close-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
               >
-                💬 Contact Customer Support
+                <X size={22} />
               </button>
-              {user ? (
-                <Link 
-                  href="/account" 
-                  className="mobile-menu-item" 
-                  style={{ border: 'none', padding: '4px 0', fontSize: '13.5px', color: 'var(--color-teal)' }}
-                  onClick={() => setMobileMenuOpen(false)}
+            </div>
+
+            {/* Drawer Search Input */}
+            <div className="rc-drawer-search-container">
+              <div className="rc-drawer-search-box">
+                <Search size={18} className="rc-drawer-search-icon" />
+                <input 
+                  type="text" 
+                  placeholder="Search" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && searchQuery.trim()) {
+                      router.push(`/diamonds?search=${encodeURIComponent(searchQuery.trim())}`);
+                      setMobileMenuOpen(false);
+                    }
+                  }}
+                  className="rc-drawer-search-input"
+                />
+                {searchQuery && (
+                  <button className="rc-drawer-search-clear" onClick={() => setSearchQuery('')}>
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Accordion Categories List */}
+            <div className="rc-drawer-accordion-list">
+              {/* ACCORDION 1: RINGS */}
+              <div className="rc-accordion-item">
+                <button 
+                  className={`rc-accordion-header ${expandedDrawerSection === 'rings' ? 'expanded' : ''}`}
+                  onClick={() => toggleDrawerSection('rings')}
                 >
-                  👤 My Account ({userProfile?.full_name || user.email?.split('@')[0]})
-                </Link>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+                  <span className="rc-accordion-title">Rings</span>
+                  <span className="rc-accordion-icon">
+                    {expandedDrawerSection === 'rings' ? '▲' : '▼'}
+                  </span>
+                </button>
+
+                {expandedDrawerSection === 'rings' && (
+                  <div className="rc-accordion-body animate-fade-in">
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">CREATE YOUR OWN DIAMOND RING</div>
+                      <Link href="/engagement-rings?style=setting" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Start with a ring</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=lab" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><DiamondIcon /> Start with a lab diamond</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=natural" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><DiamondIcon /> Start with a natural diamond</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=ready" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Shop ready-to-ship rings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">SHOP BY STYLE</div>
+                      <Link href="/engagement-rings?style=Solitaire" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Solitaire</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=Halo" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Halo</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=Pavé" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Pavé and Side-Stone</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=Three-Stone" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Three Stone</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/engagement-rings?style=Hidden-Halo" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Hidden Halo</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">WEDDING</div>
+                      <Link href="/wedding-bands" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Women's wedding rings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/wedding-bands?style=mens" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Men's wedding bands</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/wedding-bands?style=eternity" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Eternity rings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">GEMSTONE RINGS</div>
+                      <Link href="/engagement-rings?style=gemstone" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Moissanite rings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">CUSTOM RING DESIGN</div>
+                      <Link href="/engagement-rings?style=custom" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><RingIcon /> Custom engagement rings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ACCORDION 2: DIAMONDS */}
+              <div className="rc-accordion-item">
+                <button 
+                  className={`rc-accordion-header ${expandedDrawerSection === 'diamonds' ? 'expanded' : ''}`}
+                  onClick={() => toggleDrawerSection('diamonds')}
+                >
+                  <span className="rc-accordion-title">Diamonds</span>
+                  <span className="rc-accordion-icon">
+                    {expandedDrawerSection === 'diamonds' ? '▲' : '▼'}
+                  </span>
+                </button>
+
+                {expandedDrawerSection === 'diamonds' && (
+                  <div className="rc-accordion-body animate-fade-in">
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">LOOSE DIAMONDS</div>
+                      <Link href="/diamonds?style=natural" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><DiamondIcon /> Start with a natural diamond</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/diamonds?style=lab" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><DiamondIcon /> Start with a lab diamond</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">SHOP BY SHAPE</div>
+                      {Object.keys(ShapeIcons).map(shape => {
+                        const Icon = ShapeIcons[shape];
+                        return (
+                          <Link key={shape} href={`/diamonds?shape=${shape}`} className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                            <div className="rc-drawer-link-left">
+                              <Icon />
+                              <span>{shape}</span>
+                            </div>
+                            <ChevronRight size={16} className="rc-drawer-arrow" />
+                          </Link>
+                        );
+                      })}
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">EDUCATION</div>
+                      <Link href="/diamonds?style=lab" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Lab grown vs Natural diamonds</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/diamonds" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Diamond 4Cs buying guide</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ACCORDION 3: JEWELRY */}
+              <div className="rc-accordion-item">
+                <button 
+                  className={`rc-accordion-header ${expandedDrawerSection === 'jewelry' ? 'expanded' : ''}`}
+                  onClick={() => toggleDrawerSection('jewelry')}
+                >
+                  <span className="rc-accordion-title">Jewelry</span>
+                  <span className="rc-accordion-icon">
+                    {expandedDrawerSection === 'jewelry' ? '▲' : '▼'}
+                  </span>
+                </button>
+
+                {expandedDrawerSection === 'jewelry' && (
+                  <div className="rc-accordion-body animate-fade-in">
+                    <Link href="/wedding-bands" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><RingIcon /> Women's wedding rings</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+                    <Link href="/wedding-bands?style=eternity" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><RingIcon /> Eternity rings</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+                    <Link href="/wedding-bands?style=mens" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><RingIcon /> Men's wedding bands</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+                    <Link href="/earrings" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><EarringsIcon /> Earrings</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+                    <Link href="/necklaces" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><PendantIcon /> Necklaces</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+                    <Link href="/bracelets" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                      <div className="rc-drawer-link-left"><BraceletIcon /> Bracelets</div>
+                      <ChevronRight size={16} className="rc-drawer-arrow" />
+                    </Link>
+
+                    <div style={{ margin: '14px 0 18px' }}>
+                      <Link 
+                        href="/shop" 
+                        className="rc-drawer-all-btn"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Shop all jewelry <ChevronRight size={15} />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">SHOP BY STYLE</div>
+                      <Link href="/earrings?style=studs" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Diamond stud earrings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/earrings?style=hoops" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Hoop earrings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/bracelets?style=tennis" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Tennis bracelets</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/necklaces" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Diamond necklaces</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">CREATE YOUR OWN</div>
+                      <Link href="/earrings" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><EarringsIcon /> Diamond earrings</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/necklaces?style=pendant" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left"><PendantIcon /> Diamond pendant</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ACCORDION 4: GIFTS */}
+              <div className="rc-accordion-item">
+                <button 
+                  className={`rc-accordion-header ${expandedDrawerSection === 'gifts' ? 'expanded' : ''}`}
+                  onClick={() => toggleDrawerSection('gifts')}
+                >
+                  <span className="rc-accordion-title">Gifts</span>
+                  <span className="rc-accordion-icon">
+                    {expandedDrawerSection === 'gifts' ? '▲' : '▼'}
+                  </span>
+                </button>
+
+                {expandedDrawerSection === 'gifts' && (
+                  <div className="rc-accordion-body animate-fade-in">
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">TOP GIFTS</div>
+                      <Link href="/gifts?style=studs" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Diamond studs</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/gifts?style=pendant" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Solitaire necklaces</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/gifts?style=tennis" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Tennis bracelets</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+
+                    <div className="rc-drawer-subgroup">
+                      <div className="rc-drawer-subgroup-title">GIFTS BY BUDGET</div>
+                      <Link href="/gifts?style=under-250" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Under $250</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/gifts?style=under-500" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Under $500</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                      <Link href="/gifts?style=under-1000" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="rc-drawer-link-left">Under $1,000</div>
+                        <ChevronRight size={16} className="rc-drawer-arrow" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* HORIZONTAL SIDE-SCROLLING VISUAL CATEGORY CIRCLES INSIDE DRAWER */}
+            <div className="rc-drawer-circles-section">
+              <div className="rc-drawer-circles-scroll">
+                {[
+                  { name: 'Engagement rings', img: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop', link: '/engagement-rings' },
+                  { name: 'Earrings', img: 'https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=200&auto=format&fit=crop', link: '/earrings' },
+                  { name: 'Wedding rings', img: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands' },
+                  { name: 'Necklaces', img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=200&auto=format&fit=crop', link: '/necklaces' },
+                  { name: 'Tennis bracelets', img: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=200&auto=format&fit=crop', link: '/bracelets?style=tennis' },
+                  { name: 'Eternity bands', img: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands?style=eternity' },
+                  { name: 'Lab diamonds', img: 'https://images.unsplash.com/photo-1598560917505-59a3ad559071?q=80&w=200&auto=format&fit=crop', link: '/diamonds?style=lab' },
+                  { name: 'Men\'s bands', img: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=200&auto=format&fit=crop', link: '/wedding-bands?style=mens' },
+                ].map((item, idx) => (
                   <Link 
-                    href="/login" 
+                    key={idx} 
+                    href={item.link}
+                    className="rc-drawer-circle-item"
                     onClick={() => setMobileMenuOpen(false)}
-                    style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--color-teal)', textDecoration: 'none' }}
                   >
-                    Sign In
+                    <div className="rc-drawer-circle-img-wrap">
+                      <img src={item.img} alt={item.name} className="rc-drawer-circle-img" />
+                    </div>
+                    <span className="rc-drawer-circle-name">{item.name}</span>
                   </Link>
-                  <span style={{ color: '#cbd5e1' }}>|</span>
-                  <Link 
-                    href="/signup" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--color-ink)', textDecoration: 'none' }}
-                  >
-                    Create Account (Sign Up)
-                  </Link>
-                </div>
-              )}
+                ))}
+              </div>
+            </div>
+
+            {/* DRAWER FOOTER QUICK LINKS */}
+            <div className="rc-drawer-footer-links">
+              <div className="rc-drawer-footer-grid">
+                <Link href="/diamonds" onClick={() => setMobileMenuOpen(false)}>Price Check</Link>
+                <Link href="/gifts" onClick={() => setMobileMenuOpen(false)}>Promotions</Link>
+                <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Reviews</Link>
+                <Link href={user ? "/account" : "/login"} onClick={() => setMobileMenuOpen(false)}>Order Status</Link>
+                {user ? (
+                  <Link href="/account" onClick={() => setMobileMenuOpen(false)}>My Account</Link>
+                ) : (
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Sign in</Link>
+                )}
+                <Link href="/diamonds?style=lab" onClick={() => setMobileMenuOpen(false)}>Education</Link>
+                <Link href="/locations" onClick={() => setMobileMenuOpen(false)}>Our Boutiques</Link>
+                <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Trends</Link>
+              </div>
+            </div>
+
+            {/* BOTTOM PROMO CARD */}
+            <div className="rc-drawer-promo-banner">
+              <div className="rc-drawer-promo-text">
+                Join the Luxury Jeweleris Club. <span className="rc-drawer-promo-highlight">Save $100.</span>
+              </div>
+              <Link 
+                href="/diamonds" 
+                className="rc-drawer-promo-btn"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Shop diamonds
+              </Link>
             </div>
           </div>
         </div>

@@ -63,6 +63,8 @@ const jsonLd = {
   ],
 };
 
+import FloatingChatWidget from '../components/FloatingChatWidget';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -98,6 +100,7 @@ export default function RootLayout({
               <main className="main-content">{children}</main>
               <StoreLocations />
               <Footer />
+              <FloatingChatWidget />
             </div>
           </CartProvider>
         </SiteSettingsProvider>
