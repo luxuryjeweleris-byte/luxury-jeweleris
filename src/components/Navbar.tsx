@@ -250,38 +250,50 @@ export const Navbar: React.FC = () => {
               </button>
               
               {contactOpen && (
-                <div className="contact-top-dropdown animate-fade-in">
-                  <p className="contact-dropdown-title">Customer Support</p>
-                  <p className="contact-dropdown-subtitle">Connect with a certified gemologist.</p>
-                  
-                  <button 
-                    className="contact-dropdown-chat-btn" 
-                    onClick={() => { 
-                      alert('Starting support chat...'); 
-                      setContactOpen(false); 
-                    }}
-                  >
-                    Chat Now
-                  </button>
-                  
-                  <div className="contact-dropdown-sep">or</div>
-                  
-                  <div className="contact-dropdown-info">
-                    <div className="contact-info-item">
-                      <span className="contact-info-label">Call Us</span>
-                      <a href="tel:+12136427217" className="contact-info-value">+1 213-642-7217</a>
+                <>
+                  <div className="contact-dropdown-backdrop" onClick={() => setContactOpen(false)} />
+                  <div className="contact-top-dropdown animate-fade-in">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <p className="contact-dropdown-title" style={{ margin: 0 }}>Customer Support</p>
+                      <button 
+                        onClick={() => setContactOpen(false)} 
+                        style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '2px', display: 'flex' }}
+                        aria-label="Close"
+                      >
+                        <X size={16} />
+                      </button>
                     </div>
-                    <div className="contact-info-item">
-                      <span className="contact-info-label">Email Us</span>
-                      <a href="mailto:luxuryjeweleris@gmail.com" className="contact-info-value">luxuryjeweleris@gmail.com</a>
+                    <p className="contact-dropdown-subtitle">Connect with a certified gemologist.</p>
+                    
+                    <button 
+                      className="contact-dropdown-chat-btn" 
+                      onClick={() => { 
+                        alert('Connecting with customer support...'); 
+                        setContactOpen(false); 
+                      }}
+                    >
+                      Chat Now
+                    </button>
+                    
+                    <div className="contact-dropdown-sep">or</div>
+                    
+                    <div className="contact-dropdown-info">
+                      <div className="contact-info-item">
+                        <span className="contact-info-label">Call Us</span>
+                        <a href="tel:+12136427217" className="contact-info-value">+1 213-642-7217</a>
+                      </div>
+                      <div className="contact-info-item">
+                        <span className="contact-info-label">Email Us</span>
+                        <a href="mailto:luxuryjeweleris@gmail.com" className="contact-info-value">luxuryjeweleris@gmail.com</a>
+                      </div>
+                    </div>
+                    
+                    <div className="contact-dropdown-footer">
+                      <span>Looking for order info?</span>
+                      <Link href="/login" className="contact-track-link" onClick={() => setContactOpen(false)}>Track your order</Link>
                     </div>
                   </div>
-                  
-                  <div className="contact-dropdown-footer">
-                    <span>Looking for order info?</span>
-                    <Link href="/login" className="contact-track-link" onClick={() => setContactOpen(false)}>Track your order</Link>
-                  </div>
-                </div>
+                </>
               )}
             </div>
             <span className="navbar-top-sep">|</span>

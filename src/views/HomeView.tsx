@@ -174,7 +174,7 @@ export const HomeView: React.FC = () => {
                 margin: '0 auto',
                 overflow: 'hidden',
                 borderRadius: '16px',
-                background: '#ffffff',
+                background: 'transparent',
               }}
             >
               {/* Video 1 */}
