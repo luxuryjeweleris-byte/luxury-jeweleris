@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
+import Script from 'next/script';
 import { CartProvider } from '../context/CartContext';
 import { SiteSettingsProvider } from '../context/SiteSettingsContext';
 import Navbar from '../components/Navbar';
@@ -33,6 +34,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QY4KY2FQ82"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QY4KY2FQ82');
+          `}
+        </Script>
+      </head>
       <body suppressHydrationWarning>
         <SiteSettingsProvider>
           <CartProvider>
@@ -49,3 +65,4 @@ export default function RootLayout({
     </html>
   );
 }
+
