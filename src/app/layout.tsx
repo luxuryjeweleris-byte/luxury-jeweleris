@@ -27,6 +27,42 @@ export const metadata: Metadata = {
   }
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'JewelryStore',
+  name: 'Luxury Jeweleris',
+  image: 'https://www.luxuryjeweleris.com/logo.png',
+  '@id': 'https://www.luxuryjeweleris.com',
+  url: 'https://www.luxuryjeweleris.com',
+  telephone: '+1-213-642-7217',
+  priceRange: '$$$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '400 S Baldwin Ave, Suite 231',
+    addressLocality: 'Arcadia',
+    addressRegion: 'CA',
+    postalCode: '91007',
+    addressCountry: 'US',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 34.1347,
+    longitude: -118.0536,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '10:00',
+      closes: '20:00',
+    },
+  ],
+  sameAs: [
+    'https://www.instagram.com/luxuryjeweleris',
+    'https://www.facebook.com/luxuryjeweleris',
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,6 +84,10 @@ export default function RootLayout({
             gtag('config', 'G-QY4KY2FQ82');
           `}
         </Script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body suppressHydrationWarning>
         <SiteSettingsProvider>
