@@ -186,6 +186,7 @@ export const HomeView: React.FC = () => {
                 muted
                 crossOrigin="anonymous"
                 onEnded={handleVideo1Ended}
+                suppressHydrationWarning
                 style={{
                   position: 'absolute',
                   inset: 0,
@@ -209,6 +210,7 @@ export const HomeView: React.FC = () => {
                 muted
                 crossOrigin="anonymous"
                 onEnded={handleVideo2Ended}
+                suppressHydrationWarning
                 style={{
                   position: 'absolute',
                   inset: 0,

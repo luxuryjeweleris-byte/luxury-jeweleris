@@ -88,7 +88,7 @@ export const STORE_LOCATIONS: StoreLocationData[] = [
       latitude: 34.1378,
       longitude: -118.0468,
     },
-    mapUrl: 'https://www.google.com/maps/search/400+S+Baldwin+Ave+Ste+231,+Arcadia,+CA+91007',
+    mapUrl: 'https://maps.app.goo.gl/Fayra1BvJc3eNLsc9',
     mapEmbedUrl: 'https://maps.google.com/maps?q=400%20S%20Baldwin%20Ave%20Suite%20231%20Arcadia%20CA%2091007&t=&z=15&ie=UTF8&iwloc=&output=embed',
     images: [
       '/stores/arcadia_1.jpg',
@@ -193,7 +193,7 @@ export const STORE_LOCATIONS: StoreLocationData[] = [
       latitude: 34.1906,
       longitude: -118.6058,
     },
-    mapUrl: 'https://www.google.com/maps/search/6600+Topanga+Canyon+Blvd,+Canoga+Park,+CA+91303',
+    mapUrl: 'https://maps.app.goo.gl/WLyGJtbfXtqLBBsZ9',
     mapEmbedUrl: 'https://maps.google.com/maps?q=6600%20Topanga%20Canyon%20Blvd%20Canoga%20Park%20CA%2091303&t=&z=15&ie=UTF8&iwloc=&output=embed',
     images: [
       '/stores/topanga_1.jpg',

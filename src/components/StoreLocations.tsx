@@ -30,7 +30,7 @@ const stores: StoreInfo[] = [
     country: 'United States',
     phone: '+1 (213) 642-7217',
     hours: 'Mon - Sat: 10:00 AM - 9:00 PM | Sun: 11:00 AM - 7:00 PM',
-    mapUrl: 'https://www.google.com/maps/search/400+S+Baldwin+Ave+Ste+231,+Arcadia,+CA+91007',
+    mapUrl: 'https://maps.app.goo.gl/Fayra1BvJc3eNLsc9',
     images: [
       '/stores/arcadia_1.jpg',
       '/stores/arcadia_2.jpg',
@@ -47,7 +47,7 @@ const stores: StoreInfo[] = [
     country: 'United States',
     phone: '+1 (213) 642-7217',
     hours: 'Mon - Sat: 10:00 AM - 8:00 PM | Sun: 11:00 AM - 6:00 PM',
-    mapUrl: 'https://www.google.com/maps/search/6600+Topanga+Canyon+Blvd,+Canoga+Park,+CA+91303',
+    mapUrl: 'https://maps.app.goo.gl/WLyGJtbfXtqLBBsZ9',
     images: [
       '/stores/topanga_1.jpg',
       '/stores/topanga_3.jpg',
