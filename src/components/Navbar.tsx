@@ -278,12 +278,19 @@ export const Navbar: React.FC = () => {
                     <div className="contact-dropdown-sep">or</div>
                     
                     <div className="contact-dropdown-info">
-                      <div className="contact-info-item">
-                        <span className="contact-info-label">Call Us</span>
+                      <div className="contact-info-card">
+                        <div className="contact-info-header">
+                          <span className="contact-info-icon">📞</span>
+                          <span className="contact-info-label">Call Us</span>
+                        </div>
                         <a href="tel:+12136427217" className="contact-info-value">+1 213-642-7217</a>
                       </div>
-                      <div className="contact-info-item">
-                        <span className="contact-info-label">Email Us</span>
+
+                      <div className="contact-info-card">
+                        <div className="contact-info-header">
+                          <span className="contact-info-icon">✉️</span>
+                          <span className="contact-info-label">Email Us</span>
+                        </div>
                         <a href="mailto:luxuryjeweleris@gmail.com" className="contact-info-value">luxuryjeweleris@gmail.com</a>
                       </div>
                     </div>
