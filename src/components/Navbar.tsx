@@ -208,6 +208,48 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+
+        // Keep top bar visible if mobile drawer menu or search is open
+        if (mobileMenuOpen || searchOpen) {
+          setNavVisible(true);
+          lastScrollY.current = currentScrollY;
+          ticking.current = false;
+          return;
+        }
+
+        // At the very top: always show
+        if (currentScrollY <= 15) {
+          setNavVisible(true);
+        } 
+        // Scrolling DOWN significantly
+        else if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 70) {
+          setNavVisible(false);
+        } 
+        // Scrolling UP significantly
+        else if (currentScrollY < lastScrollY.current - 10) {
+          setNavVisible(true);
+        }
+
+        lastScrollY.current = currentScrollY;
+        ticking.current = false;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen, searchOpen]);
+
   const hasPromo = Boolean(topPromo && topPromo.trim().length > 0);
 
   if (pathname.startsWith('/admin')) {
@@ -215,7 +257,7 @@ export const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${navVisible ? 'navbar-top-open' : 'navbar-top-closed'}`}>
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">
@@ -551,12 +593,12 @@ export const Navbar: React.FC = () => {
 
         {/* Logo — centered on mobile, left on desktop */}
         <Link href="/" className="navbar-logo-container" style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', height: '44px', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', height: '36px', gap: '9px' }}>
             <img src="/logo.png" alt="Luxury Jeweleris" style={{ height: '100%', width: 'auto', objectFit: 'contain' }} />
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ 
                 fontFamily: "var(--font-display-outfit, 'Outfit', sans-serif)", 
-                fontSize: '18px', 
+                fontSize: '16.5px', 
                 fontWeight: 700, 
                 letterSpacing: '0.5px',
                 lineHeight: 1.1
@@ -573,9 +615,9 @@ export const Navbar: React.FC = () => {
               </div>
               <div style={{ 
                 fontFamily: "var(--font-sans, 'Inter', sans-serif)", 
-                fontSize: '8px', 
+                fontSize: '7.5px', 
                 fontWeight: 600, 
-                letterSpacing: '1.6px', 
+                letterSpacing: '1.4px', 
                 color: '#8792A0',
                 opacity: 0.95,
                 marginTop: '1px',
