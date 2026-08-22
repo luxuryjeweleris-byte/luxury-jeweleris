@@ -285,6 +285,15 @@
     justify-content: center;
     text-align: center;
   }
+  /* Rare Carat style: tall pill buttons with large bold label */
+  .hero-ctas > .btn {
+    height: 54px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    padding: 0 24px;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1023px) {
