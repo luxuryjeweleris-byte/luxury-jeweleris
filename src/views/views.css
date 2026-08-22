@@ -581,11 +581,8 @@
 .sticky-filter-bar {
   background-color: var(--color-card);
   border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 70px;
-  z-index: 50;
+  position: static;
   padding: var(--space-3) 0;
-  box-shadow: 0 2px 6px rgba(16, 21, 26, 0.02);
 }
 
 .filter-chips-row {
@@ -797,13 +794,13 @@
 
 .results-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
 
-@media (min-width: 600px) {
+@media (max-width: 599px) {
   .results-grid {
-    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
   }
 }
 
