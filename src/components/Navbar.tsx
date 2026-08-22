@@ -208,7 +208,8 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
-  const [navVisible, setNavVisible] = useState(true);
+  // Progressive collapse: 'full' -> 'partial' (top bar hidden) -> 'hidden' (entire navbar hidden)
+  const [navStage, setNavStage] = useState<'full' | 'partial' | 'hidden'>('full');
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -222,23 +223,23 @@ export const Navbar: React.FC = () => {
 
         // Keep top bar visible if mobile drawer menu or search is open
         if (mobileMenuOpen || searchOpen) {
-          setNavVisible(true);
+          setNavStage('full');
           lastScrollY.current = currentScrollY;
           ticking.current = false;
           return;
         }
 
-        // At the very top: always show
+        // At the very top: restore everything
         if (currentScrollY <= 15) {
-          setNavVisible(true);
+          setNavStage('full');
         } 
-        // Scrolling DOWN significantly
+        // Scrolling DOWN significantly: collapse one stage per gesture (loop forward)
         else if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 70) {
-          setNavVisible(false);
+          setNavStage(prev => (prev === 'full' ? 'partial' : 'hidden'));
         } 
-        // Scrolling UP significantly
+        // Scrolling UP significantly: reveal one stage per gesture (loop backward)
         else if (currentScrollY < lastScrollY.current - 10) {
-          setNavVisible(true);
+          setNavStage(prev => (prev === 'hidden' ? 'partial' : 'full'));
         }
 
         lastScrollY.current = currentScrollY;
@@ -257,7 +258,7 @@ export const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className={`navbar ${navVisible ? 'navbar-top-open' : 'navbar-top-closed'}`}>
+    <nav className={`navbar ${navStage === 'full' ? 'navbar-top-open' : navStage === 'partial' ? 'navbar-top-partial' : 'navbar-top-hidden'}`}>
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">
