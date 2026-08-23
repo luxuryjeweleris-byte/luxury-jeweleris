@@ -212,7 +212,7 @@
 
 
 .hero-section {
-  background: linear-gradient(180deg, #E6F3FA 0%, #F0F7FC 65%, #FFFFFF 100%);
+  background: radial-gradient(ellipse at 50% 85%, #FFFFFF 0%, #F5FAFD 55%, #E6F3FA 100%);
   padding: var(--space-8) 0 var(--space-12);
   border-bottom: 1px solid #E0E7ED;
   overflow: hidden;

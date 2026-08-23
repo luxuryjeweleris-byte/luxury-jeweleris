@@ -172,9 +172,9 @@ export const HomeView: React.FC = () => {
                 maxWidth: '320px',
                 aspectRatio: '1 / 1',
                 margin: '0 auto',
-                overflow: 'hidden',
-                borderRadius: '16px',
                 background: 'transparent',
+                WebkitMaskImage: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%)',
+                maskImage: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%)',
               }}
             >
               {/* Video 1 */}
@@ -192,7 +192,7 @@ export const HomeView: React.FC = () => {
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
+                  objectFit: 'contain',
                   opacity: activeVideoIndex === 0 ? 1 : 0,
                   zIndex: activeVideoIndex === 0 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -216,7 +216,7 @@ export const HomeView: React.FC = () => {
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
+                  objectFit: 'contain',
                   opacity: activeVideoIndex === 1 ? 1 : 0,
                   zIndex: activeVideoIndex === 1 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
