@@ -164,17 +164,7 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
           <div className="hero-viewer">
-            <div
-              className="hero-video-stack"
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '320px',
-                aspectRatio: '1 / 1',
-                margin: '0 auto',
-                background: '#ffffff',
-              }}
-            >
+            <div className="hero-video-stack">
               {/* Video 1 */}
               <video
                 ref={video1Ref}
@@ -191,11 +181,12 @@ export const HomeView: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
-                  background: '#ffffff',
                   opacity: activeVideoIndex === 0 ? 1 : 0,
                   zIndex: activeVideoIndex === 0 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none'
+                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
+                  WebkitTransform: 'translate3d(0, 0, 0)',
+                  transform: 'translate3d(0, 0, 0)'
                 }}
               />
 
@@ -214,11 +205,12 @@ export const HomeView: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
-                  background: '#ffffff',
                   opacity: activeVideoIndex === 1 ? 1 : 0,
                   zIndex: activeVideoIndex === 1 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none'
+                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
+                  WebkitTransform: 'translate3d(0, 0, 0)',
+                  transform: 'translate3d(0, 0, 0)'
                 }}
               />
             </div>

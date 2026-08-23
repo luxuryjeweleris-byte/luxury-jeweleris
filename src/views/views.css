@@ -325,9 +325,23 @@
   width: 100%;
 }
 
-/* Hero video wrapper */
+/* Hero video wrapper with iOS Safari GPU hardware video mask */
 .hero-video-stack {
+  position: relative;
+  width: 100%;
   max-width: 280px !important;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  background: transparent;
+  isolation: isolate;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 42%, rgba(0, 0, 0, 0) 72%);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 42%, rgba(0, 0, 0, 0) 72%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }
 
 @media (min-width: 400px) {
