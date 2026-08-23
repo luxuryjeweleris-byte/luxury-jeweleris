@@ -11,6 +11,7 @@ import Button from '../components/Button';
 import { useSiteSettings } from '../context/SiteSettingsContext';
 import { supabase, dbProductToProduct } from '../lib/supabase';
 import { isCategoryMatch } from '../lib/categoryUtils';
+import HeroJewelryViewer from '../components/HeroJewelryViewer';
 import './views.css';
 
 interface BlogPost {
@@ -43,10 +44,6 @@ export const HomeView: React.FC = () => {
     'https://res.cloudinary.com/gelkrliw/video/upload/v1785440765/products/v0coba9zahrupfdek7h8.mp4',
     'https://cldnr.rarecarat.com/video/upload/v1722272873/home-next-gen/360-ring-desktop.mp4',
   ];
-
-  const [activeVideoIndex, setActiveVideoIndex] = useState<number>(0);
-  const video1Ref = React.useRef<HTMLVideoElement | null>(null);
-  const video2Ref = React.useRef<HTMLVideoElement | null>(null);
 
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -164,56 +161,7 @@ export const HomeView: React.FC = () => {
             </div>
           </div>
           <div className="hero-viewer">
-            <div className="hero-video-stack">
-              {/* Video 1 */}
-              <video
-                ref={video1Ref}
-                src={heroVideos[0]}
-                playsInline
-                autoPlay
-                muted
-                crossOrigin="anonymous"
-                onEnded={handleVideo1Ended}
-                suppressHydrationWarning
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  opacity: activeVideoIndex === 0 ? 1 : 0,
-                  zIndex: activeVideoIndex === 0 ? 2 : 1,
-                  transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.04) brightness(1.02)'
-                }}
-              />
-
-              {/* Video 2 */}
-              <video
-                ref={video2Ref}
-                src={heroVideos[1]}
-                playsInline
-                muted
-                crossOrigin="anonymous"
-                onEnded={handleVideo2Ended}
-                suppressHydrationWarning
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  opacity: activeVideoIndex === 1 ? 1 : 0,
-                  zIndex: activeVideoIndex === 1 ? 2 : 1,
-                  transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.08) brightness(1.04)'
-                }}
-              />
-            </div>
+            <HeroJewelryViewer videos={heroVideos} />
           </div>
         </div>
       </section>
