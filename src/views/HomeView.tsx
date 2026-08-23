@@ -139,22 +139,6 @@ export const HomeView: React.FC = () => {
     { key: 'Gifts', title: 'Luxury Jewelry Gifts', path: '/gifts', desc: 'Curated gifts for anniversaries, birthdays & celebrations.' },
   ];
 
-  const handleVideo1Ended = () => {
-    setActiveVideoIndex(1);
-    if (video2Ref.current) {
-      video2Ref.current.currentTime = 0;
-      video2Ref.current.play().catch(() => {});
-    }
-  };
-
-  const handleVideo2Ended = () => {
-    setActiveVideoIndex(0);
-    if (video1Ref.current) {
-      video1Ref.current.currentTime = 0;
-      video1Ref.current.play().catch(() => {});
-    }
-  };
-
   return (
     <div className="home-view">
       {/* Hero Section */}
