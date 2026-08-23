@@ -186,9 +186,7 @@ export const HomeView: React.FC = () => {
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
                   mixBlendMode: 'multiply',
-                  filter: 'contrast(1.04) brightness(1.02)',
-                  WebkitTransform: 'translate3d(0, 0, 0)',
-                  transform: 'translate3d(0, 0, 0)'
+                  filter: 'contrast(1.04) brightness(1.02)'
                 }}
               />
 
@@ -212,9 +210,7 @@ export const HomeView: React.FC = () => {
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
                   pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
                   mixBlendMode: 'multiply',
-                  filter: 'contrast(1.08) brightness(1.04)',
-                  WebkitTransform: 'translate3d(0, 0, 0)',
-                  transform: 'translate3d(0, 0, 0)'
+                  filter: 'contrast(1.08) brightness(1.04)'
                 }}
               />
             </div>
