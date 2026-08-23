@@ -208,8 +208,8 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
-  // Progressive collapse: 'full' -> 'partial' (top bar hidden) -> 'hidden' (entire navbar hidden)
-  const [navStage, setNavStage] = useState<'full' | 'partial' | 'hidden'>('full');
+  // Only top announcement bar collapses; main navbar NEVER hides!
+  const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -223,23 +223,23 @@ export const Navbar: React.FC = () => {
 
         // Keep top bar visible if mobile drawer menu or search is open
         if (mobileMenuOpen || searchOpen) {
-          setNavStage('full');
+          setNavVisible(true);
           lastScrollY.current = currentScrollY;
           ticking.current = false;
           return;
         }
 
-        // At the very top: restore everything
+        // At the very top: restore top bar
         if (currentScrollY <= 15) {
-          setNavStage('full');
+          setNavVisible(true);
         } 
-        // Scrolling DOWN significantly: collapse one stage per gesture (loop forward)
-        else if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 70) {
-          setNavStage(prev => (prev === 'full' ? 'partial' : 'hidden'));
+        // Scrolling DOWN: collapse top announcement bar only
+        else if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 60) {
+          setNavVisible(false);
         } 
-        // Scrolling UP significantly: reveal one stage per gesture (loop backward)
+        // Scrolling UP: reveal top announcement bar
         else if (currentScrollY < lastScrollY.current - 10) {
-          setNavStage(prev => (prev === 'hidden' ? 'partial' : 'full'));
+          setNavVisible(true);
         }
 
         lastScrollY.current = currentScrollY;
@@ -258,7 +258,7 @@ export const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className={`navbar ${navStage === 'full' ? 'navbar-top-open' : navStage === 'partial' ? 'navbar-top-partial' : 'navbar-top-hidden'}`}>
+    <nav className={`navbar ${navVisible ? 'navbar-top-open' : 'navbar-top-closed'}`}>
       {/* Top Announcement Bar */}
       <div className="navbar-top-bar">
         <div className="container navbar-top-bar-container">

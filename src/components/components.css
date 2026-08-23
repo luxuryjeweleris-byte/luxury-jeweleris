@@ -378,18 +378,12 @@
   transform: translateY(0);
 }
 
-/* Stage 1 (first scroll down): collapse only the top announcement bar */
-.navbar.navbar-top-partial {
+.navbar.navbar-top-closed {
   transform: translateY(-41px);
 }
 
-/* Stage 2 (second scroll down): slide the entire navbar away */
-.navbar.navbar-top-hidden {
-  transform: translateY(-102%);
-}
-
 @media (max-width: 768px) {
-  .navbar.navbar-top-partial {
+  .navbar.navbar-top-closed {
     transform: translateY(-37px);
   }
 }
