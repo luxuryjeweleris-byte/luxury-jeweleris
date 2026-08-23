@@ -172,9 +172,7 @@ export const HomeView: React.FC = () => {
                 maxWidth: '320px',
                 aspectRatio: '1 / 1',
                 margin: '0 auto',
-                background: 'transparent',
-                WebkitMaskImage: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%)',
-                maskImage: 'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 80%)',
+                background: '#ffffff',
               }}
             >
               {/* Video 1 */}
@@ -193,12 +191,11 @@ export const HomeView: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
+                  background: '#ffffff',
                   opacity: activeVideoIndex === 0 ? 1 : 0,
                   zIndex: activeVideoIndex === 0 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none',
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.04) brightness(1.02)'
+                  pointerEvents: activeVideoIndex === 0 ? 'auto' : 'none'
                 }}
               />
 
@@ -217,12 +214,11 @@ export const HomeView: React.FC = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
+                  background: '#ffffff',
                   opacity: activeVideoIndex === 1 ? 1 : 0,
                   zIndex: activeVideoIndex === 1 ? 2 : 1,
                   transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none',
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.08) brightness(1.04)'
+                  pointerEvents: activeVideoIndex === 1 ? 'auto' : 'none'
                 }}
               />
             </div>
