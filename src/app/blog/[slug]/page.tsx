@@ -93,10 +93,34 @@ function renderBody(body: string): React.ReactNode[] {
     }
 
     // Full-block image: ![alt](url)
-    if (/^!\[[^\]]*\]\([^\)]+\)$/.test(trimmed)) {
-      const m = trimmed.match(/^!\[([^\]]*)\]\(([^\)]+)\)$/);
+    if (/^!\[[^\]]*\]\([^)]+\)$/.test(trimmed)) {
+      const m = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
       if (m) {
         return <img key={i} src={m[2]} alt={m[1]} className="md-img" loading="lazy" />;
+      }
+    }
+
+    // Mixed block: image line + HR without blank line (e.g. "![alt](url)\n---")
+    if (trimmed.includes('\n')) {
+      const lines = trimmed.split('\n');
+      const hasImageHr = lines.some(l => /^!\[[^\]]*\]\([^)]+\)$/.test(l.trim()) || /^---+$/.test(l.trim()));
+      const isList = lines.every(l => /^[-*•]\s/.test(l.trim()) || /^\d+\.\s/.test(l.trim()));
+      if (hasImageHr && !isList) {
+        return (
+          <React.Fragment key={i}>
+            {lines.map((line, j) => {
+              const t = line.trim();
+              if (!t) return null;
+              if (/^!\[[^\]]*\]\([^)]+\)$/.test(t)) {
+                const mm = t.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+                return mm ? <img key={j} src={mm[2]} alt={mm[1]} className="md-img" loading="lazy" /> : null;
+              }
+              if (/^---+$/.test(t)) return <hr key={j} className="md-hr" />;
+              if (!t) return null;
+              return <p key={j} className="md-p">{inlineFormat(t)}</p>;
+            })}
+          </React.Fragment>
+        );
       }
     }
 
@@ -130,7 +154,7 @@ function renderBody(body: string): React.ReactNode[] {
 }
 
 function inlineFormat(text: string): React.ReactNode {
-  const tokenRe = /(!\[[^\]]*\]\([^\)]+\]|\[[^\]]+\]\([^\)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  const tokenRe = /(!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
   const parts = text.split(tokenRe);
   return parts.map((part, i) => {
     if (!part) return null;
@@ -140,12 +164,12 @@ function inlineFormat(text: string): React.ReactNode {
     }
     // Image inline
     if (part.startsWith('![')) {
-      const m = part.match(/^!\[([^\]]*)\]\(([^\)]+)\)$/);
+      const m = part.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
       if (m) return <img key={i} src={m[2]} alt={m[1]} className="md-img-inline" loading="lazy" />;
     }
     // Link
     if (part.startsWith('[')) {
-      const m = part.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
+      const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (m) return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="md-a">{m[1]}</a>;
     }
     // Bold
