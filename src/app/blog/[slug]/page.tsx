@@ -40,47 +40,72 @@ function formatDate(dateStr: string | null): string {
 }
 
 /**
- * Very simple markdown-like renderer for body text.
- * Supports: **bold**, *italic*, headings (## ###), line breaks, --- divider
+ * Markdown renderer — supports #/##/###/#### headings, **bold**, *italic*, `inline code`,
+ * fenced code blocks, > blockquotes, --- dividers, links, images, bullet & numbered lists.
  */
 function renderBody(body: string): React.ReactNode[] {
-  const paragraphs = body.split(/\n\n+/);
+  // Extract fenced code blocks to avoid splitting inside them
+  const codeBlocks: string[] = [];
+  const placeholder = '§CODEBLOCK§';
+  const withoutCodes = body.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(code);
+    return `${placeholder}${idx}§`;
+  });
+
+  const paragraphs = withoutCodes.split(/\n\n+/);
   return paragraphs.map((block, i) => {
     const trimmed = block.trim();
-
     if (!trimmed) return null;
+
+    // Restore code block
+    const codeMatch = trimmed.match(new RegExp(`^${placeholder}(\\d+)§$`));
+    if (codeMatch) {
+      const code = codeBlocks[parseInt(codeMatch[1], 10)];
+      return (
+        <pre key={i} className="md-pre"><code>{code.trim()}</code></pre>
+      );
+    }
 
     // Horizontal rule
     if (/^---+$/.test(trimmed)) {
-      return <hr key={i} style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '32px 0' }} />;
+      return <hr key={i} className="md-hr" />;
     }
 
-    // Heading 2
-    if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={i} style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: '36px 0 12px', lineHeight: 1.3 }}>
-          {inlineFormat(trimmed.slice(3))}
-        </h2>
-      );
+    // Blockquote
+    if (trimmed.split('\n').every(l => l.trim().startsWith('>'))) {
+      const content = trimmed.split('\n').map(l => l.replace(/^\s*>\s?/, '')).join('\n');
+      return <blockquote key={i} className="md-blockquote">{inlineFormat(content)}</blockquote>;
     }
 
-    // Heading 3
-    if (trimmed.startsWith('### ')) {
-      return (
-        <h3 key={i} style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: '28px 0 10px', lineHeight: 1.4 }}>
-          {inlineFormat(trimmed.slice(4))}
-        </h3>
-      );
+    // Headings
+    if (/^####\s+/.test(trimmed)) {
+      return <h4 key={i} className="md-h4">{inlineFormat(trimmed.replace(/^####\s+/, ''))}</h4>;
+    }
+    if (/^###\s+/.test(trimmed)) {
+      return <h3 key={i} className="md-h3">{inlineFormat(trimmed.replace(/^###\s+/, ''))}</h3>;
+    }
+    if (/^##\s+/.test(trimmed)) {
+      return <h2 key={i} className="md-h2">{inlineFormat(trimmed.replace(/^##\s+/, ''))}</h2>;
+    }
+    if (/^#\s+/.test(trimmed)) {
+      return <h1 key={i} className="md-h1">{inlineFormat(trimmed.replace(/^#\s+/, ''))}</h1>;
+    }
+
+    // Full-block image: ![alt](url)
+    if (/^!\[[^\]]*\]\([^\)]+\)$/.test(trimmed)) {
+      const m = trimmed.match(/^!\[([^\]]*)\]\(([^\)]+)\)$/);
+      if (m) {
+        return <img key={i} src={m[2]} alt={m[1]} className="md-img" loading="lazy" />;
+      }
     }
 
     // Bullet list
     if (trimmed.split('\n').every(line => /^[-*•]\s/.test(line.trim()))) {
       return (
-        <ul key={i} style={{ paddingLeft: '22px', margin: '16px 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <ul key={i} className="md-ul">
           {trimmed.split('\n').map((line, j) => (
-            <li key={j} style={{ fontSize: '16px', lineHeight: 1.7, color: '#334155' }}>
-              {inlineFormat(line.replace(/^[-*•]\s/, ''))}
-            </li>
+            <li key={j} className="md-li">{inlineFormat(line.replace(/^[-*•]\s/, ''))}</li>
           ))}
         </ul>
       );
@@ -89,34 +114,53 @@ function renderBody(body: string): React.ReactNode[] {
     // Numbered list
     if (trimmed.split('\n').every(line => /^\d+\.\s/.test(line.trim()))) {
       return (
-        <ol key={i} style={{ paddingLeft: '22px', margin: '16px 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <ol key={i} className="md-ol">
           {trimmed.split('\n').map((line, j) => (
-            <li key={j} style={{ fontSize: '16px', lineHeight: 1.7, color: '#334155' }}>
-              {inlineFormat(line.replace(/^\d+\.\s/, ''))}
-            </li>
+            <li key={j} className="md-li">{inlineFormat(line.replace(/^\d+\.\s/, ''))}</li>
           ))}
         </ol>
       );
     }
 
-    // Default paragraph
-    return (
-      <p key={i} style={{ fontSize: '16px', lineHeight: 1.8, color: '#334155', margin: '0 0 20px' }}>
-        {inlineFormat(trimmed)}
-      </p>
-    );
+    // Default paragraph (inline images/links handled by inlineFormat)
+    const nodes = inlineFormat(trimmed);
+    // If paragraph is only an image node, render without <p> wrapper for better spacing
+    return <p key={i} className="md-p">{nodes}</p>;
   }).filter(Boolean) as React.ReactNode[];
 }
 
 function inlineFormat(text: string): React.ReactNode {
-  // Handle **bold** and *italic*
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+  const tokenRe = /(!\[[^\]]*\]\([^\)]+\]|\[[^\]]+\]\([^\)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  const parts = text.split(tokenRe);
   return parts.map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={i} style={{ color: '#0f172a', fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+    if (!part) return null;
+    // Inline code
+    if (part.startsWith('`') && part.endsWith('`') && part.length > 1) {
+      return <code key={i} className="md-inline-code">{part.slice(1, -1)}</code>;
     }
-    if (part.startsWith('*') && part.endsWith('*')) {
-      return <em key={i}>{part.slice(1, -1)}</em>;
+    // Image inline
+    if (part.startsWith('![')) {
+      const m = part.match(/^!\[([^\]]*)\]\(([^\)]+)\)$/);
+      if (m) return <img key={i} src={m[2]} alt={m[1]} className="md-img-inline" loading="lazy" />;
+    }
+    // Link
+    if (part.startsWith('[')) {
+      const m = part.match(/^\[([^\]]+)\]\(([^\)]+)\)$/);
+      if (m) return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="md-a">{m[1]}</a>;
+    }
+    // Bold
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 3) {
+      return <strong key={i} className="md-strong">{part.slice(2, -2)}</strong>;
+    }
+    // Italic
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 1) {
+      return <em key={i} className="md-em">{part.slice(1, -1)}</em>;
+    }
+    // Handle single line breaks inside a paragraph
+    if (part.includes('\n')) {
+      return part.split('\n').map((seg, j, arr) => (
+        <span key={`${i}-${j}`}>{seg}{j < arr.length - 1 ? <br /> : null}</span>
+      ));
     }
     return part;
   });

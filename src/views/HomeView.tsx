@@ -228,6 +228,30 @@ export const HomeView: React.FC = () => {
       {/* Categories Carousel */}
       <CategoryCarousel />
 
+      {/* AURELIA VOSS COLLECTION — Christian Siriano style */}
+      <section className="aurelia-banner">
+        <div className="aurelia-banner-inner">
+          <div className="aurelia-banner-content">
+            <p className="aurelia-kicker">THE</p>
+            <h2 className="aurelia-title">AURELIA VOSS</h2>
+            <p className="aurelia-collection">COLLECTION</p>
+            <div className="aurelia-divider"><span>◆</span></div>
+            <p className="aurelia-desc">Timeless jewelry crafted for unforgettable moments. Discover the debut collection by Aurelia Voss.</p>
+            <div className="aurelia-actions">
+              <button className="aurelia-btn" onClick={() => router.push('/engagement-rings')}>Shop rings</button>
+              <button className="aurelia-btn" onClick={() => router.push('/shop')}>Shop jewelry</button>
+            </div>
+          </div>
+          <div className="aurelia-media" aria-hidden="true">
+            <img
+              src="https://res.cloudinary.com/gelkrliw/image/upload/v1787659009/aurelia_voss.png"
+              alt="Aurelia Voss Collection"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* FEATURED PRODUCTS SHOWCASE SECTION */}
       <section className="featured-section" style={{ padding: 'clamp(32px, 5vw, 64px) 0', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border-soft)' }}>
         <div className="container-wide">

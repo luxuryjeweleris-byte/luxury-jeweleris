@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   BookOpen, Plus, Search, Edit2, Trash2, Eye, EyeOff,
   Loader2, X, Check, AlertCircle, ChevronRight, Tag, Calendar,
-  User, Image as ImageIcon, FileText, Globe, Clock,
+  User, Image as ImageIcon, FileText, Globe, Clock, Upload,
 } from 'lucide-react';
 import { supabase } from '../../../../lib/supabase';
 import { useAdminContext } from '../admin-context';
@@ -69,6 +69,8 @@ export default function AdminBlogPage() {
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [previewCover, setPreviewCover] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [isDraggingCover, setIsDraggingCover] = useState(false);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -92,6 +94,33 @@ export default function AdminBlogPage() {
   }, []);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
+
+  const handleCoverFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select a valid image file', 'error');
+      return;
+    }
+    setUploadingCover(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Upload failed');
+      }
+      const data = await res.json();
+      if (data.url) {
+        setForm(f => ({ ...f, cover_image: data.url }));
+        setPreviewCover(data.url);
+        showToast('Cover image uploaded via Cloudinary');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Image upload failed', 'error');
+    } finally {
+      setUploadingCover(false);
+    }
+  };
 
   const openCreate = () => {
     setEditPost(null);
@@ -588,24 +617,82 @@ export default function AdminBlogPage() {
                     />
                   </div>
 
-                  {/* Cover Image URL */}
+                  {/* Cover Image — Cloudinary Upload */}
                   <div className="full-span">
-                    <label className="admin-label"><ImageIcon size={10} style={{ display: 'inline', marginRight: '4px' }} />Cover Image URL</label>
+                    <label className="admin-label"><ImageIcon size={10} style={{ display: 'inline', marginRight: '4px' }} />Cover Image — Cloudinary</label>
                     <input
                       className="admin-input"
                       style={{ marginBottom: 0 }}
-                      placeholder="https://images.unsplash.com/…"
+                      placeholder="https://images.unsplash.com/…  or upload below"
                       value={form.cover_image ?? ''}
                       onChange={e => { setForm(f => ({ ...f, cover_image: e.target.value })); setPreviewCover(e.target.value); }}
                     />
+
+                    {/* Cloudinary Upload Zone */}
+                    <label
+                      onDragOver={e => { e.preventDefault(); setIsDraggingCover(true); }}
+                      onDragLeave={e => { e.preventDefault(); setIsDraggingCover(false); }}
+                      onDrop={e => {
+                        e.preventDefault();
+                        setIsDraggingCover(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) handleCoverFile(file);
+                      }}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        gap: '6px', marginTop: '10px', padding: '18px 16px',
+                        border: isDraggingCover ? '2px dashed #6366f1' : '2px dashed rgba(255,255,255,0.12)',
+                        borderRadius: '10px', cursor: 'pointer',
+                        background: isDraggingCover ? 'rgba(99,102,241,0.10)' : 'rgba(255,255,255,0.03)',
+                        transition: 'all 160ms ease', textAlign: 'center',
+                      }}
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={e => {
+                          const f = e.target.files?.[0];
+                          if (f) handleCoverFile(f);
+                          e.target.value = '';
+                        }}
+                      />
+                      {uploadingCover ? (
+                        <>
+                          <Loader2 size={20} className="admin-spin" color="#6366f1" />
+                          <span style={{ fontSize: '12px', color: '#a5b4fc', fontWeight: 600 }}>Uploading to Cloudinary…</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={20} color={isDraggingCover ? '#818cf8' : '#6366f1'} />
+                          <span style={{ fontSize: '12.5px', fontWeight: 700, color: isDraggingCover ? '#818cf8' : '#e2e8f0' }}>
+                            {isDraggingCover ? 'Drop image here' : 'Drag & drop image or click to browse'}
+                          </span>
+                          <span style={{ fontSize: '11px', color: '#64748b' }}>PNG, JPG, WebP — auto-uploaded to Cloudinary</span>
+                        </>
+                      )}
+                    </label>
+
                     {previewCover && (
-                      <div style={{ marginTop: '10px', borderRadius: '8px', overflow: 'hidden', height: '120px', background: '#1a2035', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ marginTop: '10px', borderRadius: '8px', overflow: 'hidden', height: '140px', background: '#1a2035', border: '1px solid rgba(255,255,255,0.06)', position: 'relative' }}>
                         <img
                           src={previewCover}
                           alt="Cover preview"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           onError={() => setPreviewCover('')}
                         />
+                        <button
+                          type="button"
+                          onClick={() => { setForm(f => ({ ...f, cover_image: '' })); setPreviewCover(''); }}
+                          style={{
+                            position: 'absolute', top: '8px', right: '8px',
+                            background: 'rgba(239,68,68,0.95)', color: 'white', border: 'none',
+                            borderRadius: '6px', padding: '5px 10px', cursor: 'pointer',
+                            fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px',
+                          }}
+                        >
+                          <X size={11} /> Remove
+                        </button>
                       </div>
                     )}
                   </div>

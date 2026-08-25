@@ -704,7 +704,7 @@
   pointer-events: none;
 }
 
-/* Article prose */
+/* Article prose — MD */
 .blog-detail-article { margin-bottom: 40px; }
 
 .blog-detail-prose {
@@ -714,6 +714,29 @@
 }
 
 .blog-detail-prose p + p { margin-top: 0; }
+
+/* Markdown elements */
+.md-h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 36px 0 14px; line-height: 1.25; font-family: var(--font-display); }
+.md-h2 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 32px 0 12px; line-height: 1.3; font-family: var(--font-display); }
+.md-h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin: 26px 0 10px; line-height: 1.35; }
+.md-h4 { font-size: 15px; font-weight: 700; color: #334155; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.3px; }
+.md-p { font-size: 16px; line-height: 1.85; color: #334155; margin: 0 0 18px; }
+.md-strong { font-weight: 700; color: #0f172a; }
+.md-em { font-style: italic; }
+.md-a { color: #0E8C8A; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.md-a:hover { color: #0a6d6b; }
+.md-inline-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 1px 6px; border-radius: 6px; color: #0f172a; }
+.md-pre { background: #0f172a; color: #e2e8f0; padding: 18px 20px; border-radius: 10px; overflow-x: auto; margin: 20px 0; font-size: 13px; line-height: 1.7; border: 1px solid #1e293b; }
+.md-pre code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.md-blockquote { border-left: 3px solid #0E8C8A; background: #f0fdfa; padding: 14px 18px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #334155; font-style: italic; }
+.md-hr { border: none; border-top: 1px solid #e2e8f0; margin: 30px 0; }
+.md-ul, .md-ol { padding-left: 22px; margin: 14px 0 18px; display: flex; flex-direction: column; gap: 8px; }
+.md-ul { list-style: disc; }
+.md-ol { list-style: decimal; }
+.md-li { font-size: 16px; line-height: 1.75; color: #334155; }
+.md-li::marker { color: #0E8C8A; }
+.md-img { width: 100%; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0; display: block; }
+.md-img-inline { max-width: 100%; border-radius: 10px; margin: 10px 0; border: 1px solid #e2e8f0; vertical-align: middle; }
 
 /* Tags Footer */
 .blog-detail-tags-footer {

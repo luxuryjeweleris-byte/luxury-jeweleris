@@ -212,7 +212,7 @@
 
 
 .hero-section {
-  background: linear-gradient(180deg, #E6F3FA 0%, #F0F7FC 65%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #E6F3FA 0%, #EDF5FC 55%, #EAF2FA 100%);
   padding: var(--space-8) 0 var(--space-12);
   border-bottom: 1px solid #E0E7ED;
   overflow: hidden;
@@ -332,12 +332,13 @@
   max-width: 280px !important;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
-  background: transparent;
+  background: #EAF2FA;
   isolation: isolate;
+  border-radius: 24px;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 42%, rgba(0, 0, 0, 0) 72%);
-  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 42%, rgba(0, 0, 0, 0) 72%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 78%);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0) 78%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -353,6 +354,161 @@
 @media (min-width: 1024px) {
   .hero-video-stack {
     max-width: 420px !important;
+  }
+}
+
+/* ── AURELIA VOSS COLLECTION — Christian Siriano style banner ── */
+.aurelia-banner {
+  background: #7A0B2E;
+  color: #ffffff;
+  overflow: hidden;
+}
+.aurelia-banner-inner {
+  display: grid;
+  grid-template-columns: 1.45fr 0.9fr;
+  min-height: 440px;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+.aurelia-banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 56px 40px;
+}
+.aurelia-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin: 0 0 10px;
+  opacity: 0.95;
+}
+.aurelia-title {
+  font-family: var(--font-display), 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 300;
+  letter-spacing: 2px;
+  line-height: 1.05;
+  margin: 0;
+  color: #ffffff;
+}
+.aurelia-collection {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  margin: 8px 0 0;
+  color: #ffffff;
+}
+.aurelia-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 18px;
+  color: rgba(255,255,255,0.55);
+  font-size: 7px;
+}
+.aurelia-divider::before,
+.aurelia-divider::after {
+  content: "";
+  width: 36px;
+  height: 1px;
+  background: rgba(255,255,255,0.35);
+  display: block;
+}
+.aurelia-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.88);
+  max-width: 440px;
+  margin: 0 0 26px;
+}
+.aurelia-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.aurelia-btn {
+  background: #ffffff;
+  color: #7A0B2E;
+  border: 1px solid #ffffff;
+  padding: 12px 30px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, color 150ms ease;
+  white-space: nowrap;
+}
+.aurelia-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+  background: #fff8fa;
+}
+.aurelia-media {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  min-height: 440px;
+}
+.aurelia-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* Mobile: full-bleed portrait with overlay — like reference */
+@media (max-width: 768px) {
+  .aurelia-banner {
+    background: #1a0a10;
+  }
+  .aurelia-banner-inner {
+    grid-template-columns: 1fr;
+    min-height: 560px;
+    position: relative;
+    background-image: url('https://res.cloudinary.com/gelkrliw/image/upload/v1787659009/aurelia_voss.png');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+  }
+  .aurelia-banner-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.10) 28%, rgba(45,10,22,0.52) 58%, rgba(45,10,22,0.78) 100%);
+    z-index: 1;
+  }
+  .aurelia-media {
+    display: none;
+  }
+  .aurelia-banner-content {
+    position: relative;
+    z-index: 2;
+    justify-content: flex-end;
+    padding: 0 20px 32px;
+    min-height: 560px;
+  }
+  .aurelia-title {
+    font-size: 30px;
+    letter-spacing: 1.5px;
+  }
+  .aurelia-desc {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.90);
+  }
+  .aurelia-btn {
+    padding: 11px 24px;
+    font-size: 13.5px;
+    flex: 1 1 0;
+    min-width: 130px;
+  }
+  .aurelia-actions {
+    width: 100%;
+    max-width: 360px;
   }
 }
 
