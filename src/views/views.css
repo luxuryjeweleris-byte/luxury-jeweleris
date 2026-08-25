@@ -359,7 +359,7 @@
 
 /* ── AURELIA VOSS COLLECTION — Christian Siriano style banner ── */
 .aurelia-banner {
-  background: #7A0B2E;
+  background: #0B1E3A;
   color: #ffffff;
   overflow: hidden;
 }
@@ -432,7 +432,7 @@
 }
 .aurelia-btn {
   background: #ffffff;
-  color: #7A0B2E;
+  color: #0B1E3A;
   border: 1px solid #ffffff;
   padding: 12px 30px;
   border-radius: 999px;
@@ -464,7 +464,7 @@
 /* Mobile: full-bleed portrait with overlay — like reference */
 @media (max-width: 768px) {
   .aurelia-banner {
-    background: #1a0a10;
+    background: #0B1E3A;
   }
   .aurelia-banner-inner {
     grid-template-columns: 1fr;
@@ -479,7 +479,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.10) 28%, rgba(45,10,22,0.52) 58%, rgba(45,10,22,0.78) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.10) 28%, rgba(11,30,58,0.62) 58%, rgba(11,30,58,0.82) 100%);
     z-index: 1;
   }
   .aurelia-media {

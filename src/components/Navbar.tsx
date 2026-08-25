@@ -208,7 +208,7 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
-  // Only top announcement bar collapses; main navbar NEVER hides!
+  // Whole navbar hides on scroll down, shows on scroll up (loop)
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
@@ -229,15 +229,15 @@ export const Navbar: React.FC = () => {
           return;
         }
 
-        // At the very top: restore top bar
+        // At the very top: show navbar
         if (currentScrollY <= 15) {
           setNavVisible(true);
         } 
-        // Scrolling DOWN: collapse top announcement bar only
+        // Scrolling DOWN: hide whole navbar
         else if (currentScrollY > lastScrollY.current + 10 && currentScrollY > 60) {
           setNavVisible(false);
         } 
-        // Scrolling UP: reveal top announcement bar
+        // Scrolling UP: show whole navbar
         else if (currentScrollY < lastScrollY.current - 10) {
           setNavVisible(true);
         }
