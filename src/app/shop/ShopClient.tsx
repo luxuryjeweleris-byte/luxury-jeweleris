@@ -7,8 +7,8 @@ import ListingView from '../../views/ListingView';
 function ShopContent() {
   const router = useRouter();
 
-  const handleProductSelect = (product: any) => {
-    router.push(`/shop/${product.id}`);
+  const handleProductSelect = (product: any, metal?: string) => {
+    router.push(`/shop/${product.id}${metal ? `?metal=${metal}` : ''}`);
   };
 
   return (

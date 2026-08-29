@@ -176,6 +176,7 @@ export function dbProductToProduct(p: DbProduct): Product {
     savePct: p.save_pct ?? undefined,
     category: p.category,
     style: p.style ?? undefined,
+    metal: p.metal ?? undefined,
     images360: (p.images_360 && p.images_360.length > 0) ? p.images_360 : undefined,
     url360: p.url_360 ?? undefined,
     config360: p.config_360 ?? undefined,

@@ -18,7 +18,7 @@ interface ListingViewProps {
     category?: string;
     search?: string;
   };
-  onProductSelect: (product: Product) => void;
+  onProductSelect: (product: Product, metal?: string) => void;
   pageTitle?: string;
   pageSubtitle?: string;
 }
@@ -168,15 +168,40 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
       } else if (styleLower === 'engagement') {
         result = result.filter(p => p.category?.toLowerCase() === 'ring' || p.name.toLowerCase().includes('ring'));
       } else if (styleLower === 'yellow-gold' || styleLower === 'yellow gold') {
-        result = result.filter(p => p.name.toLowerCase().includes('yellow') || (p.name.toLowerCase().includes('gold') && !p.name.toLowerCase().includes('white') && !p.name.toLowerCase().includes('rose')));
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasYellowImg = Boolean(p.imageYellowGold || (p.imagesYellowGold && p.imagesYellowGold.length > 0));
+          return metal.includes('yellow') || hasYellowImg || name.includes('yellow') || (name.includes('gold') && !name.includes('white') && !name.includes('rose'));
+        });
       } else if (styleLower === 'white-gold' || styleLower === 'white gold') {
-        result = result.filter(p => p.name.toLowerCase().includes('white') || p.name.toLowerCase().includes('platinum'));
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasWhiteImg = Boolean(p.imagesWhiteGold && p.imagesWhiteGold.length > 0);
+          return metal.includes('white') || hasWhiteImg || name.includes('white') || name.includes('platinum');
+        });
       } else if (styleLower === 'rose-gold' || styleLower === 'rose gold') {
-        result = result.filter(p => p.name.toLowerCase().includes('rose'));
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasRoseImg = Boolean(p.imageRoseGold || (p.imagesRoseGold && p.imagesRoseGold.length > 0));
+          return metal.includes('rose') || hasRoseImg || name.includes('rose');
+        });
       } else if (styleLower === 'platinum') {
-        result = result.filter(p => p.name.toLowerCase().includes('platinum'));
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasPlatImg = Boolean(p.imagePlatinum || (p.imagesPlatinum && p.imagesPlatinum.length > 0));
+          return metal.includes('platinum') || hasPlatImg || name.includes('platinum');
+        });
       } else if (styleLower === 'silver') {
-        result = result.filter(p => p.name.toLowerCase().includes('silver') || p.name.toLowerCase().includes('platinum') || p.name.toLowerCase().includes('white'));
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasSilverImg = Boolean(p.imageSilver || (p.imagesSilver && p.imagesSilver.length > 0));
+          return metal.includes('silver') || hasSilverImg || name.includes('silver') || name.includes('white') || name.includes('platinum');
+        });
       } else if (styleLower === 'vermeil') {
         result = result.filter(p => p.name.toLowerCase().includes('vermeil') || p.name.toLowerCase().includes('gold'));
       } else if (styleLower === 'tantalum') {
@@ -451,6 +476,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                     key={product.id}
                     product={product}
                     onSelect={onProductSelect}
+                    activeMetalFilter={selectedStyle || undefined}
                   />
                 ))}
               </div>

@@ -16,8 +16,8 @@ function GiftsContent() {
     return { category: 'gifts', shape, style, search };
   }, [shape, style, search]);
 
-  const handleProductSelect = (product: any) => {
-    router.push(`/shop/${product.id}`);
+  const handleProductSelect = (product: any, metal?: string) => {
+    router.push(`/shop/${product.id}${metal ? `?metal=${metal}` : ''}`);
   };
 
   return (

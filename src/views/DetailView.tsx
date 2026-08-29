@@ -15,25 +15,62 @@ interface DetailViewProps {
   onAddToCart: (product: Product, config: { metal: string; size: string }) => void;
 }
 
+function parseMetalParam(param?: string | null): 'gold' | 'platinum' | 'rose' | 'silver' | 'white' | '' {
+  if (!param) return '';
+  const p = param.toLowerCase();
+  if (p.includes('yellow') || p === 'gold') return 'gold';
+  if (p.includes('rose')) return 'rose';
+  if (p.includes('silver')) return 'silver';
+  if (p.includes('platinum')) return 'platinum';
+  if (p.includes('white')) return 'white';
+  return '';
+}
+
 export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddToCart }) => {
   const availableMetals = useMemo(() => getAvailableMetals(product), [product]);
   const isRing = useMemo(() => requiresRingSize(product), [product]);
 
-  // Metal selection state: default to unselected if multiple metals exist
-  const [metal, setMetal] = useState<'gold' | 'platinum' | 'rose' | 'silver' | 'white' | ''>(() => {
-    if (availableMetals.length > 1) {
-      return '';
+  // Metal selection state: check URL search params first, fallback to first available metal
+  const [metal, setMetalState] = useState<'gold' | 'platinum' | 'rose' | 'silver' | 'white' | ''>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlMetal = parseMetalParam(urlParams.get('metal'));
+      if (urlMetal) return urlMetal;
     }
-    return (availableMetals[0]?.key as any) || 'gold';
+    if (availableMetals.length > 0) {
+      return (availableMetals[0]?.key as any) || 'gold';
+    }
+    return 'gold';
   });
   const [metalError, setMetalError] = useState(false);
 
+  const setMetal = (newMetal: 'gold' | 'platinum' | 'rose' | 'silver' | 'white' | '') => {
+    setMetalState(newMetal);
+    if (typeof window !== 'undefined' && newMetal) {
+      const url = new URL(window.location.href);
+      const metalSlugMap: Record<string, string> = {
+        gold: 'yellow-gold',
+        rose: 'rose-gold',
+        white: 'white-gold',
+        silver: 'silver',
+        platinum: 'platinum'
+      };
+      url.searchParams.set('metal', metalSlugMap[newMetal] || newMetal);
+      window.history.replaceState({}, '', url.toString());
+    }
+  };
+
   useEffect(() => {
-    if (availableMetals.length <= 1) {
-      setMetal((availableMetals[0]?.key as any) || 'gold');
-      setMetalError(false);
-    } else if (metal && !availableMetals.some(m => m.key === metal)) {
-      setMetal('');
+    if (!metal && availableMetals.length > 0) {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMetal = parseMetalParam(urlParams.get('metal'));
+        if (urlMetal) {
+          setMetalState(urlMetal);
+          return;
+        }
+      }
+      setMetalState((availableMetals[0]?.key as any) || 'gold');
     }
   }, [availableMetals, metal]);
 
@@ -206,6 +243,18 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
     const finalMetal = metal || availableMetals[0]?.key || 'gold';
     onAddToCart(product, { metal: finalMetal, size: isRing ? selectedSize : 'N/A' });
   };
+
+  const currentMetalLabel = useMemo(() => {
+    if (!metal) return null;
+    const match = availableMetals.find(m => m.key === metal);
+    if (match) return match.label;
+    if (metal === 'gold') return 'Yellow Gold';
+    if (metal === 'rose') return 'Rose Gold';
+    if (metal === 'white') return 'White Gold';
+    if (metal === 'platinum') return 'Platinum';
+    if (metal === 'silver') return 'Silver';
+    return null;
+  }, [metal, availableMetals]);
 
   return (
     <div className="detail-view">
@@ -441,7 +490,14 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                 {product.isVerified && <Badge type="verified">✓ Premium Quality</Badge>}
                 {product.isNew && <Badge type="featured">New Arrival</Badge>}
               </div>
-              <h1 className="h1-text detail-title">{product.name}</h1>
+              <h1 className="h1-text detail-title">
+                {product.name}
+                {currentMetalLabel && (
+                  <span style={{ fontSize: '18px', color: '#0E8C8A', fontWeight: 600, marginLeft: '10px', display: 'inline-block' }}>
+                    — {currentMetalLabel}
+                  </span>
+                )}
+              </h1>
               <p className="body-sm-text" style={{ color: 'var(--color-slate-muted)' }}>
                 Item Ref: RC-#{product.id.toUpperCase()}-2026 · Vetted Seller Partner
               </p>

@@ -86,6 +86,7 @@ export default function CategoryCirclesAdmin() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [seeding, setSeeding] = useState(false);
+  const [showCustomLink, setShowCustomLink] = useState(false);
 
   const fetchCircles = useCallback(async () => {
     try {
@@ -130,12 +131,14 @@ export default function CategoryCirclesAdmin() {
   const openAdd = () => {
     setEditingItem(null);
     setForm({ name: '', img: '', link: '/engagement-rings', sort_order: circles.length + 1, is_active: true });
+    setShowCustomLink(false);
     setShowModal(true);
   };
 
   const openEdit = (c: DbCategoryCircle) => {
     setEditingItem(c);
     setForm({ ...c });
+    setShowCustomLink(false);
     setShowModal(true);
   };
 
@@ -340,14 +343,115 @@ export default function CategoryCirclesAdmin() {
               </div>
 
               <div>
-                <label className="admin-label">Link URL</label>
-                <input
-                  type="text"
+                <label className="admin-label">🔗 Link / Destination Page</label>
+                <select
                   className="admin-input"
                   value={form.link || ''}
-                  onChange={e => setForm(f => ({ ...f, link: e.target.value }))}
-                  placeholder="e.g. /engagement-rings or /earrings"
-                />
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === '__custom__') {
+                      setForm(f => ({ ...f, link: '' }));
+                      setShowCustomLink(true);
+                    } else {
+                      setShowCustomLink(false);
+                      setForm(f => ({ ...f, link: val }));
+                    }
+                  }}
+                  style={{ height: '42px', paddingLeft: '10px', cursor: 'pointer' }}
+                >
+                  <option value="" disabled>— Select a destination page —</option>
+
+                  <optgroup label="━━ Main Pages ━━">
+                    <option value="/engagement-rings">💍 Engagement Rings (All)</option>
+                    <option value="/wedding-bands">💍 Wedding Bands (All)</option>
+                    <option value="/earrings">👂 Earrings (All)</option>
+                    <option value="/necklaces">📿 Necklaces (All)</option>
+                    <option value="/bracelets">💎 Bracelets (All)</option>
+                    <option value="/diamonds">💠 Diamonds (All)</option>
+                    <option value="/gifts">🎁 Gifts (All)</option>
+                    <option value="/rings">💍 Rings (All)</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Rings — By Style ━━">
+                    <option value="/rings?style=Solitaire">💍 Rings → Solitaire</option>
+                    <option value="/rings?style=Halo">💍 Rings → Halo</option>
+                    <option value="/rings?style=Pavé">💍 Rings → Pavé &amp; Side-Stone</option>
+                    <option value="/rings?style=Three-Stone">💍 Rings → Three Stone</option>
+                    <option value="/rings?style=Hidden-Halo">💍 Rings → Hidden Halo</option>
+                    <option value="/rings?style=new">💍 Rings → New Arrivals</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Rings — By Metal ━━">
+                    <option value="/rings?style=yellow-gold">🟡 Rings → Yellow Gold</option>
+                    <option value="/rings?style=rose-gold">🌸 Rings → Rose Gold</option>
+                    <option value="/rings?style=silver">⚪ Rings → Silver</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Earrings — By Style ━━">
+                    <option value="/earrings?style=studs">👂 Earrings → Studs</option>
+                    <option value="/earrings?style=hoops">👂 Earrings → Hoops</option>
+                    <option value="/earrings?style=lab">👂 Earrings → Lab Diamond</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Earrings — By Metal ━━">
+                    <option value="/earrings?style=yellow-gold">🟡 Earrings → Yellow Gold</option>
+                    <option value="/earrings?style=rose-gold">🌸 Earrings → Rose Gold</option>
+                    <option value="/earrings?style=silver">⚪ Earrings → Silver</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Necklaces — By Style ━━">
+                    <option value="/necklaces?style=pendant">📿 Necklaces → Pendants</option>
+                    <option value="/necklaces?style=tennis">📿 Necklaces → Tennis</option>
+                    <option value="/necklaces?style=pearl">📿 Necklaces → Pearls</option>
+                    <option value="/necklaces?style=chain">📿 Necklaces → Chains</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Pendants ━━">
+                    <option value="/necklaces?style=pendant">🔮 Pendants (All)</option>
+                    <option value="/necklaces?style=pendant&metal=yellow-gold">🟡 Pendants → Yellow Gold</option>
+                    <option value="/necklaces?style=pendant&metal=rose-gold">🌸 Pendants → Rose Gold</option>
+                    <option value="/necklaces?style=pendant&metal=silver">⚪ Pendants → Silver</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Bracelets — By Style ━━">
+                    <option value="/bracelets?style=tennis">💎 Bracelets → Tennis</option>
+                    <option value="/bracelets?style=bangles">💎 Bracelets → Bangles</option>
+                    <option value="/bracelets?style=pearl">💎 Bracelets → Pearls</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Wedding Bands ━━">
+                    <option value="/wedding-bands?style=eternity">💍 Wedding → Eternity Bands</option>
+                    <option value="/wedding-bands?style=anniversary">💍 Wedding → Anniversary Rings</option>
+                    <option value="/wedding-bands?style=men">💍 Wedding → Men&apos;s Bands</option>
+                    <option value="/wedding-bands?style=stackable">💍 Wedding → Stackable Rings</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Diamonds ━━">
+                    <option value="/diamonds?style=lab">💠 Diamonds → Lab Diamonds</option>
+                    <option value="/diamonds?style=natural">💠 Diamonds → Natural Diamonds</option>
+                  </optgroup>
+
+                  <optgroup label="━━ Other ━━">
+                    <option value="__custom__">✏️ Custom URL (type manually)</option>
+                  </optgroup>
+                </select>
+
+                {/* Custom URL fallback input */}
+                {showCustomLink && (
+                  <div style={{ marginTop: '8px' }}>
+                    <input
+                      type="text"
+                      className="admin-input"
+                      value={form.link || ''}
+                      onChange={e => setForm(f => ({ ...f, link: e.target.value }))}
+                      placeholder="e.g. /rings?style=custom or /my-page"
+                      autoFocus
+                    />
+                    <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
+                      ⚠️ Custom URLs must match an existing page on the website.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Drag & Drop Upload Zone */}

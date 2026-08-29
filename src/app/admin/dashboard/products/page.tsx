@@ -633,13 +633,16 @@ export default function ProductsAdmin() {
                       <tr key={p.id}>
                         <td data-label="Product">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                            {p.image ? (
-                              <img src={p.image} alt={p.name} className="admin-product-thumb" loading="lazy" />
-                            ) : (
-                              <div style={{ width: '44px', height: '44px', background: '#1a2035', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Image size={20} color="#64748b" />
-                              </div>
-                            )}
+                            {(() => {
+                              const displayImg = p.image || p.image_yellow_gold || p.image_rose_gold || p.image_platinum || p.image_silver;
+                              return displayImg ? (
+                                <img src={displayImg} alt={p.name} className="admin-product-thumb" loading="lazy" />
+                              ) : (
+                                <div style={{ width: '44px', height: '44px', background: '#1a2035', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <Image size={20} color="#64748b" />
+                                </div>
+                              );
+                            })()}
                             <div>
                               <div style={{ fontWeight: 600, fontSize: '13.5px', color: '#f8fafc', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                               <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>

@@ -58,8 +58,9 @@ const jsonLd = {
     },
   ],
   sameAs: [
-    'https://www.instagram.com/luxuryjeweleris',
-    'https://www.facebook.com/luxuryjeweleris',
+    'https://www.facebook.com/profile.php?id=61588328596938&mibextid=wwXIfr',
+    'https://www.pinterest.com/luxuryjeweleris/',
+    'https://www.yelp.com/biz/luxury-jewelries-canoga-park',
   ],
 };
 

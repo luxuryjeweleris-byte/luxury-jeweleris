@@ -7,6 +7,7 @@ export const CANONICAL_CATEGORIES = [
   'Ring',
   'Earrings',
   'Necklace',
+  'Pendant',
   'Bracelet',
   'Wedding Band',
   'Diamond',
@@ -28,8 +29,11 @@ export function normalizeCategory(categoryInput?: string | null): string {
   if (clean === 'earring' || clean === 'earrings' || clean === 'stud' || clean === 'studs' || clean === 'hoop' || clean === 'hoops') {
     return 'Earrings';
   }
-  if (clean === 'necklace' || clean === 'necklaces' || clean === 'pendant' || clean === 'pendants' || clean === 'choker' || clean === 'chain') {
+  if (clean === 'necklace' || clean === 'necklaces' || clean === 'choker' || clean === 'chain') {
     return 'Necklace';
+  }
+  if (clean === 'pendant' || clean === 'pendants') {
+    return 'Pendant';
   }
   if (clean === 'bracelet' || clean === 'bracelets' || clean === 'bangle' || clean === 'bangles') {
     return 'Bracelet';
@@ -72,6 +76,7 @@ export function getCategoryDisplayLabel(categoryKey: string): string {
     case 'Ring': return 'Rings';
     case 'Earrings': return 'Earrings';
     case 'Necklace': return 'Necklaces';
+    case 'Pendant': return 'Pendants';
     case 'Bracelet': return 'Bracelets';
     case 'Wedding Band': return 'Wedding Bands';
     case 'Diamond': return 'Diamonds';

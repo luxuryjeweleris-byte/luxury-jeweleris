@@ -28,6 +28,7 @@ export interface Product {
   savePct?: number;
   category?: string;
   style?: string;
+  metal?: string;
   images360?: string[];
   url360?: string;
   config360?: any;
@@ -36,7 +37,20 @@ export interface Product {
 
 interface ProductCardProps {
   product: Product;
-  onSelect: (product: Product) => void;
+  onSelect: (product: Product, metal?: string) => void;
+  activeMetalFilter?: string; // e.g. 'yellow-gold', 'rose-gold', 'silver'
+}
+
+// Map a style/filter string to a metal key
+function metalFilterToKey(filter?: string): string | null {
+  if (!filter) return null;
+  const f = filter.toLowerCase();
+  if (f.includes('yellow')) return 'gold';
+  if (f.includes('rose')) return 'rose';
+  if (f.includes('silver')) return 'silver';
+  if (f.includes('platinum')) return 'platinum';
+  if (f.includes('white')) return 'white';
+  return null;
 }
 
 // Info Icon SVG
@@ -107,14 +121,16 @@ export function getAvailableMetals(product: Product): MetalOption[] {
   // Fallback: If no specific metal variant images were uploaded by admin (only main product.image exists)
   if (options.length === 0 && product.image) {
     const titleLower = product.name.toLowerCase();
-    if (titleLower.includes('rose')) {
+    const metalLower = (product.metal || '').toLowerCase();
+
+    if (metalLower.includes('rose') || titleLower.includes('rose')) {
       options.push({ key: 'rose', label: 'Rose Gold', color: '#D99F8D' });
-    } else if (titleLower.includes('platinum')) {
+    } else if (metalLower.includes('platinum') || titleLower.includes('platinum')) {
       options.push({ key: 'platinum', label: 'Platinum', color: '#C8CDD0' });
-    } else if (titleLower.includes('silver')) {
+    } else if (metalLower.includes('silver') || titleLower.includes('silver')) {
       options.push({ key: 'silver', label: 'Silver', color: '#D2D7DF' });
-    } else if (titleLower.includes('gold')) {
-      options.push({ key: 'gold', label: 'Yellow Gold', color: '#E2C379' });
+    } else if (metalLower.includes('white')) {
+      options.push({ key: 'white', label: 'White Gold', color: '#E2E7EB' });
     } else {
       options.push({ key: 'gold', label: 'Yellow Gold', color: '#E2C379' });
     }
@@ -123,7 +139,7 @@ export function getAvailableMetals(product: Product): MetalOption[] {
   return options;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect, activeMetalFilter }) => {
   // Favorite state
   const [isFav, setIsFav] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
@@ -131,16 +147,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   // Calculate available metals with uploaded images
   const availableMetals = React.useMemo(() => getAvailableMetals(product), [product]);
 
-  // Metal selection state: default to first available metal
-  const [selectedMetal, setSelectedMetal] = useState<string>(() => {
+  // Determine initial metal: prefer the filter-matched metal, else first available
+  const getInitialMetal = React.useCallback(() => {
+    const filterKey = metalFilterToKey(activeMetalFilter);
+    if (filterKey) {
+      if (availableMetals.some(m => m.key === filterKey)) {
+        return filterKey;
+      }
+      return filterKey; // return filterKey so matching metal label & fallback image are selected
+    }
     return availableMetals[0]?.key || 'gold';
-  });
+  }, [availableMetals, activeMetalFilter]);
 
+  // Metal selection state
+  const [selectedMetal, setSelectedMetal] = useState<string>(() => getInitialMetal());
+
+  // Re-sync when filter changes (e.g. user navigates yellow-gold → rose-gold)
   useEffect(() => {
-    if (availableMetals.length > 0 && !availableMetals.some(m => m.key === selectedMetal)) {
+    const filterKey = metalFilterToKey(activeMetalFilter);
+    if (filterKey) {
+      setSelectedMetal(filterKey);
+    } else if (availableMetals.length > 0 && !availableMetals.some(m => m.key === selectedMetal)) {
       setSelectedMetal(availableMetals[0].key);
     }
-  }, [availableMetals, selectedMetal]);
+  }, [activeMetalFilter, availableMetals]);
 
   // Check if product is favorited on load
   useEffect(() => {
@@ -215,7 +245,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   // Metal label mapping
   const getMetalLabel = () => {
     const match = availableMetals.find(m => m.key === selectedMetal);
-    return match ? match.label : 'Yellow Gold';
+    if (match) return match.label;
+    if (selectedMetal === 'gold') return 'Yellow Gold';
+    if (selectedMetal === 'rose') return 'Rose Gold';
+    if (selectedMetal === 'white') return 'White Gold';
+    if (selectedMetal === 'platinum') return 'Platinum';
+    if (selectedMetal === 'silver') return 'Silver';
+    return 'Yellow Gold';
   };
 
   // Feature badge text helper
@@ -234,7 +270,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
   };
 
   return (
-    <div className="prod-card" onClick={() => onSelect(product)} style={{ cursor: 'pointer' }}>
+    <div className="prod-card" onClick={() => onSelect(product, selectedMetal)} style={{ cursor: 'pointer' }}>
       {/* Top Image Container */}
       <div className="prod-card-img-container">
         {/* Red Sale Tag */}

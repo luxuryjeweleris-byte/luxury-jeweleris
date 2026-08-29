@@ -676,23 +676,11 @@ export const Navbar: React.FC = () => {
                   <p className="menu-column-title">Shop by metal</p>
                   <ul className="menu-column-list">
                     <li><Link href="/rings?style=yellow-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
-                    <li><Link href="/rings?style=white-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
                     <li><Link href="/rings?style=rose-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
+                    <li><Link href="/rings?style=silver" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
                   </ul>
                   
-                  <div className="menu-sub-section">
-                    <p className="menu-column-title">Gemstone Rings</p>
-                    <ul className="menu-column-list">
-                      <li><Link href="/rings?style=gemstone" className="menu-item-link"><RingIcon /> Moissanite rings</Link></li>
-                    </ul>
-                  </div>
-                  
-                  <div className="menu-sub-section">
-                    <p className="menu-column-title">Custom Ring Design</p>
-                    <ul className="menu-column-list">
-                      <li><Link href="/rings?style=custom" className="menu-item-link"><RingIcon /> Custom engagement rings</Link></li>
-                    </ul>
-                  </div>
+                  {/* Removed Gemstone and Custom Ring Design sections */}
                 </div>
 
                 <div>
@@ -802,20 +790,12 @@ export const Navbar: React.FC = () => {
                 <div>
                   <p className="menu-column-title">Shop by metal</p>
                   <ul className="menu-column-list" style={{ marginBottom: '16px' }}>
-                    <li><Link href="/earrings?style=white-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
                     <li><Link href="/earrings?style=yellow-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E2C379' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/earrings?style=rose-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
                     <li><Link href="/earrings?style=silver" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
-                    <li><Link href="/earrings?style=vermeil" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
                   </ul>
  
-                  <div className="menu-sub-section">
-                    <p className="menu-column-title">Featured</p>
-                    <ul className="menu-column-list">
-                      <li><Link href="/earrings?style=best-sellers" className="menu-item-link">Best Sellers</Link></li>
-                      <li><Link href="/earrings?style=luxe" className="menu-item-link">Luxe collection</Link></li>
-                      <li><Link href="/earrings" className="menu-item-link">Create your own earrings</Link></li>
-                    </ul>
-                  </div>
+
                 </div>
  
                 {/* Triple Promo Area */}
@@ -877,10 +857,9 @@ export const Navbar: React.FC = () => {
                 <div>
                   <p className="menu-column-title">Shop by metal color</p>
                   <ul className="menu-column-list">
-                    <li><Link href="/necklaces?style=white-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
                     <li><Link href="/necklaces?style=yellow-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/necklaces?style=rose-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
                     <li><Link href="/necklaces?style=silver" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
-                    <li><Link href="/necklaces?style=vermeil" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E3C572' }} /> Vermeil</Link></li>
                   </ul>
  
                   <div className="menu-sub-section">
@@ -950,8 +929,8 @@ export const Navbar: React.FC = () => {
                 <div>
                   <p className="menu-column-title">Shop by metal color</p>
                   <ul className="menu-column-list">
-                    <li><Link href="/bracelets?style=white-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E5E9EC' }} /> White Gold</Link></li>
                     <li><Link href="/bracelets?style=yellow-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E9B646' }} /> Yellow Gold</Link></li>
+                    <li><Link href="/bracelets?style=rose-gold" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#E0A391' }} /> Rose Gold</Link></li>
                     <li><Link href="/bracelets?style=silver" className="menu-item-link"><span className="metal-dot" style={{ backgroundColor: '#D2D7DF' }} /> Silver</Link></li>
                   </ul>
                 </div>
@@ -1224,21 +1203,6 @@ export const Navbar: React.FC = () => {
                       </Link>
                     </div>
 
-                    <div className="rc-drawer-subgroup">
-                      <div className="rc-drawer-subgroup-title">GEMSTONE RINGS</div>
-                      <Link href="/rings?style=gemstone" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
-                        <div className="rc-drawer-link-left"><RingIcon /> Moissanite rings</div>
-                        <ChevronRight size={16} className="rc-drawer-arrow" />
-                      </Link>
-                    </div>
-
-                    <div className="rc-drawer-subgroup">
-                      <div className="rc-drawer-subgroup-title">CUSTOM RING DESIGN</div>
-                      <Link href="/rings?style=custom" className="rc-drawer-link" onClick={() => setMobileMenuOpen(false)}>
-                        <div className="rc-drawer-link-left"><RingIcon /> Custom engagement rings</div>
-                        <ChevronRight size={16} className="rc-drawer-arrow" />
-                      </Link>
-                    </div>
                   </div>
                 )}
               </div>

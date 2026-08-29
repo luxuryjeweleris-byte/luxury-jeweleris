@@ -45,6 +45,26 @@ export const DEFAULT_SITE_SETTINGS: Record<string, SettingItemDef> = {
     label: 'Facebook Page Link',
     description: 'Link to official Facebook page shown in footer'
   },
+  instagram_url: {
+    value: 'https://www.instagram.com/i_luxuryjewelers/',
+    label: 'Instagram Profile Link',
+    description: 'Link to official Instagram profile shown in footer'
+  },
+  twitter_url: {
+    value: 'https://x.com/LuxuryJeweleris',
+    label: 'X (Twitter) Profile Link',
+    description: 'Link to official X (Twitter) account shown in footer'
+  },
+  pinterest_url: {
+    value: 'https://www.pinterest.com/luxuryjeweleris/',
+    label: 'Pinterest Profile Link',
+    description: 'Link to official Pinterest profile shown in footer'
+  },
+  yelp_url: {
+    value: 'https://www.yelp.com/biz/luxury-jewelries-canoga-park',
+    label: 'Yelp Business Page Link',
+    description: 'Link to official Yelp business page in Canoga Park shown in footer'
+  },
   free_shipping_text: {
     value: '100% Free Insured Shipping',
     label: 'Shipping Guarantee Text',
