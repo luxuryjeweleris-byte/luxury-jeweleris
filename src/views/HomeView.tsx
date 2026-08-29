@@ -269,7 +269,7 @@ export const HomeView: React.FC = () => {
 
           {/* Interactive Category Filter Tabs Bar */}
           <div className="category-filter-tabs-rail">
-            {['All Featured', 'Rings', 'Wedding Bands', 'Diamonds', 'Earrings', 'Necklaces', 'Bracelets', 'Gifts'].map(cat => {
+            {['All Featured', 'Rings', 'Earrings', 'Necklaces', 'Bracelets'].map(cat => {
               const isActive = activeCategoryTab === cat;
               return (
                 <button

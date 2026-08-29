@@ -749,10 +749,7 @@
 }
 
 .sticky-filter-bar {
-  background-color: var(--color-card);
-  border-bottom: 1px solid var(--color-border);
-  position: static;
-  padding: var(--space-3) 0;
+  display: none !important;
 }
 
 .filter-chips-row {
@@ -1084,6 +1081,101 @@
   overflow: hidden;
   box-shadow: 0 4px 20px -4px rgba(16, 24, 40, 0.04);
   transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .detail-viewer-wrapper {
+    padding: 10px;
+  }
+  .detail-viewer-wrapper > div {
+    height: 300px !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .detail-viewer-wrapper > div img {
+    margin: 0 auto !important;
+    display: block;
+    max-width: 92% !important;
+    max-height: 92% !important;
+    object-fit: contain !important;
+  }
+  .gallery-badge {
+    display: none !important;
+  }
+  .gallery-lens,
+  .detail-zoom-popout {
+    display: none !important;
+  }
+}
+
+/* Mobile tap-to-zoom lightbox */
+.mobile-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.92);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: lightboxIn 0.2s ease;
+}
+.mobile-lightbox-content {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mobile-lightbox-close {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0f172a;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.mobile-lightbox-img-wrap {
+  width: 100%;
+  max-height: 78vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  background: #ffffff;
+  touch-action: pinch-zoom;
+  overscroll-behavior: contain;
+}
+.mobile-lightbox-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  touch-action: pinch-zoom;
+}
+.mobile-lightbox-hint {
+  color: rgba(255,255,255,0.75);
+  font-size: 11px;
+  margin-top: 10px;
+  letter-spacing: 0.3px;
+}
+@keyframes lightboxIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (min-width: 769px) {
+  .mobile-lightbox-overlay {
+    display: none !important;
+  }
 }
 
 /* Magnifier Hover Lens */

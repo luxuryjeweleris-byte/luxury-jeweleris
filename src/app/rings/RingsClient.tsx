@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ListingView from '../../views/ListingView';
 
-function EngagementRingsContent() {
+function RingsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -30,14 +30,14 @@ function EngagementRingsContent() {
   );
 }
 
-export default function EngagementRingsClient() {
+export default function RingsClient() {
   return (
     <Suspense fallback={
       <div className="container" style={{ padding: '64px 0', textAlign: 'center' }}>
-        <div className="caption-text">Loading engagement rings...</div>
+        <div className="caption-text">Loading rings...</div>
       </div>
     }>
-      <EngagementRingsContent />
+      <RingsContent />
     </Suspense>
   );
 }

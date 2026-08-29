@@ -89,6 +89,15 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
     }
   };
 
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightboxOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxOpen]);
+
   const sizes = ['5', '6', '7', '8', '9'];
 
   // Retrieve ONLY the images for the currently selected metal color (max 5 photos per metal)
@@ -240,13 +249,14 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
                   onMouseEnter={() => setIsHoveringImage(true)}
                   onMouseLeave={() => setIsHoveringImage(false)}
                   onMouseMove={handleMouseMoveImage}
+                  onClick={() => { if (typeof window !== 'undefined' && window.innerWidth <= 768) setLightboxOpen(true); }}
                   style={{ 
                     width: '100%', 
                     height: `${currentCardHeight}px`, 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center', 
-                    cursor: 'crosshair',
+                    cursor: 'zoom-in',
                     position: 'relative',
                     transition: 'height 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
@@ -348,23 +358,23 @@ export const DetailView: React.FC<DetailViewProps> = ({ product, onBack, onAddTo
               </div>
             )}
 
+            {/* Mobile Image Lightbox — tap to zoom */}
+            {lightboxOpen && (
+              <div className="mobile-lightbox-overlay" onClick={() => setLightboxOpen(false)}>
+                <div className="mobile-lightbox-content" onClick={e => e.stopPropagation()}>
+                  <button className="mobile-lightbox-close" onClick={() => setLightboxOpen(false)} aria-label="Close">×</button>
+                  <div className="mobile-lightbox-img-wrap">
+                    <img src={currentDisplayedImage} alt={product.name} className="mobile-lightbox-img" />
+                  </div>
+                  <p className="mobile-lightbox-hint">Pinch to zoom • Drag to pan • Tap × to close</p>
+                </div>
+              </div>
+            )}
+
             {/* Gallery Thumbnails */}
             <div className="detail-thumbs-container">
               <div className="detail-thumbs-label">
                 <span>Select View Angle</span>
-                <div className="viewer-size-toolbar">
-                  <span className="size-label-text">Card Size:</span>
-                  {(['sm', 'md', 'lg', 'xl'] as const).map((sz) => (
-                    <button
-                      key={sz}
-                      className={`viewer-size-pill ${viewerSize === sz ? 'active' : ''}`}
-                      onClick={() => handleViewerSizeChange(sz)}
-                      title={`Card size ${sz.toUpperCase()}: ${cardHeightMap[sz]}px`}
-                    >
-                      {sz.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="detail-thumbs">
