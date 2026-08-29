@@ -64,6 +64,11 @@ export function isCategoryMatch(productCategory?: string | null, targetCategory?
   const normProduct = normalizeCategory(productCategory);
   const normTarget = normalizeCategory(targetCategory);
 
+  // Allow cross-matching between Ring and Wedding Band so wedding-bands & ring style links show products
+  if ((normTarget === 'Wedding Band' || normTarget === 'Ring') && (normProduct === 'Ring' || normProduct === 'Wedding Band')) {
+    return true;
+  }
+
   return normProduct.toLowerCase() === normTarget.toLowerCase();
 }
 
@@ -79,7 +84,7 @@ export function getCategoryDisplayLabel(categoryKey: string): string {
     case 'Pendant': return 'Pendants';
     case 'Bracelet': return 'Bracelets';
     case 'Wedding Band': return 'Wedding Bands';
-    case 'Diamond': return 'Diamonds';
+    case 'Diamond': return 'Lab Diamonds';
     case 'Gift': return 'Gifts';
     default:
       return norm.endsWith('s') ? norm : `${norm}s`;

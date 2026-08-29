@@ -60,8 +60,8 @@ export const STORE_LOCATIONS: StoreLocationData[] = [
     name: 'Luxury Jewelers - Santa Anita Mall, Arcadia',
     shortName: 'Arcadia Boutique',
     locationTag: 'Santa Anita Mall · Arcadia, CA',
-    seoTitle: 'Luxury Jewelry Store in Arcadia, CA | Engagement Rings & Diamonds',
-    metaDescription: 'Visit Luxury Jewelers at The Shops at Santa Anita in Arcadia, CA (91007). Shop certified lab & natural diamonds, custom engagement rings, 18k gold jewelry & expert repairs.',
+    seoTitle: 'Luxury Jewelry Store in Arcadia, CA | Engagement Rings & Lab Diamonds',
+    metaDescription: 'Visit Luxury Jewelers at The Shops at Santa Anita in Arcadia, CA (91007). Shop certified lab grown diamonds, custom engagement rings, 18k gold jewelry & expert repairs.',
     address: {
       street: '400 S Baldwin Ave, Suite 231',
       city: 'Arcadia',
@@ -110,7 +110,7 @@ export const STORE_LOCATIONS: StoreLocationData[] = [
       },
       {
         title: 'Diamond & Gemstone Consultations',
-        description: 'Compare GIA & IGI certified natural and lab-grown diamonds under 10x magnification with certified diamond experts.',
+        description: 'Compare IGI certified lab-grown diamonds under 10x magnification with certified diamond experts.',
         iconName: 'Gem',
       },
       {
@@ -139,7 +139,7 @@ export const STORE_LOCATIONS: StoreLocationData[] = [
       },
       {
         question: 'Are lab-grown diamonds available at the Arcadia boutique?',
-        answer: 'Absolutely. We carry an extensive inventory of certified lab-grown diamonds and ethically sourced natural diamonds in all shapes and sizes.',
+        answer: 'Absolutely. We carry an extensive inventory of certified lab-grown diamonds in all shapes and sizes.',
       },
     ],
     reviews: [

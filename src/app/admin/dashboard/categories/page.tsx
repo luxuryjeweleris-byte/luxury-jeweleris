@@ -367,7 +367,7 @@ export default function CategoryCirclesAdmin() {
                     <option value="/earrings">👂 Earrings (All)</option>
                     <option value="/necklaces">📿 Necklaces (All)</option>
                     <option value="/bracelets">💎 Bracelets (All)</option>
-                    <option value="/diamonds">💠 Diamonds (All)</option>
+                    <option value="/diamonds">💠 Lab Diamonds (All)</option>
                     <option value="/gifts">🎁 Gifts (All)</option>
                     <option value="/rings">💍 Rings (All)</option>
                   </optgroup>
@@ -426,9 +426,9 @@ export default function CategoryCirclesAdmin() {
                     <option value="/wedding-bands?style=stackable">💍 Wedding → Stackable Rings</option>
                   </optgroup>
 
-                  <optgroup label="━━ Diamonds ━━">
-                    <option value="/diamonds?style=lab">💠 Diamonds → Lab Diamonds</option>
-                    <option value="/diamonds?style=natural">💠 Diamonds → Natural Diamonds</option>
+                  <optgroup label="━━ Lab Diamonds ━━">
+                    <option value="/diamonds?style=lab">💠 Lab Diamonds (All)</option>
+                    <option value="/diamonds?style=lab">💠 Loose Lab Diamonds</option>
                   </optgroup>
 
                   <optgroup label="━━ Other ━━">

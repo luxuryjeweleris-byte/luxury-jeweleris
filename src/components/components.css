@@ -1141,7 +1141,7 @@
 }
 
 .mega-menu-content-grid-necklace {
-  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-columns: 1fr 1fr 1fr 1.6fr;
 }
 
 /* Header style for menu columns */

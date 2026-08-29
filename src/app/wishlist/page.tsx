@@ -95,7 +95,7 @@ export default function WishlistPage() {
             Explore our collection of fine jewelry and tap the heart icon to save products here.
           </p>
           <Link href="/diamonds" style={{ textDecoration: 'none', display: 'inline-flex', padding: '10px 24px', background: 'var(--color-teal)', color: 'white', borderRadius: '6px', fontWeight: '600' }}>
-            Explore Diamonds
+            Explore Lab Diamonds
           </Link>
         </div>
       ) : (

@@ -743,6 +743,152 @@
 /* ==========================================
    LISTING VIEW
    ========================================== */
+/* ── SMART TAXONOMY FLOW WIDGET (Matching Category Flow Diagram) ── */
+.smart-taxonomy-bar {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 20px rgba(16, 21, 26, 0.03);
+}
+
+.taxonomy-flow-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.taxonomy-flow-badge {
+  background: linear-gradient(135deg, var(--color-teal) 0%, #0F766E 100%);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.taxonomy-flow-desc {
+  font-size: 13px;
+  color: var(--color-slate);
+  font-weight: 500;
+}
+
+.taxonomy-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.taxonomy-tier {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.taxonomy-label {
+  width: 130px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--color-ink);
+  text-transform: uppercase;
+}
+
+.taxonomy-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.taxonomy-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: var(--color-surface);
+  color: var(--color-slate);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.taxonomy-chip:hover {
+  border-color: var(--color-teal);
+  color: var(--color-teal);
+}
+
+.taxonomy-chip.active {
+  background: var(--color-teal);
+  color: #ffffff;
+  border-color: var(--color-teal);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(14, 140, 138, 0.25);
+}
+
+.taxonomy-swatches {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.taxonomy-swatch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.taxonomy-swatch:hover {
+  border-color: var(--color-teal);
+}
+
+.taxonomy-swatch.active {
+  border-color: var(--color-teal);
+  background: var(--color-teal-tint);
+  font-weight: 700;
+  color: var(--color-teal-deep);
+}
+
+.swatch-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .smart-taxonomy-bar {
+    padding: 16px 16px;
+    margin-bottom: 20px;
+  }
+  .taxonomy-tier {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .taxonomy-label {
+    width: 100%;
+  }
+}
+
 .listing-view {
   background-color: var(--color-surface);
   min-height: 80vh;
@@ -2184,10 +2330,13 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
+}
 
-  .font-medium-mobile {
-    font-size: 13px !important;
-  }
+.chip-count-badge {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.75;
+  margin-left: 3px;
 }
 
 

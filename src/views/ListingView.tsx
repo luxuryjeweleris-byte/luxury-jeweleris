@@ -8,7 +8,6 @@ import { supabase, dbProductToProduct } from '../lib/supabase';
 import { isCategoryMatch, productMatchesSearchQuery } from '../lib/categoryUtils';
 import './views.css';
 
-// Mock inventory data removed - products fetch dynamically from database
 export const INITIAL_PRODUCTS: Product[] = [];
 
 interface ListingViewProps {
@@ -16,6 +15,7 @@ interface ListingViewProps {
     shape?: string;
     style?: string;
     category?: string;
+    recipient?: string;
     search?: string;
   };
   onProductSelect: (product: Product, metal?: string) => void;
@@ -25,7 +25,7 @@ interface ListingViewProps {
 
 export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProductSelect, pageTitle, pageSubtitle }) => {
   const [loading, setLoading] = useState(false);
-  const [dbLoading, setDbLoading] = useState(true);
+  const [, setDbLoading] = useState(true);
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [sortOption, setSortOption] = useState('score-desc');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -34,6 +34,8 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   const [selectedShape, setSelectedShape] = useState<string | null>(initialFilters?.shape || null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(initialFilters?.style || null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialFilters?.category || null);
+  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(initialFilters?.recipient || null);
+  const [selectedMetal, setSelectedMetal] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string | null>(initialFilters?.search || null);
   const [maxCarat, setMaxCarat] = useState<number>(5.0);
   const [maxPrice, setMaxPrice] = useState<number>(15000);
@@ -69,6 +71,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     setSelectedShape(initialFilters?.shape || null);
     setSelectedStyle(initialFilters?.style || null);
     setSelectedCategory(initialFilters?.category || null);
+    setSelectedRecipient(initialFilters?.recipient || null);
     setSearchQuery(initialFilters?.search || null);
   }, [initialFilters]);
 
@@ -77,14 +80,14 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 600);
+    }, 400);
     return () => clearTimeout(timer);
   };
 
   // Trigger loading on filter changes
   useEffect(() => {
     triggerLoading();
-  }, [selectedShape, selectedStyle, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery]);
+  }, [selectedShape, selectedStyle, selectedCategory, selectedRecipient, selectedMetal, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery]);
 
   const toggleCut = (cut: string) => {
     setSelectedCut(prev => 
@@ -95,6 +98,9 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
   const resetFilters = () => {
     setSelectedShape(null);
     setSelectedStyle(null);
+    setSelectedCategory(null);
+    setSelectedRecipient(null);
+    setSelectedMetal(null);
     setSearchQuery(null);
     setMaxCarat(5.0);
     setMaxPrice(15000);
@@ -113,18 +119,13 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
 
     // Category-level filtering (for dedicated pages)
     if (selectedCategory) {
-      const catLower = selectedCategory.toLowerCase();
-      if (catLower === 'gifts') {
-        // Show a curated mix: verified products across all categories
-        result = result.filter(p => p.isVerified);
-      } else {
-        result = result.filter(p => isCategoryMatch(p.category, selectedCategory));
-      }
+      result = result.filter(p => isCategoryMatch(p.category, selectedCategory));
     }
 
     if (selectedShape) {
       result = result.filter(p => p.shape.toLowerCase() === selectedShape.toLowerCase());
     }
+
     if (selectedStyle) {
       const styleLower = selectedStyle.toLowerCase();
       if (styleLower === 'earrings') {
@@ -215,11 +216,11 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
       } else if (styleLower === 'mens-classic') {
         result = result.filter(p => p.name.toLowerCase().includes('men') && (p.name.toLowerCase().includes('classic') || p.style?.toLowerCase() === 'solitaire'));
       } else if (styleLower === 'mens-matte') {
-        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('matte') || p.name.toLowerCase().includes('classic'));
+        result = result.filter(p => (p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('matte')) || p.name.toLowerCase().includes('classic'));
       } else if (styleLower === 'mens-hammered') {
-        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('hammered') || p.name.toLowerCase().includes('gold'));
+        result = result.filter(p => (p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('hammered')) || p.name.toLowerCase().includes('gold'));
       } else if (styleLower === 'mens-engraved') {
-        result = result.filter(p => p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('engraved') || p.name.toLowerCase().includes('wedding'));
+        result = result.filter(p => (p.name.toLowerCase().includes('men') && p.name.toLowerCase().includes('engraved')) || p.name.toLowerCase().includes('wedding'));
       } else if (styleLower === 'mens-platinum') {
         result = result.filter(p => p.name.toLowerCase().includes('men') && (p.name.toLowerCase().includes('platinum') || p.name.toLowerCase().includes('white')));
       } else if (styleLower === 'mens-yellow-gold') {
@@ -266,6 +267,57 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
       }
     }
 
+    // Recipient Filtering (Level 2 - Gender)
+    if (selectedRecipient) {
+      const recLower = selectedRecipient.toLowerCase();
+      if (recLower === 'men') {
+        result = result.filter(p => p.recipient?.toLowerCase() === 'men' || p.recipient?.toLowerCase() === 'him' || p.name.toLowerCase().includes('men') || p.style?.toLowerCase() === 'mens' || p.category?.toLowerCase() === 'wedding band');
+      } else if (recLower === 'women') {
+        result = result.filter(p => p.recipient?.toLowerCase() === 'women' || p.recipient?.toLowerCase() === 'her' || !p.name.toLowerCase().includes('men'));
+      }
+    }
+
+    // Metal / Color Filtering (Level 4 - Metal Swatch)
+    if (selectedMetal) {
+      const metalLower = selectedMetal.toLowerCase();
+      if (metalLower === 'yellow-gold' || metalLower === 'yellow gold') {
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasYellowImg = Boolean(p.imageYellowGold || (p.imagesYellowGold && p.imagesYellowGold.length > 0));
+          return metal.includes('yellow') || hasYellowImg || name.includes('yellow') || (name.includes('gold') && !name.includes('white') && !name.includes('rose'));
+        });
+      } else if (metalLower === 'white-gold' || metalLower === 'white gold') {
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasWhiteImg = Boolean(p.imagesWhiteGold && p.imagesWhiteGold.length > 0);
+          return metal.includes('white') || hasWhiteImg || name.includes('white') || name.includes('platinum');
+        });
+      } else if (metalLower === 'rose-gold' || metalLower === 'rose gold') {
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasRoseImg = Boolean(p.imageRoseGold || (p.imagesRoseGold && p.imagesRoseGold.length > 0));
+          return metal.includes('rose') || hasRoseImg || name.includes('rose');
+        });
+      } else if (metalLower === 'platinum') {
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasPlatImg = Boolean(p.imagePlatinum || (p.imagesPlatinum && p.imagesPlatinum.length > 0));
+          return metal.includes('platinum') || hasPlatImg || name.includes('platinum');
+        });
+      } else if (metalLower === 'silver') {
+        result = result.filter(p => {
+          const metal = (p.metal || '').toLowerCase();
+          const name = p.name.toLowerCase();
+          const hasSilverImg = Boolean(p.imageSilver || (p.imagesSilver && p.imagesSilver.length > 0));
+          return metal.includes('silver') || hasSilverImg || name.includes('silver') || name.includes('white') || name.includes('platinum');
+        });
+      }
+    }
+
     result = result.filter(p => p.carat <= maxCarat);
     result = result.filter(p => p.price <= maxPrice);
 
@@ -287,7 +339,73 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     }
 
     return result;
-  }, [selectedShape, selectedStyle, selectedCategory, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery, productsList]);
+  }, [selectedShape, selectedStyle, selectedCategory, selectedRecipient, selectedMetal, maxCarat, maxPrice, selectedCut, isVerifiedOnly, sortOption, searchQuery, productsList]);
+
+  // Helper to dynamically calculate product counts for taxonomy chips
+  const getTaxonomyCounts = React.useMemo(() => {
+    const counts: {
+      category: Record<string, number>;
+      recipient: Record<string, number>;
+      style: Record<string, number>;
+      metal: Record<string, number>;
+    } = {
+      category: {},
+      recipient: {},
+      style: {},
+      metal: {},
+    };
+
+    const baseList = productsList;
+    counts.category['All'] = baseList.length;
+    ['Earring', 'Rings', 'Necklace', 'Bracelet', 'Pendant'].forEach(cat => {
+      counts.category[cat] = baseList.filter(p => isCategoryMatch(p.category, cat)).length;
+    });
+
+    let categoryFiltered = baseList;
+    if (selectedCategory) {
+      categoryFiltered = baseList.filter(p => isCategoryMatch(p.category, selectedCategory));
+    }
+    counts.recipient['All'] = categoryFiltered.length;
+    counts.recipient['Women'] = categoryFiltered.filter(p => p.recipient?.toLowerCase() === 'women' || p.recipient?.toLowerCase() === 'her' || !p.name.toLowerCase().includes('men')).length;
+    counts.recipient['Men'] = categoryFiltered.filter(p => p.recipient?.toLowerCase() === 'men' || p.recipient?.toLowerCase() === 'him' || p.name.toLowerCase().includes('men') || p.style?.toLowerCase() === 'mens' || p.category?.toLowerCase() === 'wedding band').length;
+
+    let contextFiltered = categoryFiltered;
+    if (selectedRecipient) {
+      const recLower = selectedRecipient.toLowerCase();
+      if (recLower === 'men') {
+        contextFiltered = categoryFiltered.filter(p => p.recipient?.toLowerCase() === 'men' || p.recipient?.toLowerCase() === 'him' || p.name.toLowerCase().includes('men') || p.style?.toLowerCase() === 'mens' || p.category?.toLowerCase() === 'wedding band');
+      } else if (recLower === 'women') {
+        contextFiltered = categoryFiltered.filter(p => p.recipient?.toLowerCase() === 'women' || p.recipient?.toLowerCase() === 'her' || !p.name.toLowerCase().includes('men'));
+      }
+    }
+    counts.style['All'] = contextFiltered.length;
+
+    const stylesToCount = ['Pearl', 'Solitaire', 'Pavé', 'Halo', 'Three-Stone', 'Eternity', 'Studs', 'Hoops'];
+    stylesToCount.forEach(sty => {
+      const styLower = sty.toLowerCase();
+      counts.style[sty] = contextFiltered.filter(p => {
+        const pStyle = (p.style || '').toLowerCase();
+        const pName = p.name.toLowerCase();
+        if (styLower === 'solitaire') return pStyle === 'solitaire' || pName.includes('solitaire');
+        if (styLower === 'halo') return pStyle === 'halo' || (pName.includes('halo') && !pName.includes('hidden'));
+        if (styLower === 'pavé' || styLower === 'pave') return pStyle === 'pave' || pName.includes('pavé') || pName.includes('pave');
+        if (styLower === 'three-stone') return pStyle === 'three-stone' || pName.includes('three-stone') || pName.includes('three stone');
+        if (styLower === 'pearl') return pName.includes('pearl');
+        if (styLower === 'eternity') return pStyle === 'eternity' || pName.includes('eternity') || pName.includes('anniversary');
+        if (styLower === 'studs') return pStyle === 'stud' || pName.includes('stud');
+        if (styLower === 'hoops') return pStyle === 'hoop' || pName.includes('hoop');
+        return false;
+      }).length;
+    });
+
+    counts.metal['yellow-gold'] = contextFiltered.filter(p => (p.metal || '').toLowerCase().includes('yellow') || Boolean(p.imageYellowGold || (p.imagesYellowGold && p.imagesYellowGold.length > 0))).length;
+    counts.metal['white-gold'] = contextFiltered.filter(p => (p.metal || '').toLowerCase().includes('white') || Boolean(p.imagesWhiteGold && p.imagesWhiteGold.length > 0)).length;
+    counts.metal['rose-gold'] = contextFiltered.filter(p => (p.metal || '').toLowerCase().includes('rose') || Boolean(p.imageRoseGold || (p.imagesRoseGold && p.imagesRoseGold.length > 0))).length;
+    counts.metal['platinum'] = contextFiltered.filter(p => (p.metal || '').toLowerCase().includes('platinum') || Boolean(p.imagePlatinum || (p.imagesPlatinum && p.imagesPlatinum.length > 0))).length;
+    counts.metal['silver'] = contextFiltered.filter(p => (p.metal || '').toLowerCase().includes('silver') || Boolean(p.imageSilver || (p.imagesSilver && p.imagesSilver.length > 0))).length;
+
+    return counts;
+  }, [productsList, selectedCategory, selectedRecipient]);
 
   const shapes = ['Round', 'Oval', 'Cushion', 'Emerald', 'Princess', 'Radiant', 'Pear', 'Marquise', 'Asscher', 'Heart'];
   const cuts = ['Ideal', 'Excellent', 'Very Good'];
@@ -321,7 +439,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
           
           {selectedStyle && (
             <span className="active-filter-indicator">
-              Category: {selectedStyle.charAt(0).toUpperCase() + selectedStyle.slice(1)}
+              Style: {selectedStyle.charAt(0).toUpperCase() + selectedStyle.slice(1)}
               <button 
                 className="active-filter-remove" 
                 onClick={() => setSelectedStyle(null)}
@@ -332,7 +450,7 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
             </span>
           )}
           
-          {(selectedShape || selectedStyle || maxCarat < 5.0 || maxPrice < 15000 || selectedCut.length > 0 || isVerifiedOnly) && (
+          {(selectedShape || selectedStyle || selectedCategory || selectedRecipient || selectedMetal || maxCarat < 5.0 || maxPrice < 15000 || selectedCut.length > 0 || isVerifiedOnly) && (
             <button className="filter-chip" onClick={resetFilters} style={{ borderStyle: 'dashed', color: 'var(--color-teal)' }}>
               <RotateCcw size={12} /> Clear all
             </button>
@@ -340,7 +458,146 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
         </div>
       </div>
 
-      <div className="container">
+      <div className="container" style={{ paddingTop: '24px' }}>
+        {/* Smart Taxonomy Stepper Bar matching User Flow Diagram */}
+        <div className="smart-taxonomy-bar">
+          <div className="taxonomy-flow-header">
+            <span className="taxonomy-flow-badge">✦ TAXONOMY SEARCH FLOW</span>
+            <span className="taxonomy-flow-desc">Jewelrys Category ➔ Recipient ➔ Style ➔ Metal Color</span>
+          </div>
+
+          <div className="taxonomy-grid">
+            {/* Level 1: Category */}
+            <div className="taxonomy-tier">
+              <span className="taxonomy-label">1. Category</span>
+              <div className="taxonomy-chips">
+                {[
+                  { key: 'All', label: 'All Jewelry' },
+                  { key: 'Earring', label: '👂 Earring' },
+                  { key: 'Rings', label: '💍 Rings' },
+                  { key: 'Necklace', label: '📿 Necklace' },
+                  { key: 'Bracelet', label: '💎 Bracelet' },
+                  { key: 'Pendant', label: '🔮 Pendant' },
+                ].map(cat => {
+                  const count = getTaxonomyCounts.category[cat.key] ?? 0;
+                  const isActive = (cat.key === 'All' && !selectedCategory) || (selectedCategory && isCategoryMatch(selectedCategory, cat.key));
+                  const isZero = cat.key !== 'All' && count === 0;
+
+                  return (
+                    <button
+                      key={cat.key}
+                      className={`taxonomy-chip ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedCategory(cat.key === 'All' ? null : cat.key)}
+                      style={isZero ? { opacity: 0.55 } : undefined}
+                    >
+                      {cat.label} {cat.key !== 'All' && <span className="chip-count-badge">({count})</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Level 2: Recipient / Gender */}
+            <div className="taxonomy-tier">
+              <span className="taxonomy-label">2. Recipient</span>
+              <div className="taxonomy-chips">
+                {[
+                  { key: 'All', label: 'All' },
+                  { key: 'Women', label: '👩 Women' },
+                  { key: 'Men', label: '👨 Men' },
+                ].map(rec => {
+                  const count = getTaxonomyCounts.recipient[rec.key] ?? 0;
+                  const isActive = (rec.key === 'All' && !selectedRecipient) || selectedRecipient === rec.key;
+                  const isZero = rec.key !== 'All' && count === 0;
+
+                  return (
+                    <button
+                      key={rec.key}
+                      className={`taxonomy-chip ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedRecipient(rec.key === 'All' ? null : rec.key)}
+                      style={isZero ? { opacity: 0.55 } : undefined}
+                    >
+                      {rec.label} {rec.key !== 'All' && <span className="chip-count-badge">({count})</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Level 3: Style / Setting */}
+            <div className="taxonomy-tier">
+              <span className="taxonomy-label">3. Style / Setting</span>
+              <div className="taxonomy-chips">
+                {[
+                  { key: 'All', label: 'All Styles' },
+                  { key: 'Pearl', label: 'Pearl' },
+                  { key: 'Solitaire', label: 'Solitaire' },
+                  { key: 'Pavé', label: 'Pavé' },
+                  { key: 'Halo', label: 'Halo' },
+                  { key: 'Three-Stone', label: 'Three Stone' },
+                  { key: 'Eternity', label: 'Eternity' },
+                  { key: 'Studs', label: 'Studs' },
+                  { key: 'Hoops', label: 'Hoops' },
+                ].map(sty => {
+                  const count = getTaxonomyCounts.style[sty.key] ?? (sty.key === 'All' ? getTaxonomyCounts.style['All'] : 0);
+                  const isActive = (sty.key === 'All' && !selectedStyle) || (selectedStyle && selectedStyle.toLowerCase() === sty.key.toLowerCase());
+                  const isZero = sty.key !== 'All' && count === 0;
+
+                  return (
+                    <button
+                      key={sty.key}
+                      className={`taxonomy-chip ${isActive ? 'active' : ''}`}
+                      onClick={() => setSelectedStyle(sty.key === 'All' ? null : sty.key)}
+                      style={isZero ? { opacity: 0.5 } : undefined}
+                      title={isZero ? `0 items currently in ${sty.label}` : undefined}
+                    >
+                      {sty.label} {sty.key !== 'All' && <span className="chip-count-badge">({count})</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Level 4: Color / Metal */}
+            <div className="taxonomy-tier">
+              <span className="taxonomy-label">4. Metal Color</span>
+              <div className="taxonomy-swatches">
+                {[
+                  { key: 'yellow-gold', label: 'Yellow Gold', color: '#E9B646' },
+                  { key: 'white-gold', label: 'White Gold', color: '#E2E8F0' },
+                  { key: 'rose-gold', label: 'Rose Gold', color: '#E0A391' },
+                  { key: 'platinum', label: 'Platinum', color: '#CBD5E1' },
+                  { key: 'silver', label: 'Silver', color: '#94A3B8' },
+                ].map(m => {
+                  const count = getTaxonomyCounts.metal[m.key] ?? 0;
+                  const isZero = count === 0;
+
+                  return (
+                    <button
+                      key={m.key}
+                      className={`taxonomy-swatch ${selectedMetal === m.key ? 'active' : ''}`}
+                      onClick={() => setSelectedMetal(selectedMetal === m.key ? null : m.key)}
+                      style={isZero ? { opacity: 0.5 } : undefined}
+                    >
+                      <span className="swatch-color-dot" style={{ backgroundColor: m.color }} />
+                      <span className="swatch-label">{m.label} ({count})</span>
+                    </button>
+                  );
+                })}
+                {selectedMetal && (
+                  <button
+                    className="taxonomy-chip"
+                    onClick={() => setSelectedMetal(null)}
+                    style={{ fontSize: '11px', padding: '4px 10px', marginLeft: '4px' }}
+                  >
+                    Clear Color ×
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="listing-layout">
           {/* Desktop Filter Sidebar / Mobile Collapsible Sidebar */}
           <aside className={`filter-sidebar ${showMobileFilters ? 'mobile-visible' : ''}`}>
@@ -360,16 +617,12 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                 <input 
                   type="range"
                   min="0.5"
-                  max="2.5"
+                  max="5.0"
                   step="0.1"
                   value={maxCarat}
                   onChange={(e) => setMaxCarat(parseFloat(e.target.value))}
-                  className="range-slider"
+                  className="range-input"
                 />
-                <div className="range-labels">
-                  <span>0.5 ct</span>
-                  <span>2.5 ct</span>
-                </div>
               </div>
             </div>
 
@@ -387,19 +640,17 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                   step="500"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                  className="range-slider"
+                  className="range-input"
                 />
-                <div className="range-labels">
-                  <span>$1,000</span>
-                  <span>$15,000</span>
-                </div>
               </div>
             </div>
 
-            {/* Cut Quality Checkbox List */}
+            {/* Cut Filter */}
             <div className="sidebar-section">
-              <div className="sidebar-section-title">Cut Quality</div>
-              <div className="checkbox-list">
+              <div className="sidebar-section-title">
+                <span>Cut Quality</span>
+              </div>
+              <div className="checkbox-group">
                 {cuts.map((cut) => (
                   <label key={cut} className="checkbox-label">
                     <input 
@@ -408,31 +659,38 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                       onChange={() => toggleCut(cut)}
                       className="checkbox-input"
                     />
-                    {cut}
+                    <span>{cut}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Verified Cert Only Toggle */}
-            <div className="sidebar-section" style={{ borderTop: '1px solid var(--color-border-soft)', paddingTop: '16px' }}>
-              <label className="checkbox-label" style={{ fontWeight: '600' }}>
+            {/* Verified Only Filter */}
+            <div className="sidebar-section">
+              <label className="checkbox-label" style={{ fontWeight: '600', color: 'var(--color-ink)' }}>
                 <input 
                   type="checkbox"
                   checked={isVerifiedOnly}
-                  onChange={() => setIsVerifiedOnly(!isVerifiedOnly)}
+                  onChange={(e) => setIsVerifiedOnly(e.target.checked)}
                   className="checkbox-input"
                 />
-                Premium Quality Only
+                <span>Premium Quality Only</span>
               </label>
             </div>
+
+            {(selectedShape || selectedStyle || selectedCategory || selectedRecipient || selectedMetal || maxCarat < 5.0 || maxPrice < 15000 || selectedCut.length > 0 || isVerifiedOnly) && (
+              <Button variant="outline" size="sm" onClick={resetFilters} style={{ width: '100%', marginTop: '12px' }}>
+                Reset All Filters
+              </Button>
+            )}
           </aside>
 
-          {/* Results Area */}
-          <main className="results-content">
-            <div className="results-header">
+          {/* Main Content Area */}
+          <main className="listing-main">
+            {/* Control Bar: Result Count & Sort */}
+            <div className="control-bar">
               <div className="results-count">
-                {loading ? 'Searching...' : `${filteredProducts.length} items found`}
+                <span>{filteredProducts.length} items found</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <button 
@@ -476,20 +734,27 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
                     key={product.id}
                     product={product}
                     onSelect={onProductSelect}
-                    activeMetalFilter={selectedStyle || undefined}
+                    activeMetalFilter={selectedMetal || selectedStyle || undefined}
                   />
                 ))}
               </div>
             ) : (
-              <div className="empty-cart-state" style={{ backgroundColor: 'var(--color-card)', border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
-                <Filter size={40} style={{ color: 'var(--color-slate-muted)' }} />
-                <h3 className="h3-text">No matches found</h3>
-                <p className="body-text" style={{ maxWidth: '320px' }}>
-                  Try loosening your filter metrics (e.g. higher price, wider carat weights).
+              <div className="empty-cart-state" style={{ backgroundColor: 'var(--color-card)', border: '1px dashed var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '48px 24px', textAlign: 'center' }}>
+                <Filter size={40} style={{ color: 'var(--color-slate-muted)', marginBottom: '12px' }} />
+                <h3 className="h3-text" style={{ fontSize: '18px', fontWeight: '600' }}>No items match your selected filter</h3>
+                <p className="body-text" style={{ maxWidth: '380px', margin: '8px auto 16px', color: 'var(--color-slate-muted)' }}>
+                  {selectedStyle ? `There are currently 0 items matching "${selectedStyle}". Try choosing another style or clear your filter.` : 'Try loosening your filter metrics.'}
                 </p>
-                <Button variant="outline" size="sm" onClick={resetFilters}>
-                  Reset All Filters
-                </Button>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  {selectedStyle && (
+                    <Button variant="outline" size="sm" onClick={() => setSelectedStyle(null)}>
+                      Clear &quot;{selectedStyle}&quot; Filter
+                    </Button>
+                  )}
+                  <Button variant="primary" size="sm" onClick={resetFilters}>
+                    Reset All Filters
+                  </Button>
+                </div>
               </div>
             )}
           </main>
@@ -498,4 +763,5 @@ export const ListingView: React.FC<ListingViewProps> = ({ initialFilters, onProd
     </div>
   );
 };
+
 export default ListingView;

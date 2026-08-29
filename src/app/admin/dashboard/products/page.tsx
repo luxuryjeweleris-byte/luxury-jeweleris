@@ -659,9 +659,16 @@ export default function ProductsAdmin() {
                         </td>
 
                         <td data-label="Category">
-                          <span className="badge badge-confirmed" style={{ fontSize: '11px' }}>
-                            {p.category}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+                            <span className="badge badge-confirmed" style={{ fontSize: '11px' }}>
+                              {p.category}
+                            </span>
+                            {p.recipient && (
+                              <span className="badge" style={{ fontSize: '10px', background: p.recipient?.toLowerCase() === 'men' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(157, 23, 77, 0.2)', color: p.recipient?.toLowerCase() === 'men' ? '#94a3b8' : '#f472b6', border: '1px solid currentColor' }}>
+                                {p.recipient}
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         <td data-label="Price">
@@ -1044,14 +1051,39 @@ export default function ProductsAdmin() {
                   </select>
                 </div>
                 <div>
+                  <label className="admin-label">Recipient / Target Audience</label>
+                  <select
+                    className="admin-select"
+                    value={form.recipient ?? 'Women'}
+                    onChange={e => setField('recipient', e.target.value)}
+                  >
+                    <option value="Women">👩 Women (For Her)</option>
+                    <option value="Men">👨 Men (For Him)</option>
+                    <option value="Unisex">🎁 Unisex / Couple</option>
+                  </select>
+                </div>
+                <div>
                   <label className="admin-label">Setting Style</label>
-                  <input
-                    className="admin-input"
-                    style={{ marginBottom: 0 }}
-                    placeholder="e.g. Solitaire, Halo, Pave, Hidden Halo"
+                  <select
+                    className="admin-select"
                     value={form.style ?? ''}
                     onChange={e => setField('style', e.target.value)}
-                  />
+                  >
+                    <option value="">Select Setting / Style...</option>
+                    <option value="Solitaire">Solitaire</option>
+                    <option value="Halo">Halo &amp; Hidden Halo</option>
+                    <option value="Pavé">Pavé &amp; Side-Stone</option>
+                    <option value="Three-Stone">Three Stone</option>
+                    <option value="Eternity">Eternity &amp; Anniversary</option>
+                    <option value="Pearl">Pearl</option>
+                    <option value="Studs">Studs</option>
+                    <option value="Hoops">Hoops &amp; Huggies</option>
+                    <option value="Pendant">Pendant</option>
+                    <option value="Tennis">Tennis</option>
+                    <option value="Chains">Chains &amp; Crosses</option>
+                    <option value="Bangles">Bangles &amp; Cuffs</option>
+                    <option value="mens">Mens Style</option>
+                  </select>
                 </div>
                 <div className="full-span">
                   <label className="admin-label">Product Description</label>

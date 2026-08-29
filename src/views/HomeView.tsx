@@ -132,7 +132,7 @@ export const HomeView: React.FC = () => {
   const CATEGORIES_LIST = [
     { key: 'Rings', title: 'Engagement & Fine Rings', path: '/engagement-rings', desc: 'Handcrafted solitaire, halo, and vintage ring designs.' },
     { key: 'Wedding Bands', title: 'Wedding & Eternity Bands', path: '/wedding-bands', desc: 'Timeless platinum, gold, and diamond anniversary bands.' },
-    { key: 'Diamonds', title: 'Certified Loose Diamonds', path: '/diamonds', desc: 'Ethically sourced lab & natural certified diamonds.' },
+    { key: 'Diamonds', title: 'Certified Loose Lab Diamonds', path: '/diamonds', desc: 'Ethically created IGI certified lab grown diamonds.' },
     { key: 'Earrings', title: 'Diamond Earrings & Studs', path: '/earrings', desc: 'Sparkling diamond studs, huggies, and hoop earrings.' },
     { key: 'Necklaces', title: 'Necklaces & Pendants', path: '/necklaces', desc: 'Solitaire diamond pendants, chains, and chokers.' },
     { key: 'Bracelets', title: 'Tennis & Fine Bracelets', path: '/bracelets', desc: 'Elegant diamond tennis bracelets and gold bangles.' },

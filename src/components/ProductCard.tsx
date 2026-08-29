@@ -29,6 +29,8 @@ export interface Product {
   category?: string;
   style?: string;
   metal?: string;
+  recipient?: string;
+  occasion?: string;
   images360?: string[];
   url360?: string;
   config360?: any;

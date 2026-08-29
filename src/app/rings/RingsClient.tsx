@@ -10,11 +10,12 @@ function RingsContent() {
 
   const shape = searchParams.get('shape') || undefined;
   const style = searchParams.get('style') || undefined;
+  const recipient = searchParams.get('recipient') || undefined;
   const search = searchParams.get('search') || undefined;
 
   const initialFilters = React.useMemo(() => {
-    return { category: 'engagement', shape, style, search };
-  }, [shape, style, search]);
+    return { category: 'engagement', shape, style, recipient, search };
+  }, [shape, style, recipient, search]);
 
   const handleProductSelect = (product: any, metal?: string) => {
     router.push(`/shop/${product.id}${metal ? `?metal=${metal}` : ''}`);

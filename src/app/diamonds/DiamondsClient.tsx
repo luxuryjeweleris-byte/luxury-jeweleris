@@ -13,7 +13,7 @@ function DiamondsContent() {
   const search = searchParams.get('search') || undefined;
 
   const initialFilters = React.useMemo(() => {
-    return { shape, style, search };
+    return { category: 'diamond', shape, style, search };
   }, [shape, style, search]);
 
   const handleProductSelect = (product: any) => {
@@ -24,6 +24,8 @@ function DiamondsContent() {
     <ListingView 
       initialFilters={initialFilters} 
       onProductSelect={handleProductSelect} 
+      pageTitle="Lab Diamonds"
+      pageSubtitle="Browse certified lab grown diamonds — ethical, eco-friendly, and chemically identical with brilliant fire."
     />
   );
 }
