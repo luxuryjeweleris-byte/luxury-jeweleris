@@ -233,8 +233,8 @@ export default function BlogClient() {
                       <div className="blog-card-info">
                         {(post.tags ?? []).length > 0 && (
                           <div className="blog-card-tags">
-                            {(post.tags ?? []).slice(0, 2).map(tag => (
-                              <span key={tag} className="blog-card-tag-pill" onClick={e => { e.preventDefault(); setActiveCategory(tag); }}>
+                            {Array.from(new Set(post.tags ?? [])).slice(0, 2).map((tag, idx) => (
+                              <span key={`${post.id}-tag-${idx}-${tag}`} className="blog-card-tag-pill" onClick={e => { e.preventDefault(); setActiveCategory(tag); }}>
                                 {tag}
                               </span>
                             ))}

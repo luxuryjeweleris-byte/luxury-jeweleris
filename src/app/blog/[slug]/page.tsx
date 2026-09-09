@@ -146,6 +146,44 @@ function renderBody(body: string): React.ReactNode[] {
       );
     }
 
+    // Markdown Table: lines starting and ending with |
+    if (trimmed.split('\n').every(line => line.trim().startsWith('|') && line.trim().endsWith('|'))) {
+      const lines = trimmed.split('\n').map(l => l.trim());
+      if (lines.length >= 2) {
+        const headerLine = lines[0];
+        const headers = headerLine.split('|').slice(1, -1).map(h => h.trim());
+        const dataLines = lines.slice(1).filter(l => !/^[|\s\-:]+$/.test(l));
+        const rows = dataLines.map(l => l.split('|').slice(1, -1).map(c => c.trim()));
+
+        return (
+          <div key={i} className="md-table-wrapper" style={{ overflowX: 'auto', margin: '28px 0', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+            <table className="md-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13.5px', background: '#ffffff' }}>
+              <thead>
+                <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                  {headers.map((h, hi) => (
+                    <th key={hi} style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 600, color: '#1e293b' }}>
+                      {inlineFormat(h)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, ri) => (
+                  <tr key={ri} style={{ borderBottom: '1px solid #e2e8f0', background: ri % 2 === 0 ? '#ffffff' : '#fafbfc' }}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} style={{ padding: '12px 16px', color: '#334155' }}>
+                        {inlineFormat(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+    }
+
     // Default paragraph (inline images/links handled by inlineFormat)
     const nodes = inlineFormat(trimmed);
     // If paragraph is only an image node, render without <p> wrapper for better spacing
@@ -154,8 +192,10 @@ function renderBody(body: string): React.ReactNode[] {
 }
 
 function inlineFormat(text: string): React.ReactNode {
+  // Strip any accidental residual HTML tags
+  const clean = text.replace(/<[^>]+>/g, '');
   const tokenRe = /(!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
-  const parts = text.split(tokenRe);
+  const parts = clean.split(tokenRe);
   return parts.map((part, i) => {
     if (!part) return null;
     // Inline code
@@ -170,7 +210,21 @@ function inlineFormat(text: string): React.ReactNode {
     // Link
     if (part.startsWith('[')) {
       const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-      if (m) return <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="md-a">{m[1]}</a>;
+      if (m) {
+        const isInternal = m[2].startsWith('/');
+        if (isInternal) {
+          return (
+            <Link key={i} href={m[2]} className="md-a">
+              {m[1]}
+            </Link>
+          );
+        }
+        return (
+          <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="md-a">
+            {m[1]}
+          </a>
+        );
+      }
     }
     // Bold
     if (part.startsWith('**') && part.endsWith('**') && part.length > 3) {
@@ -312,8 +366,8 @@ export default function BlogPostPage() {
             {/* Tags */}
             {(post.tags ?? []).length > 0 && (
               <div className="blog-detail-tags-row">
-                {(post.tags ?? []).map(tag => (
-                  <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`} className="blog-detail-tag">
+                {Array.from(new Set(post.tags ?? [])).map((tag, idx) => (
+                  <Link key={`tag-${idx}-${tag}`} href={`/blog?tag=${encodeURIComponent(tag)}`} className="blog-detail-tag">
                     <Tag size={10} /> {tag}
                   </Link>
                 ))}
