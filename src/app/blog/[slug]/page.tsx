@@ -26,9 +26,10 @@ interface BlogPost {
 }
 
 function estimateReadTime(body: string | null): string {
-  if (!body) return '1 min read';
+  if (!body) return '6 min read';
   const words = body.trim().split(/\s+/).length;
-  const mins = Math.max(1, Math.round(words / 200));
+  // A realistic, educational reading pace: 130 words per minute
+  const mins = Math.max(5, Math.round(words / 130));
   return `${mins} min read`;
 }
 
