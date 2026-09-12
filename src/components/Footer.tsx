@@ -29,9 +29,10 @@ const PinterestIcon = ({ size = 18 }: { size?: number }) => (
   </svg>
 );
 
-const YelpIcon = ({ size = 20 }: { size?: number }) => (
-  // eslint-disable-next-line @next/next/no-img-element
-  <img src="/yelp-logo.png" alt="Yelp" width={size} height={size} style={{ display: 'block', borderRadius: '10px' }} />
+const YouTubeIcon = ({ size = 18 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
 );
 
 export const Footer: React.FC = () => {
@@ -46,7 +47,7 @@ export const Footer: React.FC = () => {
   const instagramUrl = getSetting('instagram_url', 'https://www.instagram.com/i_luxuryjewelers/');
   const twitterUrl = getSetting('twitter_url', 'https://x.com/LuxuryJeweleris');
   const pinterestUrl = getSetting('pinterest_url', 'https://www.pinterest.com/luxuryjeweleris/');
-  const yelpUrl = getSetting('yelp_url', 'https://www.yelp.com/biz/luxury-jewelries-canoga-park');
+  const youtubeUrl = getSetting('youtube_url', 'https://www.youtube.com/@luxuryjeweleris');
 
   return (
     <footer className="footer">
@@ -93,86 +94,52 @@ export const Footer: React.FC = () => {
               Luxury Jeweleris crafts timeless jewelry with exceptional artistry. From engagement rings to everyday elegance, each piece is designed to celebrate life&apos;s most precious moments.
             </p>
             
-            {/* Compact 2-Column Luxury Social Grid */}
-            <div className="footer-social-grid">
-              {/* Facebook Social Card */}
+            {/* Clean Social Icon Buttons (Facebook, Instagram, X, Pinterest, YouTube) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
               <a
                 href={facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-social-card footer-social-card-fb"
+                title="Facebook"
+                className="footer-social-icon-btn"
               >
-                <div className="social-card-icon-wrapper">
-                  <FacebookIcon size={15} />
-                </div>
-                <div className="social-card-text">
-                  <span className="social-card-name">Facebook</span>
-                  <span className="social-card-handle">@LuxuryJeweleris</span>
-                </div>
+                <FacebookIcon size={15} />
               </a>
-
-              {/* Instagram Social Card */}
               <a
                 href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-social-card footer-social-card-ig"
+                title="Instagram"
+                className="footer-social-icon-btn"
               >
-                <div className="social-card-icon-wrapper">
-                  <InstagramIcon size={15} />
-                </div>
-                <div className="social-card-text">
-                  <span className="social-card-name">Instagram</span>
-                  <span className="social-card-handle">@i_luxuryjewelers</span>
-                </div>
+                <InstagramIcon size={15} />
               </a>
-
-              {/* X (Twitter) Social Card */}
               <a
                 href={twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-social-card footer-social-card-x"
+                title="X (Twitter)"
+                className="footer-social-icon-btn"
               >
-                <div className="social-card-icon-wrapper">
-                  <TwitterIcon size={14} />
-                </div>
-                <div className="social-card-text">
-                  <span className="social-card-name">X (Twitter)</span>
-                  <span className="social-card-handle">@LuxuryJeweleris</span>
-                </div>
+                <TwitterIcon size={14} />
               </a>
-
-              {/* Pinterest Social Card */}
               <a
                 href={pinterestUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-social-card footer-social-card-pinterest"
+                title="Pinterest"
+                className="footer-social-icon-btn"
               >
-                <div className="social-card-icon-wrapper">
-                  <PinterestIcon size={15} />
-                </div>
-                <div className="social-card-text">
-                  <span className="social-card-name">Pinterest</span>
-                  <span className="social-card-handle">@luxuryjeweleris</span>
-                </div>
+                <PinterestIcon size={15} />
               </a>
-
-              {/* Yelp Social Card (Full Width) */}
               <a
-                href={yelpUrl}
+                href={youtubeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-social-card footer-social-card-yelp footer-social-card-full"
+                title="YouTube"
+                className="footer-social-icon-btn"
               >
-                <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
-                  <YelpIcon size={26} />
-                </div>
-                <div className="social-card-text">
-                  <span className="social-card-name">Review Us on Yelp</span>
-                  <span className="social-card-handle">Canoga Park, CA · 5★ Reviews →</span>
-                </div>
+                <YouTubeIcon size={16} />
               </a>
             </div>
           </div>
@@ -215,25 +182,6 @@ export const Footer: React.FC = () => {
         <div className="footer-bottom">
           <div>
             &copy; {new Date().getFullYear()} Luxury Jeweleris Inc. All rights reserved.
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '11px', color: '#8792A0', textTransform: 'uppercase', letterSpacing: '0.8px', fontWeight: 600 }}>Follow Us:</span>
-            <a href={facebookUrl} target="_blank" rel="noopener noreferrer" title="Facebook" className="footer-social-icon-btn">
-              <FacebookIcon size={15} />
-            </a>
-            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" title="Instagram" className="footer-social-icon-btn">
-              <InstagramIcon size={15} />
-            </a>
-            <a href={twitterUrl} target="_blank" rel="noopener noreferrer" title="X (Twitter)" className="footer-social-icon-btn">
-              <TwitterIcon size={14} />
-            </a>
-            <a href={pinterestUrl} target="_blank" rel="noopener noreferrer" title="Pinterest" className="footer-social-icon-btn">
-              <PinterestIcon size={15} />
-            </a>
-            <a href={yelpUrl} target="_blank" rel="noopener noreferrer" title="Yelp" className="footer-social-icon-btn" style={{ background: 'transparent', padding: 0, overflow: 'visible' }}>
-              <YelpIcon size={24} />
-            </a>
           </div>
 
           <div style={{ display: 'flex', gap: '20px' }}>

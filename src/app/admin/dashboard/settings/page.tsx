@@ -131,7 +131,7 @@ export default function SettingsAdmin() {
     {
       title: 'Store Guarantees & Social Links',
       icon: ShieldCheck,
-      keys: ['facebook_url', 'pinterest_url', 'yelp_url', 'free_shipping_text', 'return_policy_text']
+      keys: ['facebook_url', 'instagram_url', 'twitter_url', 'pinterest_url', 'youtube_url', 'yelp_url', 'free_shipping_text', 'return_policy_text']
     }
   ];
 

@@ -60,6 +60,11 @@ export const DEFAULT_SITE_SETTINGS: Record<string, SettingItemDef> = {
     label: 'Pinterest Profile Link',
     description: 'Link to official Pinterest profile shown in footer'
   },
+  youtube_url: {
+    value: 'https://www.youtube.com/@luxuryjeweleris',
+    label: 'YouTube Channel Link',
+    description: 'Link to official YouTube channel shown in footer'
+  },
   yelp_url: {
     value: 'https://www.yelp.com/biz/luxury-jewelries-canoga-park',
     label: 'Yelp Business Page Link',
